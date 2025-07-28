@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>YWE 스나이퍼 공식 사이트</title>
 <style>
-  /* 기본 스타일 생략 (위에서 제공한 스타일 그대로 사용) */
+  /* 기본 스타일 */
   * {
     margin: 0; padding: 0; box-sizing: border-box;
   }
@@ -481,26 +481,44 @@
     html += `</section>`;
     return html;
   }
-
   // 제보 신청 탭 렌더링
   function renderSubmit() {
     return `
       <h1 class="header">스나이퍼 제보 신청</h1>
       <section>
         <label for="submit-title">제목</label>
-        <input type="text" id="submit-title" placeholder="제목을 입력하세요" aria-required="true" />
+        <input type="text" id="submit-title" placeholder="제목을 입력하세요" aria-label="제보 제목 입력란" />
+
         <label for="submit-content">내용</label>
-        <textarea id="submit-content" rows="6" placeholder="내용을 입력하세요" aria-required="true"></textarea>
+        <textarea id="submit-content" rows="8" placeholder="내용을 자세히 입력하세요" aria-label="제보 내용 입력란"></textarea>
+
         <button onclick="submitReport()">제보하기</button>
-        <div id="submit-msg" role="alert" aria-live="assertive" style="margin-top:1rem;"></div>
       </section>
     `;
+  }
+
+  // 제보하기 함수
+  function submitReport() {
+    const title = document.getElementById('submit-title').value.trim();
+    const content = document.getElementById('submit-content').value.trim();
+    if (!title || !content) {
+      alert('제목과 내용을 모두 입력해 주세요.');
+      return;
+    }
+    const reports = getReports();
+    reports.unshift({ title, content, user: getLoginUser(), timestamp: Date.now() });
+    setReports(reports);
+    alert('제보가 정상적으로 접수되었습니다.');
+    switchTab('sniper');
   }
 
   // FAQ 탭 렌더링
   function renderFaq() {
     const faqs = getFaqs();
-    let html = `<h1 class="header">자주 묻는 질문</h1><section>`;
+    let html = `
+      <h1 class="header">자주 묻는 질문 (FAQ)</h1>
+      <section>
+    `;
     if (faqs.length === 0) {
       html += `<div class="card">등록된 FAQ가 없습니다.</div>`;
     } else {
@@ -517,210 +535,142 @@
     return html;
   }
 
-  // 관리자 탭 렌더링 (관리자만 접근 가능)
+  // 관리자 탭 렌더링 (FAQ 편집 + 관리자 관리)
   function renderAdmin() {
-    const reports = getReports();
+    if (!isAdmin(getLoginUser())) {
+      return `<div class="card" role="alert">관리자 권한이 없습니다.</div>`;
+    }
+
     const faqs = getFaqs();
+    const admins = [...adminUsers];
+
+    // FAQ 편집 UI
     let html = `
       <h1 class="header">관리자 페이지</h1>
-      <section>
-        <h2>관리자 권한 사용자</h2>
-        <ul id="admin-list">
+      <section aria-label="FAQ 편집">
+        <h2>FAQ 편집</h2>
+        <button onclick="addFaq()">FAQ 추가</button>
+        <div id="faq-list">
     `;
-    adminUsers.forEach(user => {
-      html += `<li>${escapeHtml(user)} ${user !== superAdminId ? `<button onclick="removeAdminUser('${user}')">삭제</button>` : '(최고관리자)'}</li>`;
+
+    faqs.forEach((faq, idx) => {
+      html += `
+        <div class="card" style="margin-bottom:1rem;">
+          <input type="text" value="${escapeHtml(faq.question)}" oninput="updateFaqQuestion(${idx}, this.value)" aria-label="FAQ 질문 ${idx + 1}" />
+          <textarea rows="4" oninput="updateFaqAnswer(${idx}, this.value)" aria-label="FAQ 답변 ${idx + 1}">${escapeHtml(faq.answer)}</textarea>
+          <button onclick="removeFaq(${idx})" style="background:#ff5555; color:white;">삭제</button>
+        </div>
+      `;
     });
+
+    html += `</div></section>`;
+
+    // 관리자 관리 UI
     html += `
-        </ul>
-        <input type="text" id="add-admin-id" placeholder="관리자 추가할 아이디" aria-label="관리자 추가할 아이디" />
+      <section aria-label="관리자 관리" style="margin-top: 3rem;">
+        <h2>관리자 권한 관리</h2>
+        <input type="text" id="admin-id-input" placeholder="추가/삭제할 관리자 아이디 입력" aria-label="관리자 아이디 입력란" />
         <button onclick="handleAddAdmin()">관리자 추가</button>
-      </section>
+        <button onclick="handleRemoveAdmin()">관리자 삭제</button>
+        <div style="margin-top: 1rem;">
+          <strong>현재 관리자 목록:</strong>
+          <ul>
+    `;
 
-      <section style="margin-top:2rem;">
-        <h2>FAQ 관리</h2>
-        <button onclick="renderFaqEditor()">FAQ 편집하기</button>
-      </section>
+    admins.forEach((id) => {
+      html += `<li>${escapeHtml(id)}${id === superAdminId ? ' (최고 관리자)' : ''}</li>`;
+    });
 
-      <section style="margin-top:2rem;">
-        <h2>제보 관리</h2>
-        <button onclick="renderReportsEditor()">제보 편집하기</button>
+    html += `
+          </ul>
+        </div>
       </section>
     `;
+
     return html;
   }
 
-  // FAQ 편집 화면
-  function renderFaqEditor() {
-    const faqs = getFaqs();
-    let html = `
-      <h1 class="header">FAQ 편집</h1>
-      <section>
-        <button onclick="renderApp()">뒤로가기</button>
-        <button onclick="addFaq()">FAQ 추가</button>
-        <div id="faq-editor-list">
-    `;
-    faqs.forEach((faq, i) => {
-      html += `
-        <div class="card">
-          <input type="text" value="${escapeHtml(faq.question)}" placeholder="질문" oninput="updateFaqQuestion(${i}, this.value)" />
-          <textarea rows="4" oninput="updateFaqAnswer(${i}, this.value)">${escapeHtml(faq.answer)}</textarea>
-          <button onclick="removeFaq(${i})">삭제</button>
-        </div>
-      `;
-    });
-    html += `</div></section>`;
-    app.innerHTML = renderSidebar('admin') + `<main class="content">${html}</main>`;
-  }
-
-  // 제보 편집 화면
-  function renderReportsEditor() {
-    const reports = getReports();
-    let html = `
-      <h1 class="header">제보 편집</h1>
-      <section>
-        <button onclick="renderApp()">뒤로가기</button>
-        <button onclick="addReport()">제보 추가</button>
-        <div id="report-editor-list">
-    `;
-    reports.forEach((report, i) => {
-      html += `
-        <div class="card">
-          <input type="text" value="${escapeHtml(report.title)}" placeholder="제목" oninput="updateReportTitle(${i}, this.value)" />
-          <textarea rows="4" oninput="updateReportContent(${i}, this.value)">${escapeHtml(report.content)}</textarea>
-          <button onclick="removeReport(${i})">삭제</button>
-        </div>
-      `;
-    });
-    html += `</div></section>`;
-    app.innerHTML = renderSidebar('admin') + `<main class="content">${html}</main>`;
-  }
-
-  // FAQ 편집 함수들
+  // FAQ 관련 함수들
   function addFaq() {
     const faqs = getFaqs();
-    faqs.push({question: '', answer: ''});
+    faqs.push({ question: '', answer: '' });
     setFaqs(faqs);
-    renderFaqEditor();
+    renderApp();
   }
   function updateFaqQuestion(idx, val) {
     const faqs = getFaqs();
+    if (!faqs[idx]) return;
     faqs[idx].question = val;
     setFaqs(faqs);
   }
   function updateFaqAnswer(idx, val) {
     const faqs = getFaqs();
+    if (!faqs[idx]) return;
     faqs[idx].answer = val;
     setFaqs(faqs);
   }
   function removeFaq(idx) {
     const faqs = getFaqs();
-    faqs.splice(idx, 1);
-    setFaqs(faqs);
-    renderFaqEditor();
+    if (faqs[idx]) {
+      if (!confirm(`FAQ "${faqs[idx].question}" 을(를) 삭제하시겠습니까?`)) return;
+      faqs.splice(idx, 1);
+      setFaqs(faqs);
+      renderApp();
+    }
   }
 
-  // 제보 편집 함수들
-  function addReport() {
-    const reports = getReports();
-    reports.push({title: '', content: ''});
-    setReports(reports);
-    renderReportsEditor();
-  }
-  function updateReportTitle(idx, val) {
-    const reports = getReports();
-    reports[idx].title = val;
-    setReports(reports);
-  }
-  function updateReportContent(idx, val) {
-    const reports = getReports();
-    reports[idx].content = val;
-    setReports(reports);
-  }
-  function removeReport(idx) {
-    const reports = getReports();
-    reports.splice(idx, 1);
-    setReports(reports);
-    renderReportsEditor();
-  }
-
-  // 관리자 추가 처리
+  // 관리자 권한 추가/삭제 이벤트 핸들러
   function handleAddAdmin() {
-    const idInput = document.getElementById('add-admin-id');
-    const id = idInput.value.trim();
+    const id = document.getElementById('admin-id-input').value.trim();
     if (!id) {
-      alert('아이디를 입력해 주세요.');
+      alert('관리자 아이디를 입력해 주세요.');
       return;
     }
     addAdminUser(id);
-    idInput.value = '';
+    document.getElementById('admin-id-input').value = '';
+    renderApp();
+  }
+  function handleRemoveAdmin() {
+    const id = document.getElementById('admin-id-input').value.trim();
+    if (!id) {
+      alert('관리자 아이디를 입력해 주세요.');
+      return;
+    }
+    removeAdminUser(id);
+    document.getElementById('admin-id-input').value = '';
     renderApp();
   }
 
-  // 제보 제출 처리
-  function submitReport() {
-    const titleInput = document.getElementById('submit-title');
-    const contentInput = document.getElementById('submit-content');
-    const msgDiv = document.getElementById('submit-msg');
-    const title = titleInput.value.trim();
-    const content = contentInput.value.trim();
-    if (!title || !content) {
-      msgDiv.textContent = '제목과 내용을 모두 입력해 주세요.';
-      return;
-    }
-    const reports = getReports();
-    reports.push({title, content});
-    setReports(reports);
-    msgDiv.textContent = '제보가 정상적으로 제출되었습니다.';
-    titleInput.value = '';
-    contentInput.value = '';
-    renderApp('submit');
-  }
-
-  // 탭 전환 처리
+  // 탭 전환 함수
   function switchTab(tab) {
     currentTab = tab;
     renderApp();
   }
 
-  // 메인 렌더 함수
-  function renderApp(forceTab) {
+  // 메인 렌더링 함수
+  function renderApp() {
     const loginUser = getLoginUser();
     if (!loginUser) {
-      currentTab = 'login';
-      app.innerHTML = renderLogin();
+      renderLogin();
       return;
     }
-    if (forceTab) currentTab = forceTab;
 
-    let sidebar = renderSidebar(currentTab);
-    let mainContent = '';
+    const sidebarHtml = renderSidebar(currentTab);
+    let contentHtml = '';
 
-    switch(currentTab) {
-      case 'sniper':
-        mainContent = renderSniper();
-        break;
-      case 'submit':
-        mainContent = renderSubmit();
-        break;
-      case 'faq':
-        mainContent = renderFaq();
-        break;
-      case 'admin':
-        if (isAdmin(loginUser)) {
-          mainContent = renderAdmin();
-        } else {
-          mainContent = `<main class="content"><h1>접근 권한이 없습니다.</h1></main>`;
-        }
-        break;
-      case 'login':
-      default:
-        app.innerHTML = renderLogin();
-        return;
+    switch (currentTab) {
+      case 'sniper': contentHtml = renderSniper(); break;
+      case 'submit': contentHtml = renderSubmit(); break;
+      case 'faq': contentHtml = renderFaq(); break;
+      case 'admin': contentHtml = renderAdmin(); break;
+      default: contentHtml = `<div class="card">알 수 없는 탭입니다.</div>`;
     }
-    app.innerHTML = sidebar + `<main class="content">${mainContent}</main>`;
+
+    app.innerHTML = sidebarHtml + `<main class="content" role="main" tabindex="-1">${contentHtml}</main>`;
+    document.querySelector('main.content').focus();
   }
 
-  // 초기 렌더링
+  // 최초 렌더링
   renderApp();
 
 </script>
