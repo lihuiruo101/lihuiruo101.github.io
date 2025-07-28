@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>YWE 스나이퍼 공식 사이트</title>
 <style>
-  /* 기본 스타일 */
+  /* 기본 스타일 + 업그레이드 */
   * {
     margin: 0; padding: 0; box-sizing: border-box;
   }
   html, body {
     height: 100%;
-    background: linear-gradient(135deg, #001f3f, #005f99);
+    background: linear-gradient(135deg, #001622, #004466);
     color: #00f0ff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -24,181 +24,194 @@
     flex-direction: row;
   }
   nav.sidebar {
-    background: #021a35;
-    width: 240px;
-    box-shadow: 5px 0 15px #00f0ffaa;
+    background: linear-gradient(180deg, #012244, #003355);
+    width: 260px;
+    box-shadow:
+      4px 0 15px #00ffffcc,
+      inset 0 0 10px #00ffff88;
     display: flex;
     flex-direction: column;
-    padding-top: 2rem;
+    padding-top: 2.5rem;
     position: fixed;
     top: 0; bottom: 0; left: 0;
     z-index: 1100;
+    border-right: 3px solid #00ffffbb;
   }
   nav.sidebar a {
-    padding: 1.2rem 2rem;
-    color: #00f0ff;
+    padding: 1.4rem 2.4rem;
+    color: #00ffffee;
     text-decoration: none;
     cursor: pointer;
     font-weight: 700;
-    font-size: 1.15rem;
-    letter-spacing: 0.07em;
-    transition: background 0.3s ease, color 0.3s ease;
+    font-size: 1.25rem;
+    letter-spacing: 0.1em;
+    transition: background 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
     user-select: none;
+    border-left: 4px solid transparent;
+    box-shadow: inset 0 0 0 0 transparent;
   }
   nav.sidebar a:hover,
   nav.sidebar a.active {
-    background: #004080;
-    color: #00ffff;
-    text-shadow: 0 0 7px #00ffffcc;
+    background: #006080;
+    color: #ccffff;
+    text-shadow: 0 0 12px #66ffffcc;
+    border-left: 4px solid #00ffff;
+    box-shadow: inset 10px 0 20px #00ffff33;
   }
   button.logout-btn {
     margin-top: auto;
     margin-bottom: 2rem;
-    margin-left: 1.5rem;
-    margin-right: 1.5rem;
-    padding: 0.8rem 1.3rem;
-    background: #ff5555;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    padding: 1rem 1.5rem;
+    background: #ff4444;
     color: white;
     border: none;
-    border-radius: 8px;
-    font-weight: 800;
-    font-size: 1rem;
+    border-radius: 12px;
+    font-weight: 900;
+    font-size: 1.15rem;
     cursor: pointer;
     user-select: none;
-    box-shadow: 0 0 10px #ff5555cc;
-    transition: background 0.3s ease;
+    box-shadow: 0 0 18px #ff4444cc;
+    transition: background 0.4s ease, box-shadow 0.4s ease;
   }
   button.logout-btn:hover {
-    background: #ff2222;
-    box-shadow: 0 0 16px #ff2222dd;
+    background: #ff1111;
+    box-shadow: 0 0 28px #ff1111ee;
   }
   main.content {
-    margin-left: 240px;
-    padding: 2.5rem 3.5rem;
+    margin-left: 260px;
+    padding: 3rem 4rem;
     flex: 1;
     overflow-y: auto;
     height: 100vh;
     background: linear-gradient(180deg, #011f4b 0%, #03396c 100%);
-    box-shadow: inset 0 0 40px #00f0ff33;
+    box-shadow: inset 0 0 50px #00f0ff55;
     scroll-behavior: smooth;
+    color: #a8f0ff;
+    text-shadow: 0 0 6px #00ffffcc;
   }
   .header {
-    font-size: 2.6rem;
-    margin-bottom: 1.8rem;
-    letter-spacing: 0.12em;
+    font-size: 3rem;
+    margin-bottom: 2.4rem;
+    letter-spacing: 0.15em;
     font-weight: 900;
-    text-shadow: 0 0 12px #00ffffcc;
+    text-shadow: 0 0 18px #00ffffcc;
     user-select: none;
   }
   .card {
     background: #022f5f;
-    border: 1.5px solid #00ffffaa;
-    border-radius: 14px;
-    padding: 1.8rem 2.2rem;
-    margin-bottom: 2rem;
+    border: 2px solid #00ffffbb;
+    border-radius: 18px;
+    padding: 2.4rem 3rem;
+    margin-bottom: 2.6rem;
     position: relative;
-    box-shadow: 0 0 22px #00ffff66;
+    box-shadow: 0 0 30px #00ffff88;
     color: #c0f8ff;
-    font-size: 1.15rem;
-    line-height: 1.5;
+    font-size: 1.2rem;
+    line-height: 1.6;
     word-break: break-word;
   }
   .report-title {
     font-weight: 900;
-    font-size: 1.5rem;
-    margin-bottom: 1.2rem;
-    text-shadow: 0 0 8px #00ffffcc;
+    font-size: 1.6rem;
+    margin-bottom: 1.8rem;
+    text-shadow: 0 0 10px #00ffffcc;
     user-select: text;
   }
-  textarea, input[type=text], input[type=password] {
+  textarea, input[type=text], input[type=password], input[type=email] {
     width: 100%;
     background: #011f4b;
-    color: #00ffff;
-    border: 2px solid #00ffffcc;
-    border-radius: 10px;
-    padding: 14px 18px;
+    color: #00ffffee;
+    border: 2.5px solid #00ffffcc;
+    border-radius: 14px;
+    padding: 18px 22px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
+    font-size: 1.1rem;
+    margin-bottom: 1.8rem;
+    transition: border-color 0.4s ease, background-color 0.4s ease, box-shadow 0.4s ease;
     resize: vertical;
+    box-shadow: inset 0 0 10px #00ffff55;
   }
-  textarea:focus, input[type=text]:focus, input[type=password]:focus {
+  textarea:focus, input[type=text]:focus, input[type=password]:focus, input[type=email]:focus {
     outline: none;
     border-color: #00ffff;
-    box-shadow: 0 0 15px #00ffffcc;
-    background: #03396c;
+    box-shadow: 0 0 22px #00ffffcc;
+    background: #044377;
   }
   button {
     background: #00ffff;
     border: none;
-    padding: 14px 28px;
-    font-weight: 800;
+    padding: 16px 34px;
+    font-weight: 900;
     cursor: pointer;
-    border-radius: 12px;
+    border-radius: 16px;
     color: #003344;
-    font-size: 1.2rem;
-    box-shadow: 0 0 15px #00ffffcc;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
+    font-size: 1.3rem;
+    box-shadow: 0 0 22px #00ffffcc;
+    transition: background 0.4s ease, box-shadow 0.4s ease, transform 0.2s ease;
     user-select: none;
-    margin-right: 1.2rem;
-    margin-top: 0.8rem;
+    margin-right: 1.6rem;
+    margin-top: 1rem;
   }
   button:hover:not(:disabled) {
     background: #00e6cc;
-    box-shadow: 0 0 26px #00e6ccff;
+    box-shadow: 0 0 36px #00e6ccff;
+    transform: scale(1.07);
   }
   button:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
     box-shadow: none;
+    transform: none;
   }
   img.preview {
     max-width: 100%;
-    margin-top: 1.5rem;
-    border-radius: 14px;
-    border: 2.5px solid #00ffffbb;
-    box-shadow: 0 0 18px #00ffff99;
+    margin-top: 2rem;
+    border-radius: 18px;
+    border: 3px solid #00ffffbb;
+    box-shadow: 0 0 26px #00ffffaa;
   }
   ul {
-    padding-left: 1.4rem;
-    margin-top: 0.5rem;
-    margin-bottom: 1.5rem;
+    padding-left: 1.8rem;
+    margin-top: 0.7rem;
+    margin-bottom: 1.8rem;
   }
   ul li {
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.8rem;
   }
   .login-box {
     background: #011f4b;
-    padding: 50px 45px;
-    border-radius: 20px;
-    box-shadow: 0 0 35px #00ffffcc;
-    max-width: 420px;
-    width: 90vw;
+    padding: 60px 55px;
+    border-radius: 24px;
+    box-shadow: 0 0 45px #00ffffcc;
+    max-width: 480px;
+    width: 95vw;
     margin: auto;
-    margin-top: 10vh;
+    margin-top: 12vh;
     color: #00ffff;
     text-align: center;
     user-select: none;
   }
   .login-box h2 {
-    font-size: 2.6rem;
-    margin-bottom: 2.5rem;
-    text-shadow: 0 0 12px #00ffffcc;
-    letter-spacing: 0.12em;
+    font-size: 3rem;
+    margin-bottom: 3rem;
+    text-shadow: 0 0 18px #00ffffcc;
+    letter-spacing: 0.15em;
   }
   input.login-input {
     width: 100%;
-    padding: 16px 20px;
-    margin: 16px 0;
-    font-size: 1.25rem;
-    border-radius: 10px;
-    border: 2px solid #00ffffaa;
-    background: #001933;
-    color: #00ffff;
+    padding: 18px 26px;
+    margin: 18px 0;
+    font-size: 1.35rem;
+    border-radius: 14px;
+    border: 2.5px solid #00ffffaa;
+    background: #001a33;
+    color: #00ffffdd;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
     outline: none;
+    box-shadow: inset 0 0 14px #00ffff88;
   }
   input.login-input::placeholder {
     color: #00ffff88;
@@ -206,36 +219,62 @@
   input.login-input:focus {
     border-color: #00ffff;
     background: #003366;
-    box-shadow: 0 0 15px #00ffffaa;
+    box-shadow: 0 0 22px #00ffffcc;
   }
   button.login-button {
     background: #00ffff;
     color: #003344;
     font-weight: 900;
     cursor: pointer;
-    border: 2px solid #00ffff;
-    padding: 16px 0;
-    font-size: 1.2rem;
-    border-radius: 14px;
-    margin-top: 20px;
+    border: 2.5px solid #00ffff;
+    padding: 18px 0;
+    font-size: 1.3rem;
+    border-radius: 18px;
+    margin-top: 28px;
     width: 100%;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
+    transition: background 0.4s ease, box-shadow 0.4s ease, transform 0.2s ease;
     user-select: none;
-    box-shadow: 0 0 22px #00ffffaa;
+    box-shadow: 0 0 30px #00ffffbb;
   }
   button.login-button:hover {
     background: #00e6cc;
-    box-shadow: 0 0 30px #00e6ccff;
+    box-shadow: 0 0 38px #00e6ccff;
+    transform: scale(1.06);
   }
   #login-error {
-    color: #ff5555;
-    font-weight: 800;
-    margin-top: 14px;
-    font-size: 1.1rem;
-    text-shadow: 0 0 8px #ff5555cc;
+    color: #ff4444;
+    font-weight: 900;
+    margin-top: 18px;
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px #ff4444cc;
     user-select: none;
-    min-height: 1.4em;
+    min-height: 1.6em;
   }
+
+  /* 안전정보관리 테이블 스타일 */
+  table.safe-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+  }
+  table.safe-info-table th,
+  table.safe-info-table td {
+    border: 1.5px solid #00ffffbb;
+    padding: 0.9rem 1.4rem;
+    text-align: center;
+    font-size: 1rem;
+    color: #ccf8ff;
+  }
+  table.safe-info-table th {
+    background: #003a66;
+    font-weight: 800;
+    text-shadow: 0 0 8px #00ffffcc;
+  }
+  table.safe-info-table tbody tr:hover {
+    background: #005f99bb;
+    cursor: default;
+  }
+
   @media (max-width: 800px) {
     body {
       flex-direction: column;
@@ -248,35 +287,40 @@
       flex-direction: row;
       padding: 0;
       box-shadow: none;
+      border-right: none;
+      border-bottom: 3px solid #00ffffbb;
     }
     nav.sidebar a {
       flex: 1;
-      padding: 1rem 0;
-      font-size: 1.1rem;
+      padding: 1.2rem 0;
+      font-size: 1.15rem;
       text-align: center;
       border-right: 1.5px solid #005f99;
+      border-left: none;
+      border-bottom: none;
+      box-shadow: none !important;
     }
     nav.sidebar a:last-child {
       border-right: none;
     }
     button.logout-btn {
       margin: 0 12px 12px 12px;
-      padding: 0.7rem;
-      font-size: 1rem;
+      padding: 0.9rem;
+      font-size: 1.1rem;
       box-shadow: none;
-      border-radius: 8px;
+      border-radius: 10px;
       width: auto;
       flex: none;
     }
     main.content {
       margin-left: 0;
-      padding: 1.5rem 2rem;
+      padding: 2rem 2.5rem;
       height: auto;
     }
     .login-box {
-      margin-top: 6vh;
+      margin-top: 8vh;
       width: 96vw;
-      padding: 30px 20px;
+      padding: 40px 30px;
     }
   }
 </style>
@@ -287,28 +331,24 @@
 <script>
   'use strict';
 
-  // 최고 관리자 ID (고정)
   const superAdminId = 'lihuiruo101';
 
-  // 관리자 권한 배열 로컬스토리지에서 불러오기 (없으면 superAdminId 포함)
   let adminUsers = JSON.parse(localStorage.getItem('ywe_admin_users') || JSON.stringify([superAdminId]));
 
-  // HTML 특수문자 이스케이프
   function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
   }
 
-  // 간단 마크다운 변환 (**, *, `, 링크, 이미지, 줄바꿈)
   function simpleMarkdown(text) {
     if (!text) return '';
     return escapeHtml(text)
       .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
       .replace(/\*(.+?)\*/g, '<i>$1</i>')
       .replace(/`(.+?)`/g, '<code>$1</code>')
-      .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="preview" />')
-      .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+      .replace(/!(.*?)(.*?)/g, '<img src="$2" alt="$1" class="preview" />')
+      .replace(/(.+?)(.+?)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
       .replace(/\n/g, '<br>');
   }
 
@@ -325,7 +365,6 @@
     renderApp();
   }
 
-  // 회원 비밀번호 저장/불러오기
   function getUserPw(id) {
     return localStorage.getItem('user_' + id);
   }
@@ -333,12 +372,10 @@
     localStorage.setItem('user_' + id, pw);
   }
 
-  // 관리자 권한 체크
   function isAdmin(userId) {
     return adminUsers.includes(userId);
   }
 
-  // 관리자 권한 추가/삭제
   function addAdminUser(id) {
     if (!adminUsers.includes(id)) {
       adminUsers.push(id);
@@ -366,8 +403,9 @@
   // 제보 및 FAQ 저장소 키
   const REPORTS_KEY = 'ywe_reports';
   const FAQ_KEY = 'ywe_faq';
+  const SNIPERS_KEY = 'ywe_snipers';
+  const LOGIN_HISTORY_KEY = 'ywe_login_history'; // 로그인 기록 저장
 
-  // 제보, FAQ 불러오기/저장
   function getReports() {
     return JSON.parse(localStorage.getItem(REPORTS_KEY) || '[]');
   }
@@ -380,17 +418,28 @@
   function setFaqs(faqs) {
     localStorage.setItem(FAQ_KEY, JSON.stringify(faqs));
   }
+  function getSnipers() {
+    return JSON.parse(localStorage.getItem(SNIPERS_KEY) || '[]');
+  }
+  function setSnipers(snipers) {
+    localStorage.setItem(SNIPERS_KEY, JSON.stringify(snipers));
+  }
+  function getLoginHistory() {
+    return JSON.parse(localStorage.getItem(LOGIN_HISTORY_KEY) || '[]');
+  }
+  function setLoginHistory(history) {
+    localStorage.setItem(LOGIN_HISTORY_KEY, JSON.stringify(history));
+  }
 
-  // 현재 탭 상태
-  const app = document.getElementById('app');
   let currentTab = getLoginUser() ? 'sniper' : 'login';
 
-  // 로그인 화면 렌더링
+  // 로그인 화면 렌더링 (이메일 추가)
   function renderLogin(errorMsg = '') {
     app.innerHTML = `
       <section class="login-box" role="main" aria-label="로그인 박스">
         <h2>YWE 로그인</h2>
         <input id="id" class="login-input" placeholder="아이디" aria-label="아이디 입력란" autocomplete="username" />
+        <input id="email" class="login-input" type="email" placeholder="이메일" aria-label="이메일 입력란" autocomplete="email" />
         <input id="pw" class="login-input" placeholder="비밀번호" type="password" aria-label="비밀번호 입력란" autocomplete="current-password" />
         <button class="login-button" id="login-btn">로그인</button>
         <button class="login-button" id="signup-btn">회원가입</button>
@@ -400,353 +449,220 @@
 
     document.getElementById('login-btn').addEventListener('click', handleLogin);
     document.getElementById('signup-btn').addEventListener('click', handleSignup);
-    document.getElementById('pw').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        handleLogin();
-      }
-    });
+    document.getElementById('pw').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') {
+    handleLogin();
+  }
+});
+
+// 로그인 처리 함수
+function handleLogin() {
+  const id = document.getElementById('id').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const pw = document.getElementById('pw').value;
+
+  if (!id || !email || !pw) {
+    renderLogin('모든 필드를 입력해주세요.');
+    return;
   }
 
-  // 로그인 처리
-  function handleLogin() {
-    const id = document.getElementById('id').value.trim();
-    const pw = document.getElementById('pw').value.trim();
-    if (!id || !pw) {
-      renderLogin('아이디와 비밀번호를 모두 입력해 주십시오.');
-      return;
-    }
-    const savedPw = getUserPw(id);
-    if (savedPw === null) {
-      renderLogin('존재하지 않는 아이디입니다.');
-      return;
-    }
-    if (savedPw === pw) {
-      setLoginUser(id);
-      currentTab = 'sniper';
+  const storedPw = getUserPw(id);
+  if (!storedPw) {
+    renderLogin('등록되지 않은 아이디입니다.');
+    return;
+  }
+
+  if (storedPw !== pw) {
+    renderLogin('비밀번호가 틀렸습니다.');
+    return;
+  }
+
+  // 로그인 성공 처리
+  setLoginUser(id);
+  // 로그인 기록 저장 (아이디, 이메일, 시간)
+  const history = getLoginHistory();
+  history.push({ id, email, time: new Date().toISOString() });
+  setLoginHistory(history);
+
+  currentTab = 'sniper';
+  renderApp();
+}
+
+// 회원가입 처리 함수
+function handleSignup() {
+  const id = document.getElementById('id').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const pw = document.getElementById('pw').value;
+
+  if (!id || !email || !pw) {
+    renderLogin('모든 필드를 입력해주세요.');
+    return;
+  }
+
+  if (getUserPw(id)) {
+    renderLogin('이미 등록된 아이디입니다.');
+    return;
+  }
+
+  setUserPw(id, pw);
+
+  // 신규 회원은 기본적으로 일반 사용자로 가입됨
+  setLoginUser(id);
+
+  alert('회원가입이 완료되었습니다.');
+  currentTab = 'sniper';
+  renderApp();
+}
+
+// 앱 메인 렌더링
+function renderApp() {
+  const userId = getLoginUser();
+
+  if (!userId) {
+    currentTab = 'login';
+    renderLogin();
+    return;
+  }
+
+  // 기본 네비게이션
+  const navHtml = `
+    <nav class="sidebar" role="navigation" aria-label="사이트 주요 메뉴">
+      <a href="#" class="${currentTab === 'sniper' ? 'active' : ''}" id="tab-sniper">스나이퍼 목록</a>
+      <a href="#" class="${currentTab === 'reports' ? 'active' : ''}" id="tab-reports">제보 관리</a>
+      <a href="#" class="${currentTab === 'faq' ? 'active' : ''}" id="tab-faq">FAQ 관리</a>
+      ${isAdmin(userId) ? `
+        <a href="#" class="${currentTab === 'admin' ? 'active' : ''}" id="tab-admin">관리자 관리</a>
+        <a href="#" class="${currentTab === 'loginHistory' ? 'active' : ''}" id="tab-loginHistory">로그인 기록</a>
+      ` : ''}
+      <button class="logout-btn" id="logout-btn" aria-label="로그아웃">로그아웃</button>
+    </nav>
+  `;
+
+  let mainContentHtml = '';
+
+  if (currentTab === 'sniper') {
+    mainContentHtml = renderSnipers();
+  } else if (currentTab === 'reports') {
+    mainContentHtml = renderReports();
+  } else if (currentTab === 'faq') {
+    mainContentHtml = renderFaqs();
+  } else if (currentTab === 'admin' && isAdmin(userId)) {
+    mainContentHtml = renderAdminPanel();
+  } else if (currentTab === 'loginHistory' && isAdmin(userId)) {
+    mainContentHtml = renderLoginHistory();
+  } else {
+    mainContentHtml = '<p>알 수 없는 탭입니다.</p>';
+  }
+
+  app.innerHTML = `
+    ${navHtml}
+    <main class="content" role="main" aria-live="polite">
+      ${mainContentHtml}
+    </main>
+  `;
+
+  document.getElementById('logout-btn').addEventListener('click', logout);
+  document.getElementById('tab-sniper')?.addEventListener('click', () => { currentTab = 'sniper'; renderApp(); });
+  document.getElementById('tab-reports')?.addEventListener('click', () => { currentTab = 'reports'; renderApp(); });
+  document.getElementById('tab-faq')?.addEventListener('click', () => { currentTab = 'faq'; renderApp(); });
+  if (isAdmin(userId)) {
+    document.getElementById('tab-admin')?.addEventListener('click', () => { currentTab = 'admin'; renderApp(); });
+    document.getElementById('tab-loginHistory')?.addEventListener('click', () => { currentTab = 'loginHistory'; renderApp(); });
+  }
+}
+
+// 스나이퍼 목록 렌더링 예시
+function renderSnipers() {
+  const snipers = getSnipers();
+  if (snipers.length === 0) {
+    return '<p>등록된 스나이퍼가 없습니다.</p>';
+  }
+  return `
+    <h1 class="header">스나이퍼 목록</h1>
+    <ul>
+      ${snipers.map(s => `<li><b>${escapeHtml(s.name)}</b> - ${escapeHtml(s.description)}</li>`).join('')}
+    </ul>
+  `;
+}
+
+// 제보 관리 렌더링 (간단 예시)
+function renderReports() {
+  const reports = getReports();
+  if (reports.length === 0) {
+    return '<p>등록된 제보가 없습니다.</p>';
+  }
+  return `
+    <h1 class="header">제보 관리</h1>
+    <ul>
+      ${reports.map(r => `<li><b>${escapeHtml(r.title)}</b><br />${simpleMarkdown(r.content)}</li>`).join('')}
+    </ul>
+  `;
+}
+
+// FAQ 관리 렌더링 (간단 예시)
+function renderFaqs() {
+  const faqs = getFaqs();
+  if (faqs.length === 0) {
+    return '<p>등록된 FAQ가 없습니다.</p>';
+  }
+  return `
+    <h1 class="header">FAQ 관리</h1>
+    <ul>
+      ${faqs.map(f => `<li><b>${escapeHtml(f.question)}</b><br />${simpleMarkdown(f.answer)}</li>`).join('')}
+    </ul>
+  `;
+}
+
+// 관리자 관리 화면
+function renderAdminPanel() {
+  const admins = adminUsers;
+  return `
+    <h1 class="header">관리자 관리</h1>
+    <div class="card">
+      <p>최고관리자: <b>${superAdminId}</b></p>
+      <p>현재 관리자 목록:</p>
+      <ul>
+        ${admins.map(a => `<li>${escapeHtml(a)} ${a !== superAdminId ? `<button onclick="removeAdminUser('${escapeHtml(a)}')">삭제</button>` : ''}</li>`).join('')}
+      </ul>
+      <input id="new-admin-id" type="text" placeholder="추가할 관리자 아이디" aria-label="추가할 관리자 아이디" />
+      <button id="add-admin-btn">관리자 추가</button>
+    </div>
+  `;
+}
+
+// 로그인 기록 렌더링
+function renderLoginHistory() {
+  const history = getLoginHistory().slice().reverse(); // 최근 기록부터
+  if (history.length === 0) {
+    return '<p>로그인 기록이 없습니다.</p>';
+  }
+  return `
+    <h1 class="header">로그인 기록</h1>
+    <table class="safe-info-table" role="table" aria-label="로그인 기록 테이블">
+      <thead>
+        <tr><th>아이디</th><th>이메일</th><th>로그인 시간</th></tr>
+      </thead>
+      <tbody>
+        ${history.map(h => `<tr><td>${escapeHtml(h.id)}</td><td>${escapeHtml(h.email)}</td><td>${new Date(h.time).toLocaleString()}</td></tr>`).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+// 관리자 추가 버튼 이벤트 위임
+document.addEventListener('click', (e) => {
+  if (e.target && e.target.id === 'add-admin-btn') {
+    const input = document.getElementById('new-admin-id');
+    const id = input.value.trim();
+    if (id) {
+      addAdminUser(id);
+      input.value = '';
       renderApp();
     } else {
-      renderLogin('비밀번호가 올바르지 않습니다.');
+      alert('아이디를 입력해주세요.');
     }
   }
+});
 
-  // 회원가입 처리
-  function handleSignup() {
-    const id = document.getElementById('id').value.trim();
-    const pw = document.getElementById('pw').value.trim();
-    if (!id || !pw) {
-      alert('아이디와 비밀번호를 모두 입력해 주십시오.');
-      return;
-    }
-    if (getUserPw(id) !== null) {
-      alert('이미 존재하는 아이디입니다.');
-      return;
-    }
-    setUserPw(id, pw);
-    alert('회원가입이 성공적으로 완료되었습니다. 로그인해 주십시오.');
-    renderLogin();
-  }
-
-  // 사이드바 렌더링
-  function renderSidebar(active) {
-    const loginUser = getLoginUser();
-    if (!loginUser) return '';
-
-    let navHtml = `
-      <nav class="sidebar" role="navigation" aria-label="메인 메뉴">
-        <a href="#" id="nav-sniper" class="${active === 'sniper' ? 'active' : ''}" onclick="switchTab('sniper')" aria-current="${active === 'sniper' ? 'page' : undefined}">스나이퍼</a>
-        <a href="#" id="nav-submit" class="${active === 'submit' ? 'active' : ''}" onclick="switchTab('submit')" aria-current="${active === 'submit' ? 'page' : undefined}">제보 신청</a>
-        <a href="#" id="nav-faq" class="${active === 'faq' ? 'active' : ''}" onclick="switchTab('faq')" aria-current="${active === 'faq' ? 'page' : undefined}">자주 묻는 질문</a>
-    `;
-
-    if (isAdmin(loginUser)) {
-      navHtml += `<a href="#" id="nav-admin" class="${active === 'admin' ? 'active' : ''}" onclick="switchTab('admin')" aria-current="${active === 'admin' ? 'page' : undefined}">관리자</a>`;
-    }
-
-    navHtml += `
-      <button class="logout-btn" onclick="logout()" aria-label="로그아웃">${escapeHtml(loginUser)} 님 로그아웃</button>
-      </nav>
-    `;
-    return navHtml;
-  }
-
-  // 스나이퍼 목록 (간단 예시 데이터, 로컬스토리지 저장 가능)
-  const SNIPERS_KEY = 'ywe_snipers';
-
-  function getSnipers() {
-    return JSON.parse(localStorage.getItem(SNIPERS_KEY) || '[]');
-  }
-  function setSnipers(snipers) {
-    localStorage.setItem(SNIPERS_KEY, JSON.stringify(snipers));
-  }
-
-  // 스나이퍼 탭 렌더링
-  function renderSniper() {
-    const snipers = getSnipers();
-    let html = `
-      <h1 class="header">스나이퍼 목록</h1>
-      <div class="card" role="region" aria-label="스나이퍼 목록">
-    `;
-
-    if (snipers.length === 0) {
-      html += `<p>아직 등록된 스나이퍼가 없습니다.</p>`;
-    } else {
-      html += `<ul>`;
-      for (const s of snipers) {
-        html += `<li><b>${escapeHtml(s.name)}</b> - ${escapeHtml(s.desc)}</li>`;
-      }
-      html += `</ul>`;
-    }
-
-    // 관리자만 스나이퍼 등록 가능
-    if (isAdmin(getLoginUser())) {
-      html += `
-        <hr />
-        <h2>새 스나이퍼 등록</h2>
-        <input id="sniper-name" placeholder="스나이퍼 이름" aria-label="스나이퍼 이름 입력" />
-        <textarea id="sniper-desc" placeholder="설명" aria-label="스나이퍼 설명 입력"></textarea>
-        <button id="btn-add-sniper">등록하기</button>
-      `;
-    }
-
-    html += `</div>`;
-    return html;
-  }
-
-  // 제보 신청 탭 렌더링
-  function renderSubmit() {
-    return `
-      <h1 class="header">제보 신청</h1>
-      <div class="card" role="region" aria-label="제보 신청 양식">
-        <textarea id="report-content" placeholder="제보 내용을 입력해 주세요." aria-label="제보 내용"></textarea>
-        <button id="btn-submit-report">제보하기</button>
-      </div>
-    `;
-  }
-
-  // FAQ 탭 렌더링
-  function renderFaq() {
-    const faqs = getFaqs();
-    let html = `
-      <h1 class="header">자주 묻는 질문 (FAQ)</h1>
-      <div class="card" role="region" aria-label="FAQ 목록">
-    `;
-
-    if (faqs.length === 0) {
-      html += `<p>FAQ가 아직 등록되지 않았습니다.</p>`;
-    } else {
-      for (const [index, faq] of faqs.entries()) {
-        html += `
-          <details ${faq.open ? 'open' : ''}>
-            <summary><b>${escapeHtml(faq.question)}</b></summary>
-            <p>${simpleMarkdown(faq.answer)}</p>
-          </details>
-        `;
-      }
-    }
-
-    // 관리자만 FAQ 편집 가능
-    if (isAdmin(getLoginUser())) {
-      html += `
-        <hr />
-        <h2>FAQ 추가 / 편집</h2>
-        <input id="faq-question" placeholder="질문" aria-label="FAQ 질문 입력" />
-        <textarea id="faq-answer" placeholder="답변 (마크다운 지원)" aria-label="FAQ 답변 입력"></textarea>
-        <button id="btn-add-faq">FAQ 등록</button>
-        <button id="btn-clear-faqs" style="background:#ff5555; color:#fff;">모두 삭제</button>
-      `;
-    }
-
-    html += `</div>`;
-    return html;
-  }
-
-  // 관리자 탭 렌더링
-  function renderAdmin() {
-    const loginUser = getLoginUser();
-    if (!isAdmin(loginUser)) {
-      return `<p>접근 권한이 없습니다.</p>`;
-    }
-
-    let html = `
-      <h1 class="header">관리자 패널</h1>
-      <div class="card" role="region" aria-label="관리자 권한 관리">
-        <h2>관리자 권한 관리</h2>
-        <p>현재 관리자 목록:</p>
-        <ul>
-    `;
-
-    for (const admin of adminUsers) {
-      html += `<li>${escapeHtml(admin)} ${admin !== superAdminId ? `<button data-remove-admin="${escapeHtml(admin)}" style="background:#ff5555;color:#fff;">권한 제거</button>` : '<i>최고 관리자</i>'}</li>`;
-    }
-
-    html += `
-        </ul>
-        <input id="new-admin-id" placeholder="추가할 관리자 아이디" aria-label="관리자 아이디 입력" />
-        <button id="btn-add-admin">관리자 추가</button>
-      </div>
-    `;
-
-    return html;
-  }
-
-  // 현재 탭 화면 렌더링
-  function renderMainContent() {
-    switch (currentTab) {
-      case 'login':
-        renderLogin();
-        break;
-      case 'sniper':
-        app.innerHTML = renderSidebar('sniper') + `<main class="content">${renderSniper()}</main>`;
-        bindSniperEvents();
-        break;
-      case 'submit':
-        app.innerHTML = renderSidebar('submit') + `<main class="content">${renderSubmit()}</main>`;
-        bindSubmitEvents();
-        break;
-      case 'faq':
-        app.innerHTML = renderSidebar('faq') + `<main class="content">${renderFaq()}</main>`;
-        bindFaqEvents();
-        break;
-      case 'admin':
-        app.innerHTML = renderSidebar('admin') + `<main class="content">${renderAdmin()}</main>`;
-        bindAdminEvents();
-        break;
-      default:
-        currentTab = 'login';
-        renderLogin();
-        break;
-    }
-  }
-
-  // 전체 앱 렌더링
-  function renderApp() {
-    if (currentTab === 'login') {
-      renderLogin();
-    } else {
-      renderMainContent();
-    }
-  }
-
-  // 탭 변경
-  function switchTab(tabName) {
-    currentTab = tabName;
-    renderApp();
-  }
-
-  // 스나이퍼 탭 이벤트 바인딩
-  function bindSniperEvents() {
-    const btnAdd = document.getElementById('btn-add-sniper');
-    if (!btnAdd) return;
-
-    btnAdd.addEventListener('click', () => {
-      const nameInput = document.getElementById('sniper-name');
-      const descInput = document.getElementById('sniper-desc');
-      const name = nameInput.value.trim();
-      const desc = descInput.value.trim();
-      if (!name || !desc) {
-        alert('스나이퍼 이름과 설명을 모두 입력하세요.');
-        return;
-      }
-      let snipers = getSnipers();
-      snipers.push({ name, desc });
-      setSnipers(snipers);
-      alert('스나이퍼가 등록되었습니다.');
-      switchTab('sniper');
-    });
-  }
-
-  // 제보 탭 이벤트 바인딩
-  function bindSubmitEvents() {
-    const btnSubmit = document.getElementById('btn-submit-report');
-    if (!btnSubmit) return;
-
-    btnSubmit.addEventListener('click', () => {
-      const content = document.getElementById('report-content').value.trim();
-      if (!content) {
-        alert('제보 내용을 입력해 주세요.');
-        return;
-      }
-      let reports = getReports();
-      reports.push({
-        id: Date.now(),
-        user: getLoginUser(),
-        content,
-        date: new Date().toISOString(),
-      });
-      setReports(reports);
-      alert('제보가 접수되었습니다. 감사합니다.');
-      document.getElementById('report-content').value = '';
-    });
-  }
-
-  // FAQ 탭 이벤트 바인딩
-  function bindFaqEvents() {
-    const btnAddFaq = document.getElementById('btn-add-faq');
-    if (btnAddFaq) {
-      btnAddFaq.addEventListener('click', () => {
-        const question = document.getElementById('faq-question').value.trim();
-        const answer = document.getElementById('faq-answer').value.trim();
-        if (!question || !answer) {
-          alert('질문과 답변을 모두 입력하세요.');
-          return;
-        }
-        let faqs = getFaqs();
-        faqs.push({ question, answer, open: false });
-        setFaqs(faqs);
-        alert('FAQ가 등록되었습니다.');
-        switchTab('faq');
-      });
-    }
-    const btnClearFaqs = document.getElementById('btn-clear-faqs');
-    if (btnClearFaqs) {
-      btnClearFaqs.addEventListener('click', () => {
-        if (confirm('모든 FAQ를 삭제하시겠습니까?')) {
-          setFaqs([]);
-          alert('모든 FAQ가 삭제되었습니다.');
-          switchTab('faq');
-        }
-      });
-    }
-  }
-
-  // 관리자 탭 이벤트 바인딩
-  function bindAdminEvents() {
-    const btnAddAdmin = document.getElementById('btn-add-admin');
-    if (btnAddAdmin) {
-      btnAddAdmin.addEventListener('click', () => {
-        const newAdminId = document.getElementById('new-admin-id').value.trim();
-        if (!newAdminId) {
-          alert('추가할 관리자 아이디를 입력하세요.');
-          return;
-        }
-        addAdminUser(newAdminId);
-        switchTab('admin');
-      });
-    }
-
-    // 관리자 권한 제거 버튼들
-    document.querySelectorAll('button[data-remove-admin]').forEach(btn => {
-      btn.addEventListener('click', e => {
-        const id = e.target.getAttribute('data-remove-admin');
-        if (id === superAdminId) {
-          alert('최고관리자 권한은 삭제할 수 없습니다.');
-          return;
-        }
-        if (confirm(`${id} 님의 관리자 권한을 삭제하시겠습니까?`)) {
-          removeAdminUser(id);
-          switchTab('admin');
-        }
-      });
-    });
-  }
-
-  // 초기 렌더링
-  renderApp();
-
-  // 글로벌 함수 노출 (사이드바 클릭용)
-  window.switchTab = switchTab;
-  window.logout = logout;
-
-</script>
-</body>
-</html>
+// 초기 렌더링
+renderApp();
