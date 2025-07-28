@@ -5,220 +5,244 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>스나이퍼 공식 사이트 | YWE</title>
 <style>
-  /* Reset */
+  /* 네온 스타일 기본 셋업 */
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
   * {
-    margin: 0; padding: 0; box-sizing: border-box;
+    box-sizing: border-box;
   }
   body {
-    font-family: 'Malgun Gothic', Arial, sans-serif;
-    background: #1e2a47;
-    color: #eee;
+    margin: 0; padding: 0;
+    background: #01030f;
+    color: #0ff;
+    font-family: 'Orbitron', monospace, 'Malgun Gothic', sans-serif;
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 30px 20px;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px;
   }
-  #container {
-    width: 960px;
-    max-width: 100%;
-    background: #273858;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  .container {
+    width: 900px;
+    background: #001020;
+    border: 2px solid #0ff;
+    border-radius: 15px;
+    box-shadow:
+      0 0 10px #0ff,
+      0 0 20px #0ff,
+      0 0 40px #0ff;
     padding: 30px 40px;
   }
-  header {
-    border-bottom: 2px solid #5bb6f7;
-    padding-bottom: 20px;
-    margin-bottom: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  h1, h2 {
+    color: #0ff;
+    text-align: center;
+    text-shadow:
+      0 0 10px #0ff,
+      0 0 20px #0ff,
+      0 0 30px #0ff;
   }
-  header h1 {
-    font-weight: 900;
-    font-size: 2.4rem;
-    color: #5bb6f7;
+  label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 700;
+    text-shadow: 0 0 6px #0ff;
+  }
+  input[type="text"], input[type="password"], textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    background: #001820;
+    border: 1px solid #0ff;
+    border-radius: 10px;
+    color: #0ff;
+    font-size: 1rem;
+    box-shadow:
+      inset 0 0 5px #0ff;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  button {
+    margin-top: 20px;
+    background: #0ff;
+    border: none;
+    padding: 12px 25px;
+    font-weight: 700;
+    color: #001820;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 1rem;
+    box-shadow:
+      0 0 10px #0ff;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background: #06caca;
+    color: #000;
+    box-shadow:
+      0 0 20px #06caca,
+      0 0 40px #06caca;
+  }
+  nav {
+    text-align: center;
+    margin-bottom: 30px;
   }
   nav button {
-    background: #5bb6f7;
-    border: none;
-    color: #1e2a47;
+    background: transparent;
+    border: 2px solid #0ff;
+    margin: 0 10px;
+    padding: 8px 20px;
+    border-radius: 12px;
+    color: #0ff;
     font-weight: 700;
     font-size: 1rem;
-    padding: 10px 20px;
-    border-radius: 8px;
-    margin-left: 10px;
-    cursor: pointer;
-    transition: background 0.25s ease;
+    transition: all 0.3s ease;
   }
   nav button:hover {
-    background: #4790c3;
-    color: #fff;
+    background: #0ff;
+    color: #001820;
+    box-shadow: 0 0 15px #0ff;
+  }
+  .message {
+    margin-top: 15px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .message.error {
+    color: #ff3366;
+    text-shadow: 0 0 6px #ff3366;
+  }
+  .message.success {
+    color: #33ff99;
+    text-shadow: 0 0 6px #33ff99;
   }
   #sidebar {
-    background: #2e3c5bdd;
-    padding: 16px 24px;
+    background: #001820dd;
+    border: 1px solid #0ff;
     border-radius: 12px;
+    padding: 12px 20px;
     margin-bottom: 30px;
-    font-size: 1rem;
     display: flex;
     justify-content: space-between;
-    color: #a3c0f8;
+    color: #0ff;
+    font-weight: 700;
+    text-shadow: 0 0 6px #0ff;
   }
-  #sidebar div strong {
-    color: #5bb6f7;
-    margin-right: 8px;
+  #sidebar div {
+    user-select: none;
   }
-  main {
-    min-height: 500px;
-  }
-  h2 {
-    color: #5bb6f7;
-    margin-bottom: 20px;
-  }
-  ul {
+  ul.list {
     list-style: none;
+    padding-left: 0;
   }
-  ul li {
-    background: #3a4a76;
-    border-radius: 12px;
-    padding: 18px 25px;
-    margin-bottom: 20px;
-    box-shadow: inset 0 0 10px #1a2640;
+  ul.list li {
+    background: #002844;
+    border-radius: 10px;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    box-shadow:
+      inset 0 0 10px #005577;
     position: relative;
   }
-  ul li strong.title {
+  ul.list li strong.title {
     font-size: 1.2rem;
+    margin-bottom: 8px;
     display: block;
-    margin-bottom: 10px;
+    text-shadow: 0 0 8px #0ff;
   }
-  .markdown {
-    font-size: 1rem;
-    line-height: 1.5em;
-    color: #d6defb;
+  ul.list li .markdown {
+    color: #a0f0ff;
+    line-height: 1.4em;
+    white-space: pre-wrap;
   }
-  .image-preview {
+  ul.list li .image-preview {
     margin-top: 10px;
   }
-  .image-preview img {
+  ul.list li .image-preview img {
     max-width: 120px;
     margin-right: 12px;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.25);
-    vertical-align: middle;
+    box-shadow:
+      0 0 10px #0ff;
     cursor: default;
+    vertical-align: middle;
     transition: transform 0.3s ease;
   }
-  .image-preview img:hover {
+  ul.list li .image-preview img:hover {
     transform: scale(1.1);
   }
-  button.btn-small {
+  .btn-small {
     position: absolute;
-    top: 18px;
-    right: 20px;
-    background: #5bb6f7;
+    top: 15px;
+    right: 15px;
+    background: #0ff;
     border: none;
-    color: #1e2a47;
+    color: #001820;
     font-weight: 700;
     border-radius: 8px;
-    padding: 5px 12px;
+    padding: 6px 12px;
     cursor: pointer;
     font-size: 0.9rem;
     transition: background 0.25s ease;
+    box-shadow: 0 0 6px #0ff;
   }
-  button.btn-small + button.btn-small {
+  .btn-small + .btn-small {
     right: 85px;
   }
-  button.btn-small:hover {
-    background: #4790c3;
-    color: #fff;
+  .btn-small:hover {
+    background: #06caca;
+    color: #000;
   }
-  form label {
-    font-weight: 700;
-    margin-top: 16px;
-    display: block;
-    color: #a3c0f8;
+  form label.inline {
+    display: inline-block;
+    margin-right: 12px;
   }
-  form input[type="text"], form textarea {
-    width: 100%;
-    padding: 12px 15px;
-    font-size: 1rem;
+  .footer {
+    margin-top: 40px;
+    font-size: 0.9rem;
+    color: #0ff6;
+    text-align: center;
+    user-select: none;
+  }
+  /* Scrollbar for better UX */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #0ff;
     border-radius: 10px;
-    border: none;
-    margin-top: 6px;
-    background: #1a2543;
-    color: #d6defb;
-    resize: vertical;
   }
-  form textarea {
-    min-height: 140px;
-  }
-  form button {
-    margin-top: 24px;
-    background: #5bb6f7;
-    border: none;
-    padding: 14px 30px;
-    font-size: 1.1rem;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    color: #1e2a47;
-    transition: background 0.25s ease;
-  }
-  form button:hover {
-    background: #4790c3;
-    color: #fff;
-  }
-  .message {
-    margin-top: 14px;
-    font-size: 1rem;
-    font-weight: 700;
-  }
-  .message.error {
-    color: #ff6666;
-  }
-  .message.success {
-    color: #7ef57e;
-  }
-  /* Link button */
-  button.link-button {
-    margin-left: 15px;
-    background: transparent;
-    color: #a3c0f8;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    text-decoration: underline;
-    padding: 0;
-  }
-  button.link-button:hover {
-    color: #5bb6f7;
+  ::-webkit-scrollbar-track {
+    background: #001020;
   }
 </style>
 </head>
 <body>
-  <div id="container">
-    <header>
-      <h1>스나이퍼 공식 사이트 | YWE</h1>
-      <nav>
-        <button id="nav-login">로그인</button>
-        <button id="nav-signup">회원가입</button>
-        <button id="nav-main" style="display:none;">홈</button>
-        <button id="nav-logout" style="display:none;">로그아웃</button>
-      </nav>
-    </header>
+<div class="container">
+  <header>
+    <h1>스나이퍼 공식 사이트 | YWE</h1>
+    <nav>
+      <button id="nav-login">로그인</button>
+      <button id="nav-signup">회원가입</button>
+      <button id="nav-main" style="display:none;">홈</button>
+      <button id="nav-logout" style="display:none;">로그아웃</button>
+    </nav>
+  </header>
 
-    <aside id="sidebar" style="display:none;">
-      <div><strong>사용자:</strong> <span id="sidebar-userid"></span></div>
-      <div id="sidebar-ip-wrapper" style="display:none;"><strong>IP:</strong> <span id="sidebar-ip">알 수 없음</span></div>
-    </aside>
+  <aside id="sidebar" style="display:none;">
+    <div><strong>사용자:</strong> <span id="sidebar-userid"></span></div>
+    <div id="sidebar-ip-wrapper" style="display:none;"><strong>내 IP:</strong> <span id="sidebar-ip">불러오는 중...</span></div>
+  </aside>
 
-    <main id="app">
-      <!-- 여기서 화면 렌더링 -->
-    </main>
+  <main id="app">
+    <!-- 여기에 화면 렌더링 -->
+  </main>
+
+  <div class="footer">
+    &copy; 2025 YWE. All rights reserved.
   </div>
+</div>
 
 <script>
 (() => {
@@ -228,14 +252,16 @@
   const USER_KEY = 'ywe_users';
   const FAQ_KEY = 'ywe_faqs';
   const SNIPER_KEY = 'ywe_snipers';
+
+  // 관리자 아이디 (기본 admin)
   const ADMIN_ID = 'admin';
 
   // 상태
   let currentUserId = null;
   let state = {
-    page: 'login',
-    faqEditingId: null,
-    sniperEditingId: null,
+    page: 'login', // login, signup, main, faqForm, sniperForm
+    editingFaqId: null,
+    editingSniperId: null,
     message: { text: '', type: '' }
   };
 
@@ -250,7 +276,7 @@
   const sidebarIpWrapper = document.getElementById('sidebar-ip-wrapper');
   const sidebarIp = document.getElementById('sidebar-ip');
 
-  // 유틸
+  // 유틸 함수 - 로컬스토리지 읽기/쓰기
   function loadUsers() {
     return JSON.parse(localStorage.getItem(USER_KEY) || '{}');
   }
@@ -270,7 +296,7 @@
     localStorage.setItem(SNIPER_KEY, JSON.stringify(snipers));
   }
 
-  // 마크다운 간단 파서 (제목, 굵게, 기울임, 줄바꿈)
+  // HTML 이스케이프
   function escapeHtml(text) {
     if (!text) return '';
     return text.replace(/[&<>"']/g, c => {
@@ -283,19 +309,30 @@
       }
     });
   }
+
+  // 간단 마크다운 파서 (볼드, 이탤릭, 줄바꿈)
   function parseMarkdown(text) {
     if (!text) return '';
     let html = escapeHtml(text);
-    html = html.replace(/^### (.*)$/gm, '<h3>$1</h3>');
-    html = html.replace(/^## (.*)$/gm, '<h2>$1</h2>');
-    html = html.replace(/^# (.*)$/gm, '<h1>$1</h1>');
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
     html = html.replace(/\n/g, '<br/>');
     return html;
   }
 
-  // IP 가져오기 (admin만)
+  // 관리자 여부 판단
+  function isAdmin() {
+    if (!currentUserId) return false;
+    const users = loadUsers();
+    return users[currentUserId] && users[currentUserId].isAdmin === true;
+  }
+
+  // ID 생성 (랜덤 8자리)
+  function generateId() {
+    return Math.random().toString(36).substring(2, 10);
+  }
+
+  // IP 가져오기 (관리자만)
   async function fetchUserIP() {
     try {
       const res = await fetch('https://api.ipify.org?format=json');
@@ -307,19 +344,7 @@
     }
   }
 
-  // 관리자 체크
-  function isAdmin() {
-    if (!currentUserId) return false;
-    const users = loadUsers();
-    return users[currentUserId] && users[currentUserId].isAdmin === true;
-  }
-
-  // 유일한 ID 생성
-  function generateId() {
-    return Math.random().toString(36).substring(2, 10);
-  }
-
-  // 네비게이션 UI 업데이트
+  // 내비게이션 UI 업데이트
   function updateNav() {
     if (currentUserId) {
       navLogin.style.display = 'none';
@@ -331,6 +356,7 @@
 
       if (isAdmin()) {
         sidebarIpWrapper.style.display = 'block';
+        sidebarIp.textContent = '불러오는 중...';
         fetchUserIP().then(ip => {
           sidebarIp.textContent = ip || '알 수 없음';
         });
@@ -349,15 +375,16 @@
     }
   }
 
-  // 화면 전환
+  // 화면 전환 함수
   function navigate(page) {
     state.page = page;
-    state.message.text = '';
-    state.message.type = '';
+    state.message = { text: '', type: '' };
+    state.editingFaqId = null;
+    state.editingSniperId = null;
     render();
   }
 
-  // 로그인 화면
+  // 로그인 화면 렌더링
   function renderLogin() {
     app.innerHTML = `
       <h2>로그인</h2>
@@ -366,8 +393,8 @@
       <label for="login-pw">비밀번호</label>
       <input type="password" id="login-pw" autocomplete="current-password" />
       <button id="btn-login">로그인</button>
-      <button class="link-button" id="go-signup">회원가입</button>
-      <div class="message ${state.message.type}">${state.message.text}</div>
+      <button id="go-signup" style="margin-left:10px;background:none;color:#0ff;border:none;cursor:pointer;text-decoration:underline;">회원가입</button>
+      <div class="message ${state.message.type}">${escapeHtml(state.message.text)}</div>
     `;
 
     document.getElementById('btn-login').onclick = () => {
@@ -390,10 +417,11 @@
       updateNav();
       navigate('main');
     };
+
     document.getElementById('go-signup').onclick = () => navigate('signup');
   }
 
-  // 회원가입 화면
+  // 회원가입 화면 렌더링 (관리자 등록용 체크박스 포함)
   function renderSignup() {
     app.innerHTML = `
       <h2>회원가입</h2>
@@ -403,15 +431,17 @@
       <input type="password" id="signup-pw" autocomplete="new-password" />
       <label for="signup-pw2">비밀번호 확인</label>
       <input type="password" id="signup-pw2" autocomplete="new-password" />
+      <label><input type="checkbox" id="signup-admin" /> 관리자 권한 요청</label>
       <button id="btn-signup">회원가입</button>
-      <button class="link-button" id="go-login">로그인</button>
-      <div class="message ${state.message.type}">${state.message.text}</div>
+      <button id="go-login" style="margin-left:10px;background:none;color:#0ff;border:none;cursor:pointer;text-decoration:underline;">로그인</button>
+      <div class="message ${state.message.type}">${escapeHtml(state.message.text)}</div>
     `;
 
     document.getElementById('btn-signup').onclick = () => {
       const id = document.getElementById('signup-id').value.trim();
       const pw = document.getElementById('signup-pw').value;
       const pw2 = document.getElementById('signup-pw2').value;
+      const reqAdmin = document.getElementById('signup-admin').checked;
       const users = loadUsers();
 
       if (!id || !pw || !pw2) {
@@ -429,23 +459,33 @@
         renderSignup();
         return;
       }
+      // 관리자 권한은 id가 'admin' 일 때만 부여 허용
+      let isAdminFlag = false;
+      if(reqAdmin && id === ADMIN_ID) {
+        isAdminFlag = true;
+      } else if(reqAdmin) {
+        state.message = { text: `'${ADMIN_ID}' 아이디만 관리자 권한 부여 가능합니다.`, type: 'error' };
+        renderSignup();
+        return;
+      }
 
-      users[id] = { password: pw, isAdmin: false };
+      users[id] = { password: pw, isAdmin: isAdminFlag };
       saveUsers(users);
       alert('회원가입이 완료되었습니다. 로그인 해주세요.');
       state.message = { text: '', type: '' };
       navigate('login');
     };
+
     document.getElementById('go-login').onclick = () => navigate('login');
   }
 
-  // FAQ 목록 및 스나이퍼 목록 메인 화면
+  // 메인 화면 (FAQ + 스나이퍼 목록)
   function renderMain() {
     const faqs = loadFaqs();
     const snipers = loadSnipers();
     const admin = isAdmin();
 
-    let html = `<h2>FAQ</h2><ul>`;
+    let html = `<h2>FAQ</h2><ul class="list">`;
     if (faqs.length === 0) {
       html += `<li>등록된 FAQ가 없습니다.</li>`;
     } else {
@@ -454,114 +494,246 @@
           <strong class="title">${escapeHtml(faq.title)}</strong>
           <div class="markdown">${parseMarkdown(faq.description)}</div>`;
         if (admin) {
-          html += `<button class="btn-small btn-del-faq" data-id="${faq.id}">삭제</button>`;
-          html += `<button class="btn-small btn-edit-faq" data-id="${faq.id}">수정</button>`;
+          html += `
+            <button class="btn-small" data-faq-id="${faq.id}" data-action="edit-faq">수정</button>
+            <button class="btn-small" data-faq-id="${faq.id}" data-action="delete-faq">삭제</button>
+          `;
         }
         html += `</li>`;
       }
     }
     html += `</ul>`;
-    if (admin) {
-      html += `<button id="btn-add-faq">FAQ 추가</button>`;
-    }
 
-    html += `<h2>스나이퍼</h2><ul>`;
+    html += `<h2>스나이퍼 목록</h2><ul class="list">`;
     if (snipers.length === 0) {
       html += `<li>등록된 스나이퍼가 없습니다.</li>`;
     } else {
-      for (const snip of snipers) {
+      for (const sniper of snipers) {
         html += `<li>
-          <strong class="title">${escapeHtml(snip.title)}</strong>
-          <div class="markdown">${parseMarkdown(snip.description)}</div>`;
-        if (snip.images && snip.images.length) {
+          <strong class="title">${escapeHtml(sniper.name)}</strong>
+          <div class="markdown">${parseMarkdown(sniper.description)}</div>`;
+        if (sniper.images && sniper.images.length > 0) {
           html += `<div class="image-preview">`;
-          for (const src of snip.images) {
-            html += `<img src="${escapeHtml(src)}" alt="스나이퍼 이미지" loading="lazy" />`;
+          for (const img of sniper.images) {
+            html += `<img src="${escapeHtml(img)}" alt="스나이퍼 이미지" />`;
           }
           html += `</div>`;
         }
         if (admin) {
-          html += `<button class="btn-small btn-del-sniper" data-id="${snip.id}">삭제</button>`;
-          html += `<button class="btn-small btn-edit-sniper" data-id="${snip.id}">수정</button>`;
+          html += `
+            <button class="btn-small" data-sniper-id="${sniper.id}" data-action="edit-sniper">수정</button>
+            <button class="btn-small" data-sniper-id="${sniper.id}" data-action="delete-sniper">삭제</button>
+          `;
         }
         html += `</li>`;
       }
     }
     html += `</ul>`;
+
     if (admin) {
-      html += `<button id="btn-add-sniper">스나이퍼 추가</button>`;
+      html += `
+        <button id="btn-add-faq" style="margin-right: 15px;">FAQ 추가</button>
+        <button id="btn-add-sniper">스나이퍼 추가</button>
+      `;
     }
+
+    html += `<div class="message ${state.message.type}">${escapeHtml(state.message.text)}</div>`;
 
     app.innerHTML = html;
 
-    // 이벤트 바인딩 FAQ
+    // 버튼 이벤트 바인딩
     if (admin) {
       document.getElementById('btn-add-faq').onclick = () => {
-        state.faqEditingId = null;
-        renderFaqForm();
+        state.editingFaqId = null;
+        navigate('faqForm');
       };
-      for (const btn of document.querySelectorAll('.btn-edit-faq')) {
-        btn.onclick = e => {
-          state.faqEditingId = e.target.dataset.id;
-          renderFaqForm();
-        };
-      }
-      for (const btn of document.querySelectorAll('.btn-del-faq')) {
-        btn.onclick = e => {
-          const id = e.target.dataset.id;
-          if (confirm('정말 삭제하시겠습니까?')) {
-            const faqs = loadFaqs().filter(f => f.id !== id);
-            saveFaqs(faqs);
-            renderMain();
-          }
-        };
-      }
+      document.getElementById('btn-add-sniper').onclick = () => {
+        state.editingSniperId = null;
+        navigate('sniperForm');
+      };
     }
 
-    // 이벤트 바인딩 스나이퍼
-    if (admin) {
-      document.getElementById('btn-add-sniper').onclick = () => {
-        state.sniperEditingId = null;
-        renderSniperForm();
+    // FAQ 수정/삭제 이벤트
+    app.querySelectorAll('button[data-action="edit-faq"]').forEach(btn => {
+      btn.onclick = () => {
+        const id = btn.getAttribute('data-faq-id');
+        state.editingFaqId = id;
+        navigate('faqForm');
       };
-      for (const btn of document.querySelectorAll('.btn-edit-sniper')) {
-        btn.onclick = e => {
-          state.sniperEditingId = e.target.dataset.id;
-          renderSniperForm();
-        };
-      }
-      for (const btn of document.querySelectorAll('.btn-del-sniper')) {
-        btn.onclick = e => {
-          const id = e.target.dataset.id;
-          if (confirm('정말 삭제하시겠습니까?')) {
-            const snipers = loadSnipers().filter(s => s.id !== id);
-            saveSnipers(snipers);
-            renderMain();
-          }
-        };
-      }
-    }
+    });
+    app.querySelectorAll('button[data-action="delete-faq"]').forEach(btn => {
+      btn.onclick = () => {
+        const id = btn.getAttribute('data-faq-id');
+        if (confirm('FAQ를 삭제하시겠습니까?')) {
+          const updatedFaqs = faqs.filter(f => f.id !== id);
+          saveFaqs(updatedFaqs);
+          state.message = { text: 'FAQ가 삭제되었습니다.', type: 'success' };
+          renderMain();
+        }
+      };
+    });
+
+    // 스나이퍼 수정/삭제 이벤트
+    app.querySelectorAll('button[data-action="edit-sniper"]').forEach(btn => {
+      btn.onclick = () => {
+        const id = btn.getAttribute('data-sniper-id');
+        state.editingSniperId = id;
+        navigate('sniperForm');
+      };
+    });
+    app.querySelectorAll('button[data-action="delete-sniper"]').forEach(btn => {
+      btn.onclick = () => {
+        const id = btn.getAttribute('data-sniper-id');
+        if (confirm('스나이퍼를 삭제하시겠습니까?')) {
+          const updatedSnipers = snipers.filter(s => s.id !== id);
+          saveSnipers(updatedSnipers);
+          state.message = { text: '스나이퍼가 삭제되었습니다.', type: 'success' };
+          renderMain();
+        }
+      };
+    });
   }
 
-  // 기타 페이지 렌더 함수 (예: renderFaqForm, renderSniperForm 등) 이어서 필요하면 추가해드릴 수 있습니다.
+  // FAQ 추가/수정 폼 렌더링
+  function renderFaqForm() {
+    const faqs = loadFaqs();
+    let faq = { id: '', title: '', description: '' };
+    if (state.editingFaqId) {
+      const found = faqs.find(f => f.id === state.editingFaqId);
+      if (found) faq = found;
+    }
 
-  // 로그아웃 처리
+    app.innerHTML = `
+      <h2>${state.editingFaqId ? 'FAQ 수정' : 'FAQ 추가'}</h2>
+      <label for="faq-title">제목</label>
+      <input type="text" id="faq-title" value="${escapeHtml(faq.title)}" />
+      <label for="faq-description">설명</label>
+      <textarea id="faq-description">${escapeHtml(faq.description)}</textarea>
+      <button id="btn-save-faq">${state.editingFaqId ? '수정 완료' : '추가하기'}</button>
+      <button id="btn-cancel-faq" style="margin-left: 10px;">취소</button>
+      <div class="message ${state.message.type}">${escapeHtml(state.message.text)}</div>
+    `;
+
+    document.getElementById('btn-save-faq').onclick = () => {
+      const title = document.getElementById('faq-title').value.trim();
+      const description = document.getElementById('faq-description').value.trim();
+
+      if (!title || !description) {
+        state.message = { text: '제목과 설명을 모두 입력해주세요.', type: 'error' };
+        renderFaqForm();
+        return;
+      }
+
+      if (state.editingFaqId) {
+        // 수정
+        const index = faqs.findIndex(f => f.id === state.editingFaqId);
+        if (index !== -1) {
+          faqs[index].title = title;
+          faqs[index].description = description;
+          saveFaqs(faqs);
+          state.message = { text: 'FAQ가 수정되었습니다.', type: 'success' };
+        }
+      } else {
+        // 추가
+        const newFaq = { id: generateId(), title, description };
+        faqs.push(newFaq);
+        saveFaqs(faqs);
+        state.message = { text: 'FAQ가 추가되었습니다.', type: 'success' };
+      }
+      navigate('main');
+    };
+
+    document.getElementById('btn-cancel-faq').onclick = () => navigate('main');
+  }
+
+  // 스나이퍼 추가/수정 폼 렌더링
+  function renderSniperForm() {
+    const snipers = loadSnipers();
+    let sniper = { id: '', name: '', description: '', images: [] };
+    if (state.editingSniperId) {
+      const found = snipers.find(s => s.id === state.editingSniperId);
+      if (found) sniper = found;
+    }
+
+    app.innerHTML = `
+      <h2>${state.editingSniperId ? '스나이퍼 수정' : '스나이퍼 추가'}</h2>
+      <label for="sniper-name">이름</label>
+      <input type="text" id="sniper-name" value="${escapeHtml(sniper.name)}" />
+      <label for="sniper-description">설명</label>
+      <textarea id="sniper-description">${escapeHtml(sniper.description)}</textarea>
+      <label for="sniper-images">이미지 URL (콤마로 구분)</label>
+      <textarea id="sniper-images">${escapeHtml(sniper.images.join(', '))}</textarea>
+      <button id="btn-save-sniper">${state.editingSniperId ? '수정 완료' : '추가하기'}</button>
+      <button id="btn-cancel-sniper" style="margin-left: 10px;">취소</button>
+      <div class="message ${state.message.type}">${escapeHtml(state.message.text)}</div>
+    `;
+
+    document.getElementById('btn-save-sniper').onclick = () => {
+      const name = document.getElementById('sniper-name').value.trim();
+      const description = document.getElementById('sniper-description').value.trim();
+      const imagesText = document.getElementById('sniper-images').value.trim();
+
+      if (!name || !description) {
+        state.message = { text: '이름과 설명을 모두 입력해주세요.', type: 'error' };
+        renderSniperForm();
+        return;
+      }
+
+      const images = imagesText
+        ? imagesText.split(',').map(s => s.trim()).filter(s => s)
+        : [];
+
+      if (state.editingSniperId) {
+        // 수정
+        const index = snipers.findIndex(s => s.id === state.editingSniperId);
+        if (index !== -1) {
+          snipers[index].name = name;
+          snipers[index].description = description;
+          snipers[index].images = images;
+          saveSnipers(snipers);
+          state.message = { text: '스나이퍼가 수정되었습니다.', type: 'success' };
+        }
+      } else {
+        // 추가
+        const newSniper = { id: generateId(), name, description, images };
+        snipers.push(newSniper);
+        saveSnipers(snipers);
+        state.message = { text: '스나이퍼가 추가되었습니다.', type: 'success' };
+      }
+      navigate('main');
+    };
+
+    document.getElementById('btn-cancel-sniper').onclick = () => navigate('main');
+  }
+
+  // 초기 렌더링 함수
+  function render() {
+    switch(state.page) {
+      case 'login': renderLogin(); break;
+      case 'signup': renderSignup(); break;
+      case 'main': renderMain(); break;
+      case 'faqForm': renderFaqForm(); break;
+      case 'sniperForm': renderSniperForm(); break;
+      default: renderLogin(); break;
+    }
+    updateNav();
+  }
+
+  // 네비게이션 버튼 이벤트
+  navLogin.onclick = () => navigate('login');
+  navSignup.onclick = () => navigate('signup');
+  navMain.onclick = () => navigate('main');
   navLogout.onclick = () => {
-    if (confirm('로그아웃하시겠습니까?')) {
+    if (confirm('로그아웃 하시겠습니까?')) {
       currentUserId = null;
-      updateNav();
+      state.message = { text: '로그아웃 되었습니다.', type: 'success' };
       navigate('login');
     }
   };
 
-  // 네비게이션 버튼 연결
-  navLogin.onclick = () => navigate('login');
-  navSignup.onclick = () => navigate('signup');
-  navMain.onclick = () => navigate('main');
-
   // 시작
-  updateNav();
-  navigate('login');
+  render();
+
 })();
 </script>
 </body>
