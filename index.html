@@ -4,9 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>YWE | 스나이핑 - 통합관리</title>
-
 <style>
-  /* 구글 폰트 임포트 */
   @import url('https://fonts.googleapis.com/css2?family=Orbitron&family=Nanum+Gothic&display=swap');
 
   :root {
@@ -19,11 +17,11 @@
   }
 
   * {
-    margin:0; padding:0; box-sizing: border-box;
+    margin: 0; padding: 0; box-sizing: border-box;
   }
 
   html, body {
-    height:100%; width:100%;
+    height: 100%; width: 100%;
     font-family: 'Nanum Gothic', sans-serif;
     background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     color: var(--light-text);
@@ -147,20 +145,38 @@
     min-height: 120px;
   }
 
+  /* 비밀번호 입력 + 토글 아이콘 */
   .password-wrapper {
     position: relative;
+    width: 100%;
+  }
+
+  .password-wrapper input[type="password"],
+  .password-wrapper input[type="text"] {
+    width: 100%;
+    padding-right: 3.2rem;
   }
 
   .password-toggle {
     position: absolute;
-    right: 1.2rem;
     top: 50%;
+    right: 1rem;
     transform: translateY(-50%);
-    width: 26px;
-    height: 26px;
-    fill: #888;
+    width: 24px;
+    height: 24px;
     cursor: pointer;
+    fill: #888;
+    transition: fill 0.3s ease;
     user-select: none;
+  }
+  .password-toggle:hover,
+  .password-toggle:focus {
+    fill: var(--primary);
+    outline: none;
+  }
+  .password-toggle:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
   }
 
   .submit-btn {
@@ -246,7 +262,6 @@
       padding: 1.5rem 1rem;
     }
   }
-
 </style>
 </head>
 
@@ -272,10 +287,9 @@
         <label for="login-pw">비밀번호</label>
         <div class="password-wrapper">
           <input type="password" id="login-pw" autocomplete="current-password" required />
-          <svg id="toggle-login-pw" class="password-toggle" viewBox="0 0 24 24">
-            <path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5
-              5 2.24 5 5-2.24 5-5 5z"/>
-            <circle cx="12" cy="12" r="2.5"/>
+          <svg id="toggle-login-pw" class="password-toggle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-label="비밀번호 보기 토글" role="button" tabindex="0">
+            <path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7z" fill="none" stroke="#888" stroke-width="2"/>
+            <circle cx="12" cy="12" r="3" fill="#888"/>
           </svg>
         </div>
         <button type="submit" class="submit-btn">로그인</button>
@@ -292,10 +306,9 @@
         <label for="register-pw">비밀번호</label>
         <div class="password-wrapper">
           <input type="password" id="register-pw" autocomplete="new-password" required />
-          <svg id="toggle-register-pw" class="password-toggle" viewBox="0 0 24 24">
-            <path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5
-              5 2.24 5 5-2.24 5-5 5z"/>
-            <circle cx="12" cy="12" r="2.5"/>
+          <svg id="toggle-register-pw" class="password-toggle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-label="비밀번호 보기 토글" role="button" tabindex="0">
+            <path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7z" fill="none" stroke="#888" stroke-width="2"/>
+            <circle cx="12" cy="12" r="3" fill="#888"/>
           </svg>
         </div>
         <button type="submit" class="submit-btn">회원가입</button>
@@ -357,7 +370,7 @@
   </main>
 
   <script>
-    // 각 섹션, 네비 버튼 매핑
+    // 섹션 매핑
     const sections = {
       'nav-login': 'section-login',
       'nav-register': 'section-register',
@@ -367,14 +380,12 @@
       'nav-admin': 'section-admin'
     };
 
-    // 초기 관리자 목록 (하드코딩)
     let ADMIN_IDS = ['lihuiruo101'];
 
-    // 현재 로그인한 사용자 ID와 IP
     let currentUser = null;
     let currentIP = null;
 
-    // 섹션 전환 함수
+    // 메뉴 활성화 함수
     function switchSection(activeBtnId) {
       Object.entries(sections).forEach(([btnId, secId]) => {
         document.getElementById(btnId).classList.toggle('active', btnId === activeBtnId);
@@ -382,106 +393,7 @@
       });
     }
 
-    // 네비 버튼 클릭 이벤트 등록
-    Object.keys(sections).forEach(btnId => {
-      const btn = document.getElementById(btnId);
-      if (btn) {
-        btn.addEventListener('click', () => {
-          switchSection(btnId);
-        });
-      }
-    });
-
-    // 로그아웃 버튼
-    document.getElementById('logout-btn').addEventListener('click', () => {
-      currentUser = null;
-      currentIP = null;
-      // 메뉴 초기화
-      resetMenu();
-      switchSection('nav-login');
-    });
-
-    // 로그인 <-> 회원가입 토글
-    document.getElementById('toggle-to-register').addEventListener('click', () => {
-      switchSection('nav-register');
-    });
-    document.getElementById('toggle-to-login').addEventListener('click', () => {
-      switchSection('nav-login');
-    });
-
-    // 비밀번호 토글
-    function setupPasswordToggle(toggleId, inputId) {
-      document.getElementById(toggleId).addEventListener('click', () => {
-        const pwInput = document.getElementById(inputId);
-        pwInput.type = (pwInput.type === 'password') ? 'text' : 'password';
-      });
-    }
-    setupPasswordToggle('toggle-login-pw', 'login-pw');
-    setupPasswordToggle('toggle-register-pw', 'register-pw');
-
-    // 로그인 폼 제출
-    document.getElementById('form-login').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const id = document.getElementById('login-id').value.trim();
-      const pw = document.getElementById('login-pw').value;
-      if (!id || !pw) return alert('아이디와 비밀번호를 입력해주세요.');
-
-      // 여기 실제 인증 대신 간단히 진행
-      currentUser = id;
-
-      // IP 가져오기
-      try {
-        const res = await fetch('https://api.ipify.org?format=json');
-        const data = await res.json();
-        currentIP = data.ip;
-      } catch {
-        currentIP = '알 수 없음';
-      }
-
-      logUserIP(currentUser, currentIP);
-      activateMenuByRole(currentUser);
-      switchSection('nav-faq');
-    });
-
-    // 회원가입 폼 제출
-    document.getElementById('form-register').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const id = document.getElementById('register-id').value.trim();
-      const pw = document.getElementById('register-pw').value;
-      if (!id || !pw) return alert('아이디와 비밀번호를 입력해주세요.');
-
-      // 실제 가입 로직 대신 예시 메시지
-      alert(`가입 완료: ${id} (실제 DB 미구현)`);
-      switchSection('nav-login');
-    });
-
-    // 관리자용 메뉴 활성화
-    function activateMenuByRole(id) {
-      // 로그인 상태에 따라 메뉴 표시
-      document.querySelectorAll('nav button').forEach(btn => {
-        if (btn.id === 'logout-btn') {
-          btn.classList.remove('hidden');
-        } else if (btn.id === 'nav-login' || btn.id === 'nav-register') {
-          btn.classList.add('hidden');
-        } else {
-          // 일반 사용자 메뉴
-          btn.classList.remove('hidden');
-        }
-      });
-
-      // 관리자 메뉴 조건
-      if (ADMIN_IDS.includes(id)) {
-        document.getElementById('nav-admin').classList.remove('hidden');
-        document.getElementById('form-faq').classList.remove('hidden');
-        document.getElementById('form-expose').classList.remove('hidden');
-      } else {
-        document.getElementById('nav-admin').classList.add('hidden');
-        document.getElementById('form-faq').classList.add('hidden');
-        document.getElementById('form-expose').classList.add('hidden');
-      }
-    }
-
-    // 로그아웃 등 메뉴 초기화
+    // 메뉴 초기화
     function resetMenu() {
       document.querySelectorAll('nav button').forEach(btn => {
         if (btn.id === 'nav-login' || btn.id === 'nav-register') {
@@ -494,7 +406,30 @@
       document.getElementById('logout-btn').classList.add('hidden');
     }
 
-    // IP 로그 기록 - 관리자 화면에 추가
+    // 관리자 메뉴 활성화
+    function activateMenuByRole(id) {
+      document.querySelectorAll('nav button').forEach(btn => {
+        if (btn.id === 'logout-btn') {
+          btn.classList.remove('hidden');
+        } else if (btn.id === 'nav-login' || btn.id === 'nav-register') {
+          btn.classList.add('hidden');
+        } else {
+          btn.classList.remove('hidden');
+        }
+      });
+
+      if (ADMIN_IDS.includes(id)) {
+        document.getElementById('nav-admin').classList.remove('hidden');
+        document.getElementById('form-faq').classList.remove('hidden');
+        document.getElementById('form-expose').classList.remove('hidden');
+      } else {
+        document.getElementById('nav-admin').classList.add('hidden');
+        document.getElementById('form-faq').classList.add('hidden');
+        document.getElementById('form-expose').classList.add('hidden');
+      }
+    }
+
+    // IP 로그 기록
     function logUserIP(id, ip) {
       const ul = document.getElementById('ip-log-list');
       const li = document.createElement('li');
@@ -503,81 +438,177 @@
       ul.appendChild(li);
     }
 
-    // FAQ 게시판 예시 데이터 및 기능
-    const faqListEl = document.getElementById('faq-list');
-    const faqs = [];
+    // 비밀번호 토글 함수
+    function setupPasswordToggle(toggleId, inputId) {
+      const toggle = document.getElementById(toggleId);
+      const input = document.getElementById(inputId);
+
+      function togglePassword() {
+        if(input.type === 'password') {
+          input.type = 'text';
+          toggle.querySelector('circle').setAttribute('fill', '#1e90ff');
+          toggle.querySelector('path').setAttribute('stroke', '#1e90ff');
+        } else {
+          input.type = 'password';
+          toggle.querySelector('circle').setAttribute('fill', '#888');
+          toggle.querySelector('path').setAttribute('stroke', '#888');
+        }
+      }
+
+      toggle.addEventListener('click', togglePassword);
+      toggle.addEventListener('keydown', e => {
+        if(e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          togglePassword();
+        }
+      });
+    }
+
+    // 네비 버튼 이벤트 등록
+    Object.keys(sections).forEach(btnId => {
+      const btn = document.getElementById(btnId);
+      btn.addEventListener('click', () => switchSection(btnId));
+    });
+
+    // 로그아웃 버튼 이벤트
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      currentUser = null;
+      currentIP = null;
+      resetMenu();
+      switchSection('nav-login');
+      document.getElementById('ip-log-list').innerHTML = '';
+      alert('로그아웃 되었습니다.');
+    });
+
+    // 로그인 폼 제출 이벤트 (여기선 간단히 아이디만 체크)
+    document.getElementById('form-login').addEventListener('submit', e => {
+      e.preventDefault();
+      const id = document.getElementById('login-id').value.trim();
+      const pw = document.getElementById('login-pw').value.trim();
+
+      if (!id || !pw) {
+        alert('아이디와 비밀번호를 입력하세요.');
+        return;
+      }
+      // 실제 인증은 서버 필요. 여기서는 아이디만으로 로그인 처리
+      currentUser = id;
+
+      // 가상 IP 할당 (실제론 서버에서 받아야 함)
+      currentIP = `192.168.0.${Math.floor(Math.random() * 255)}`;
+
+      alert(`${id}님 로그인 성공! IP: ${currentIP}`);
+
+      activateMenuByRole(id);
+      switchSection('nav-faq');
+      logUserIP(id, currentIP);
+    });
+
+    // 회원가입 폼 제출 이벤트
+    document.getElementById('form-register').addEventListener('submit', e => {
+      e.preventDefault();
+      const id = document.getElementById('register-id').value.trim();
+      const pw = document.getElementById('register-pw').value.trim();
+
+      if (!id || !pw) {
+        alert('아이디와 비밀번호를 입력하세요.');
+        return;
+      }
+
+      alert(`회원가입 성공! 환영합니다, ${id}님!`);
+      // 여기서 실제 회원가입 처리 필요
+
+      // 가입 완료 후 로그인 페이지로 이동
+      switchSection('nav-login');
+      document.getElementById('nav-login').classList.add('active');
+      document.getElementById('nav-register').classList.remove('active');
+    });
+
+    // 로그인/회원가입 토글 텍스트 클릭 이벤트
+    document.getElementById('toggle-to-register').addEventListener('click', () => {
+      switchSection('nav-register');
+      document.getElementById('nav-register').classList.add('active');
+      document.getElementById('nav-login').classList.remove('active');
+    });
+    document.getElementById('toggle-to-login').addEventListener('click', () => {
+      switchSection('nav-login');
+      document.getElementById('nav-login').classList.add('active');
+      document.getElementById('nav-register').classList.remove('active');
+    });
+
+    // FAQ / 박제 폼 제출 이벤트 (관리자 전용)
     document.getElementById('form-faq').addEventListener('submit', e => {
       e.preventDefault();
       const title = document.getElementById('faq-title').value.trim();
       const content = document.getElementById('faq-content').value.trim();
-      if (!title || !content) return alert('제목과 내용을 입력하세요.');
-      faqs.push({title, content});
-      renderFAQ();
+      if (!title || !content) {
+        alert('제목과 내용을 입력하세요.');
+        return;
+      }
+      const faqList = document.getElementById('faq-list');
+      const faqItem = document.createElement('div');
+      faqItem.style.borderBottom = '1px solid var(--primary)';
+      faqItem.style.padding = '0.5rem 0';
+      faqItem.innerHTML = `<strong>${title}</strong><p>${content}</p>`;
+      faqList.appendChild(faqItem);
       e.target.reset();
+      alert('FAQ가 등록되었습니다.');
     });
-    function renderFAQ() {
-      faqListEl.innerHTML = '';
-      faqs.forEach(({title, content}, i) => {
-        const div = document.createElement('div');
-        div.style.borderBottom = '1px solid var(--primary)';
-        div.style.padding = '0.8rem 0';
-        div.innerHTML = `<strong>${title}</strong><p style="margin-top:0.3rem;">${content}</p>`;
-        faqListEl.appendChild(div);
-      });
-    }
-
-    // 박제 게시판 예시 데이터 및 기능
-    const exposeListEl = document.getElementById('expose-list');
-    const exposes = [];
 
     document.getElementById('form-expose').addEventListener('submit', e => {
       e.preventDefault();
       const title = document.getElementById('expose-title').value.trim();
       const content = document.getElementById('expose-content').value.trim();
-      if (!title || !content) return alert('제목과 내용을 입력하세요.');
-
-      exposes.push({ title, content });
-      renderExpose();
+      if (!title || !content) {
+        alert('제목과 내용을 입력하세요.');
+        return;
+      }
+      const exposeList = document.getElementById('expose-list');
+      const exposeItem = document.createElement('div');
+      exposeItem.style.borderBottom = '1px solid var(--primary)';
+      exposeItem.style.padding = '0.5rem 0';
+      exposeItem.innerHTML = `<strong>${title}</strong><p>${content}</p>`;
+      exposeList.appendChild(exposeItem);
       e.target.reset();
+      alert('박제가 등록되었습니다.');
     });
 
-    function renderExpose() {
-      exposeListEl.innerHTML = '';
-      exposes.forEach(({title, content}, i) => {
-        const div = document.createElement('div');
-        div.style.borderBottom = '1px solid var(--primary)';
-        div.style.padding = '0.8rem 0';
-        // 간단 마크다운 처리 (줄바꿈만)
-        const safeContent = content.replace(/\n/g, '<br>');
-        div.innerHTML = `<strong>${title}</strong><p style="margin-top:0.3rem;">${safeContent}</p>`;
-        exposeListEl.appendChild(div);
-      });
-    }
-
-    // 제보 게시판 처리 (간단히 알림 처리)
+    // 제보 폼 제출 이벤트
     document.getElementById('form-report').addEventListener('submit', e => {
       e.preventDefault();
       const title = document.getElementById('report-title').value.trim();
       const content = document.getElementById('report-content').value.trim();
-      if (!title || !content) return alert('제목과 내용을 입력하세요.');
-
+      if (!title || !content) {
+        alert('제목과 설명을 입력하세요.');
+        return;
+      }
       alert(`제보가 접수되었습니다.\n제목: ${title}`);
       e.target.reset();
     });
 
-    // 관리자 - 새 관리자 아이디 추가
+    // 관리자 아이디 추가
     document.getElementById('form-admin-add').addEventListener('submit', e => {
       e.preventDefault();
-      const newAdminId = document.getElementById('new-admin-id').value.trim();
-      if (!newAdminId) return alert('관리자 아이디를 입력하세요.');
-      if (ADMIN_IDS.includes(newAdminId)) return alert('이미 등록된 관리자입니다.');
-
-      ADMIN_IDS.push(newAdminId);
-      alert(`${newAdminId} 님이 관리자에 추가되었습니다.`);
-      document.getElementById('new-admin-id').value = '';
-      // 혹시 현재 로그인한 사용자가 새 관리자면 메뉴 갱신
-      if(currentUser === newAdminId) activateMenuByRole(currentUser);
+      const newAdmin = document.getElementById('new-admin-id').value.trim();
+      if (!newAdmin) {
+        alert('아이디를 입력하세요.');
+        return;
+      }
+      if (!ADMIN_IDS.includes(newAdmin)) {
+        ADMIN_IDS.push(newAdmin);
+        alert(`관리자 아이디 ${newAdmin} 추가 완료!`);
+      } else {
+        alert('이미 관리자입니다.');
+      }
+      e.target.reset();
     });
+
+    // 비밀번호 토글 초기화
+    setupPasswordToggle('toggle-login-pw', 'login-pw');
+    setupPasswordToggle('toggle-register-pw', 'register-pw');
+
+    // 기본 화면 세팅
+    resetMenu();
+    switchSection('nav-login');
 
   </script>
 </body>
