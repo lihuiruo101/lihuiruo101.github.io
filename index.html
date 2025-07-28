@@ -2,553 +2,583 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>YWE | 스나이핑</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>YWE | 스나이핑 - 통합관리</title>
+
 <style>
+  /* 구글 폰트 임포트 */
   @import url('https://fonts.googleapis.com/css2?family=Orbitron&family=Nanum+Gothic&display=swap');
-  /* Reset */
-  * {
-    margin: 0; padding: 0; box-sizing: border-box;
+
+  :root {
+    --primary: #1e90ff;
+    --accent: #f44336;
+    --dark-bg: #0f2027;
+    --dark-panel: rgba(20, 20, 20, 0.95);
+    --light-text: #eee;
+    --radius: 10px;
   }
-  body {
+
+  * {
+    margin:0; padding:0; box-sizing: border-box;
+  }
+
+  html, body {
+    height:100%; width:100%;
     font-family: 'Nanum Gothic', sans-serif;
     background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    color: #eee;
-    display: flex;
-    height: 100vh;
+    color: var(--light-text);
     overflow: hidden;
   }
-  /* 사이드바 */
+
+  body {
+    display: flex;
+    min-height: 100vh;
+  }
+
   nav {
     width: 280px;
-    background: rgba(30,30,30,0.95);
-    border-right: 2px solid #1e90ff;
+    background: var(--dark-panel);
+    border-right: 3px solid var(--primary);
     display: flex;
     flex-direction: column;
-    user-select: none;
-    box-shadow: 4px 0 8px rgba(0,0,0,0.6);
-    backdrop-filter: blur(8px);
+    padding-top: 2rem;
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    position: relative;
   }
+
   nav h1 {
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.7rem;
-    padding: 2rem 1.5rem;
-    color: #1e90ff;
-    border-bottom: 2px solid #1e90ff;
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: var(--primary);
     text-align: center;
-    letter-spacing: 2px;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--primary);
   }
+
   nav button {
     background: none;
     border: none;
-    color: #ccc;
+    color: #bbb;
     font-weight: 600;
     font-size: 1.1rem;
-    padding: 1.2rem 2rem;
+    padding: 1.3rem 2.2rem;
     text-align: left;
     cursor: pointer;
     transition: background 0.3s ease, color 0.3s ease;
+    user-select: none;
   }
-  nav button:hover {
-    background: #1e90ff;
+  nav button:hover, nav button.active {
+    background: var(--primary);
     color: #121212;
   }
-  nav button.active {
-    background: #1e90ff;
-    color: #121212;
-    font-weight: 700;
-  }
+
   nav button#logout-btn {
     margin-top: auto;
-    border-top: 1px solid #333;
-    color: #f44336;
+    border-top: 1px solid #555;
+    color: var(--accent);
   }
+
   nav button#logout-btn:hover {
-    background: #f44336;
-    color: #fff;
+    background: var(--accent);
+    color: white;
   }
-  /* 메인 컨텐츠 */
+
   main {
     flex: 1;
-    padding: 2rem 3rem;
+    background: rgba(10, 10, 10, 0.9);
     overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #1e90ff #121212;
-    background: rgba(10,10,10,0.8);
-    box-shadow: inset 0 0 40px rgba(0,0,0,0.7);
+    padding: 2.5rem 3rem;
+    display: flex;
+    justify-content: center;
   }
+
   main::-webkit-scrollbar {
     width: 12px;
   }
-  main::-webkit-scrollbar-track {
-    background: #121212;
-  }
   main::-webkit-scrollbar-thumb {
-    background-color: #1e90ff;
-    border-radius: 10px;
-    border: 3px solid #121212;
+    background-color: var(--primary);
+    border-radius: 20px;
   }
-  /* 공통 타이틀 */
+
+  section {
+    width: 100%;
+    max-width: 700px;
+    background: rgba(30,30,30,0.85);
+    border-radius: var(--radius);
+    padding: 2rem 2.5rem;
+    box-shadow: 0 0 20px var(--primary);
+    color: var(--light-text);
+  }
+
   h2 {
     font-family: 'Orbitron', sans-serif;
-    font-weight: 900;
-    color: #1e90ff;
+    font-size: 2.1rem;
     margin-bottom: 1.2rem;
-    font-size: 2rem;
     text-align: center;
-    text-shadow: 0 0 10px #1e90ff;
+    color: var(--primary);
   }
-  /* 폼 스타일 */
+
   form {
-    max-width: 480px;
-    margin: 0 auto;
-    background: rgba(30,30,30,0.7);
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 0 15px #1e90ffaa;
+    display: flex;
+    flex-direction: column;
   }
+
   label {
-    display: block;
     font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: #aad4ff;
-    user-select:none;
+    margin-bottom: 0.6rem;
+    color: #aaccee;
   }
-  input[type=text], input[type=password] {
-    width: 100%;
-    padding: 0.75rem 1rem;
+
+  input[type=text], input[type=password], textarea {
+    background: #121212;
     border-radius: 8px;
     border: none;
-    background: #121212;
-    color: #eee;
-    font-size: 1.1rem;
-    box-shadow: inset 0 0 8px #1e90ff88;
-    transition: box-shadow 0.3s ease;
+    padding: 1rem;
+    color: var(--light-text);
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+    font-family: 'Nanum Gothic', sans-serif;
+    resize: vertical;
   }
-  input[type=text]:focus, input[type=password]:focus {
-    outline: none;
-    box-shadow: 0 0 15px #1e90ff;
+
+  textarea {
+    min-height: 120px;
   }
-  /* 비밀번호 눈 아이콘 래퍼 */
+
   .password-wrapper {
     position: relative;
-    display: flex;
-    align-items: center;
   }
-  .password-wrapper input {
-    flex: 1;
-  }
+
   .password-toggle {
     position: absolute;
-    right: 1rem;
+    right: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 26px;
+    height: 26px;
+    fill: #888;
     cursor: pointer;
-    fill: #666;
-    width: 24px;
-    height: 24px;
-    transition: fill 0.3s ease;
+    user-select: none;
   }
-  .password-toggle:hover {
-    fill: #1e90ff;
-  }
-  /* 버튼 스타일 */
-  button.submit-btn {
-    margin-top: 1.6rem;
-    background: #1e90ff;
+
+  .submit-btn {
+    background: var(--primary);
     border: none;
-    color: #121212;
-    font-weight: 700;
-    font-size: 1.2rem;
-    padding: 0.9rem 2rem;
     border-radius: 10px;
+    padding: 1.2rem 1rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #121212;
     cursor: pointer;
-    box-shadow: 0 0 12px #1e90ffbb;
     transition: background 0.3s ease;
+    margin-top: 0.5rem;
   }
-  button.submit-btn:hover {
-    background: #0d6efd;
-    box-shadow: 0 0 20px #0d6efdcc;
+  .submit-btn:hover {
+    background: #0a7fff;
   }
-  /* 링크 스타일 */
+
   .toggle-auth {
+    margin-top: 1rem;
     text-align: center;
-    margin-top: 1.4rem;
+    font-size: 1rem;
     color: #aad4ff;
-    font-weight: 600;
     cursor: pointer;
-    user-select:none;
-    transition: color 0.3s ease;
+    user-select: none;
   }
-  .toggle-auth:hover {
-    color: #66aaff;
-  }
-  /* 로그인/회원가입 컨테이너 */
-  #auth-container, #register-container {
-    width: 100%;
-    max-width: 480px;
-    margin: auto;
-    padding-top: 6rem;
-  }
-  /* 숨김 처리 */
+
   .hidden {
     display: none !important;
   }
-  /* 컨텐츠 섹션 */
-  section.content-section {
-    max-width: 700px;
-    margin: auto;
-  }
-  /* 리스트 스타일 */
-  ul {
+
+  ul#ip-log-list {
     list-style: none;
     padding-left: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--primary);
+    border-radius: var(--radius);
+    background: rgba(20,20,20,0.9);
   }
-  li {
-    background: #1e90ff22;
-    margin: 0.5rem 0;
-    padding: 0.7rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  li:hover {
-    background: #1e90ff44;
-  }
-  /* 텍스트 박스 */
-  textarea {
-    width: 100%;
-    height: 80px;
-    padding: 1rem;
-    margin-top: 0.7rem;
-    border-radius: 8px;
-    border: none;
-    background: #121212;
-    color: #eee;
-    font-size: 1rem;
-    box-shadow: inset 0 0 8px #1e90ff88;
-    resize: vertical;
-  }
-  /* 관리자 메뉴 버튼 */
-  button.admin-action-btn {
-    background: #f44336;
-    border: none;
-    color: #fff;
+
+  ul#ip-log-list li {
     padding: 0.6rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 0.5rem;
-    font-weight: 700;
-    transition: background 0.3s ease;
+    border-bottom: 1px solid var(--primary);
+    font-family: monospace;
+    font-size: 0.9rem;
+    color: #ddeeff;
   }
-  button.admin-action-btn:hover {
-    background: #d32f2f;
+
+  ul#ip-log-list li:last-child {
+    border-bottom: none;
   }
+
+  /* 반응형 */
+  @media (max-width: 900px) {
+    body {
+      flex-direction: column;
+    }
+    nav {
+      width: 100%;
+      flex-direction: row;
+      border-right: none;
+      border-bottom: 3px solid var(--primary);
+      padding-top: 0.8rem;
+      overflow-x: auto;
+    }
+    nav h1 {
+      display: none;
+    }
+    nav button {
+      flex: 1;
+      font-size: 0.9rem;
+      padding: 1rem 0.6rem;
+      text-align: center;
+      white-space: nowrap;
+    }
+    main {
+      padding: 1rem 1.5rem;
+      height: calc(100vh - 60px);
+    }
+    section {
+      max-width: 100%;
+      padding: 1.5rem 1rem;
+    }
+  }
+
 </style>
 </head>
+
 <body>
-<nav aria-label="메인 메뉴">
-  <h1>YWE | 스나이핑</h1>
-  <button id="nav-faq" class="hidden">FAQ</button>
-  <button id="nav-expose" class="hidden">박제</button>
-  <button id="nav-report" class="hidden">제보 요청</button>
-  <button id="nav-admin" class="hidden">관리자 메뉴</button>
-  <button id="logout-btn" class="hidden">로그아웃</button>
-</nav>
-<main>
-  <!-- 로그인/회원가입 -->
-  <section id="auth-container">
-    <h2>로그인</h2>
-    <form id="login-form" autocomplete="off" novalidate>
-      <label for="login-id">아이디</label>
-      <input type="text" id="login-id" required autocomplete="username" />
-      <label for="login-pw">비밀번호</label>
-      <div class="password-wrapper">
-        <input type="password" id="login-pw" required autocomplete="current-password" />
-        <svg id="toggle-login-pw" class="password-toggle" viewBox="0 0 24 24" aria-label="비밀번호 표시/숨기기" role="button" tabindex="0">
-          <path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5
-          5 2.24 5 5-2.24 5-5 5z"/>
-          <circle cx="12" cy="12" r="2.5"/>
-        </svg>
+  <nav>
+    <h1>YWE | 스나이핑</h1>
+    <button id="nav-login" class="active">로그인</button>
+    <button id="nav-register">회원가입</button>
+    <button id="nav-faq" class="hidden">FAQ</button>
+    <button id="nav-expose" class="hidden">박제</button>
+    <button id="nav-report" class="hidden">제보</button>
+    <button id="nav-admin" class="hidden">관리자</button>
+    <button id="logout-btn" class="hidden">로그아웃</button>
+  </nav>
+
+  <main>
+    <!-- 로그인 섹션 -->
+    <section id="section-login">
+      <h2>로그인</h2>
+      <form id="form-login">
+        <label for="login-id">아이디</label>
+        <input type="text" id="login-id" autocomplete="username" required />
+        <label for="login-pw">비밀번호</label>
+        <div class="password-wrapper">
+          <input type="password" id="login-pw" autocomplete="current-password" required />
+          <svg id="toggle-login-pw" class="password-toggle" viewBox="0 0 24 24">
+            <path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5
+              5 2.24 5 5-2.24 5-5 5z"/>
+            <circle cx="12" cy="12" r="2.5"/>
+          </svg>
+        </div>
+        <button type="submit" class="submit-btn">로그인</button>
+      </form>
+      <div class="toggle-auth" id="toggle-to-register">계정이 없으신가요? 회원가입</div>
+    </section>
+
+    <!-- 회원가입 섹션 -->
+    <section id="section-register" class="hidden">
+      <h2>회원가입</h2>
+      <form id="form-register">
+        <label for="register-id">아이디</label>
+        <input type="text" id="register-id" autocomplete="username" required />
+        <label for="register-pw">비밀번호</label>
+        <div class="password-wrapper">
+          <input type="password" id="register-pw" autocomplete="new-password" required />
+          <svg id="toggle-register-pw" class="password-toggle" viewBox="0 0 24 24">
+            <path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5
+              5 2.24 5 5-2.24 5-5 5z"/>
+            <circle cx="12" cy="12" r="2.5"/>
+          </svg>
+        </div>
+        <button type="submit" class="submit-btn">회원가입</button>
+      </form>
+      <div class="toggle-auth" id="toggle-to-login">이미 계정이 있으신가요? 로그인</div>
+    </section>
+
+    <!-- FAQ 섹션 -->
+    <section id="section-faq" class="hidden">
+      <h2>자주 묻는 질문 (FAQ)</h2>
+      <div id="faq-list" style="max-height: 400px; overflow-y: auto; margin-top: 1rem; border: 1px solid var(--primary); border-radius: var(--radius); padding: 1rem; background: #121212;"></div>
+      <form id="form-faq" class="hidden" style="margin-top: 1.5rem;">
+        <label for="faq-title">제목</label>
+        <input type="text" id="faq-title" />
+        <label for="faq-content">내용 (마크다운 가능)</label>
+        <textarea id="faq-content"></textarea>
+        <button type="submit" class="submit-btn">등록</button>
+      </form>
+    </section>
+
+    <!-- 박제 섹션 -->
+    <section id="section-expose" class="hidden">
+      <h2>사기꾼 박제</h2>
+      <div id="expose-list" style="max-height: 400px; overflow-y: auto; margin-top: 1rem; border: 1px solid var(--primary); border-radius: var(--radius); padding: 1rem; background: #121212;"></div>
+      <form id="form-expose" class="hidden" style="margin-top: 1.5rem;">
+        <label for="expose-title">제목</label>
+        <input type="text" id="expose-title" />
+        <label for="expose-content">내용 (마크다운 가능)</label>
+        <textarea id="expose-content"></textarea>
+        <button type="submit" class="submit-btn">등록</button>
+      </form>
+    </section>
+
+    <!-- 제보 섹션 -->
+    <section id="section-report" class="hidden">
+      <h2>제보 요청</h2>
+      <form id="form-report" style="margin-top: 1rem;">
+        <label for="report-title">제목</label>
+        <input type="text" id="report-title" required />
+        <label for="report-content">설명</label>
+        <textarea id="report-content" rows="5" required></textarea>
+        <button type="submit" class="submit-btn">제보</button>
+      </form>
+    </section>
+
+    <!-- 관리자 섹션 -->
+    <section id="section-admin" class="hidden">
+      <h2>관리자 메뉴</h2>
+      <div id="admin-ip-log" style="margin-top: 1rem;">
+        <h3>접속 사용자 정보 (IP / ID)</h3>
+        <ul id="ip-log-list"></ul>
       </div>
-      <button type="submit" class="submit-btn">로그인</button>
-    </form>
-    <div class="toggle-auth" id="go-register">계정이 없으신가요? 회원가입</div>
-  </section>
-  <section id="register-container" class="hidden">
-    <h2>회원가입</h2>
-    <form id="register-form" autocomplete="off" novalidate>
-      <label for="reg-id">아이디</label>
-      <input type="text" id="reg-id" required autocomplete="username" />
-      <label for="reg-pw">비밀번호</label>
-      <div class="password-wrapper">
-        <input type="password" id="reg-pw" required autocomplete="new-password" />
-        <svg id="toggle-reg-pw" class="password-toggle" viewBox="0 0 24 24" aria-label="비밀번호 표시/숨기기" role="button" tabindex="0">
-          <path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5
-          5 2.24 5 5-2.24 5-5 5z"/>
-          <circle cx="12" cy="12" r="2.5"/>
-        </svg>
-      </div>
-      <button type="submit" class="submit-btn">회원가입</button>
-    </form>
-    <div class="toggle-auth" id="go-login">로그인 하러 가기</div>
-  </section>
+      <form id="form-admin-add" style="margin-top: 2rem;">
+        <label for="new-admin-id">관리자 아이디 추가</label>
+        <input type="text" id="new-admin-id" required />
+        <button type="submit" class="submit-btn">추가</button>
+      </form>
+    </section>
+  </main>
 
-  <!-- FAQ 섹션 -->
-  <section id="faq-section" class="hidden content-section">
-    <h2>FAQ</h2>
-    <ul id="faq-list"></ul>
-    <div id="faq-admin-controls" class="hidden">
-      <textarea id="faq-text" placeholder="FAQ 내용을 입력하세요..."></textarea>
-      <button id="add-faq-btn" class="admin-action-btn">FAQ 추가</button>
-    </div>
-  </section>
+  <script>
+    // 각 섹션, 네비 버튼 매핑
+    const sections = {
+      'nav-login': 'section-login',
+      'nav-register': 'section-register',
+      'nav-faq': 'section-faq',
+      'nav-expose': 'section-expose',
+      'nav-report': 'section-report',
+      'nav-admin': 'section-admin'
+    };
 
-  <!-- 박제 섹션 -->
-  <section id="expose-section" class="hidden content-section">
-    <h2>박제</h2>
-    <ul id="expose-list"></ul>
-    <div id="expose-admin-controls" class="hidden">
-      <textarea id="expose-text" placeholder="박제 내용을 입력하세요..."></textarea>
-      <button id="add-expose-btn" class="admin-action-btn">박제 추가</button>
-    </div>
-  </section>
+    // 초기 관리자 목록 (하드코딩)
+    let ADMIN_IDS = ['lihuiruo101'];
 
-  <!-- 제보 요청 섹션 -->
-  <section id="report-section" class="hidden content-section">
-    <h2>제보 요청</h2>
-    <ul id="report-list"></ul>
-    <div id="report-admin-controls" class="hidden">
-      <textarea id="report-text" placeholder="제보 내용을 입력하세요..."></textarea>
-      <button id="add-report-btn" class="admin-action-btn">제보 추가</button>
-    </div>
-  </section>
+    // 현재 로그인한 사용자 ID와 IP
+    let currentUser = null;
+    let currentIP = null;
 
-  <!-- 관리자 메뉴 -->
-  <section id="admin-section" class="hidden content-section">
-    <h2>관리자 메뉴</h2>
-    <p>관리자용 추가 기능을 구현하세요.</p>
-  </section>
-</main>
+    // 섹션 전환 함수
+    function switchSection(activeBtnId) {
+      Object.entries(sections).forEach(([btnId, secId]) => {
+        document.getElementById(btnId).classList.toggle('active', btnId === activeBtnId);
+        document.getElementById(secId).classList.toggle('hidden', btnId !== activeBtnId);
+      });
+    }
 
-<script>
-  // 저장 키
-  const STORAGE_USERS = 'ywe_sniping_users';
-  const STORAGE_ADMINS = 'ywe_sniping_admins';
-  const STORAGE_FAQ = 'ywe_sniping_faqs';
-  const STORAGE_EXPOSE = 'ywe_sniping_exposes';
-  const STORAGE_REPORTS = 'ywe_sniping_reports';
-
-  // 현재 로그인 유저
-  let currentUser = null;
-
-  // 데이터 로드
-  let users = JSON.parse(localStorage.getItem(STORAGE_USERS)) || {};
-  let admins = JSON.parse(localStorage.getItem(STORAGE_ADMINS)) || ['lihuiruo101'];
-  let faqs = JSON.parse(localStorage.getItem(STORAGE_FAQ)) || [];
-  let exposes = JSON.parse(localStorage.getItem(STORAGE_EXPOSE)) || [];
-  let reports = JSON.parse(localStorage.getItem(STORAGE_REPORTS)) || [];
-
-  // DOM
-  const navFAQ = document.getElementById('nav-faq');
-  const navExpose = document.getElementById('nav-expose');
-  const navReport = document.getElementById('nav-report');
-  const navAdmin = document.getElementById('nav-admin');
-  const logoutBtn = document.getElementById('logout-btn');
-
-  const authContainer = document.getElementById('auth-container');
-  const registerContainer = document.getElementById('register-container');
-
-  const loginForm = document.getElementById('login-form');
-  const registerForm = document.getElementById('register-form');
-
-  const goRegister = document.getElementById('go-register');
-  const goLogin = document.getElementById('go-login');
-
-  const faqSection = document.getElementById('faq-section');
-  const exposeSection = document.getElementById('expose-section');
-  const reportSection = document.getElementById('report-section');
-  const adminSection = document.getElementById('admin-section');
-
-  const faqList = document.getElementById('faq-list');
-  const exposeList = document.getElementById('expose-list');
-  const reportList = document.getElementById('report-list');
-
-  const faqAdminControls = document.getElementById('faq-admin-controls');
-  const exposeAdminControls = document.getElementById('expose-admin-controls');
-  const reportAdminControls = document.getElementById('report-admin-controls');
-
-  const faqText = document.getElementById('faq-text');
-  const exposeText = document.getElementById('expose-text');
-  const reportText = document.getElementById('report-text');
-
-  const addFaqBtn = document.getElementById('add-faq-btn');
-  const addExposeBtn = document.getElementById('add-expose-btn');
-  const addReportBtn = document.getElementById('add-report-btn');
-
-  // 비밀번호 눈 토글 함수
-  function togglePassword(inputId, toggleBtnId) {
-    const input = document.getElementById(inputId);
-    const toggleBtn = document.getElementById(toggleBtnId);
-    toggleBtn.addEventListener('click', () => {
-      if(input.type === 'password') {
-        input.type = 'text';
-        toggleBtn.innerHTML = `
-          <path d="M12 4.5C7 4.5 3.1 7.6 1.5 12c1.6 4.4 5.5 7.5 10.5 7.5s8.9-3.1 10.5-7.5c-1.6-4.4-5.5-7.5-10.5-7.5zm0 12a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9zm0-7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" />`;
-      } else {
-        input.type = 'password';
-        toggleBtn.innerHTML = `
-          <path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5
-          5 2.24 5 5-2.24 5-5 5z"/>
-          <circle cx="12" cy="12" r="2.5"/>`;
+    // 네비 버튼 클릭 이벤트 등록
+    Object.keys(sections).forEach(btnId => {
+      const btn = document.getElementById(btnId);
+      if (btn) {
+        btn.addEventListener('click', () => {
+          switchSection(btnId);
+        });
       }
     });
-  }
-  togglePassword('login-pw','toggle-login-pw');
-  togglePassword('reg-pw','toggle-reg-pw');
 
-  // 화면 전환
-  goRegister.addEventListener('click', () => {
-    authContainer.classList.add('hidden');
-    registerContainer.classList.remove('hidden');
-  });
-  goLogin.addEventListener('click', () => {
-    registerContainer.classList.add('hidden');
-    authContainer.classList.remove('hidden');
-  });
-
-  // 로그인 함수
-  loginForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const id = loginForm['login-id'].value.trim();
-    const pw = loginForm['login-pw'].value.trim();
-    if (!id || !pw) {
-      alert('아이디와 비밀번호를 모두 입력해주세요.');
-      return;
-    }
-    if (!users[id] || users[id] !== pw) {
-      alert('아이디 또는 비밀번호가 올바르지 않습니다.');
-      return;
-    }
-    currentUser = id;
-    afterLogin();
-  });
-
-  // 회원가입
-  registerForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const id = registerForm['reg-id'].value.trim();
-    const pw = registerForm['reg-pw'].value.trim();
-    if (!id || !pw) {
-      alert('아이디와 비밀번호를 입력해주세요.');
-      return;
-    }
-    if (users[id]) {
-      alert('이미 존재하는 아이디입니다.');
-      return;
-    }
-    users[id] = pw;
-    localStorage.setItem(STORAGE_USERS, JSON.stringify(users));
-    alert('회원가입 완료! 로그인 해주세요.');
-    registerContainer.classList.add('hidden');
-    authContainer.classList.remove('hidden');
-  });
-
-  // 로그인 후 처리
-  function afterLogin() {
-    authContainer.classList.add('hidden');
-    registerContainer.classList.add('hidden');
-    navFAQ.classList.remove('hidden');
-    navExpose.classList.remove('hidden');
-    navReport.classList.remove('hidden');
-    logoutBtn.classList.remove('hidden');
-
-    if (admins.includes(currentUser)) {
-      navAdmin.classList.remove('hidden');
-    }
-
-    showSection('faq');
-  }
-
-  // 로그아웃
-  logoutBtn.addEventListener('click', () => {
-    currentUser = null;
-    location.reload();
-  });
-
-  // 섹션 보여주기
-  function showSection(section) {
-    [faqSection, exposeSection, reportSection, adminSection].forEach(sec => sec.classList.add('hidden'));
-    if (section === 'faq') faqSection.classList.remove('hidden');
-    if (section === 'expose') exposeSection.classList.remove('hidden');
-    if (section === 'report') reportSection.classList.remove('hidden');
-    if (section === 'admin') adminSection.classList.remove('hidden');
-
-    // 버튼 active 처리
-    [navFAQ, navExpose, navReport, navAdmin].forEach(btn => btn.classList.remove('active'));
-    if (section === 'faq') navFAQ.classList.add('active');
-    if (section === 'expose') navExpose.classList.add('active');
-    if (section === 'report') navReport.classList.add('active');
-    if (section === 'admin') navAdmin.classList.add('active');
-
-    // 관리자 컨트롤 노출
-    const isAdmin = admins.includes(currentUser);
-    faqAdminControls.classList.toggle('hidden', !isAdmin);
-    exposeAdminControls.classList.toggle('hidden', !isAdmin);
-    reportAdminControls.classList.toggle('hidden', !isAdmin);
-  }
-
-  navFAQ.addEventListener('click', () => showSection('faq'));
-  navExpose.addEventListener('click', () => showSection('expose'));
-  navReport.addEventListener('click', () => showSection('report'));
-  navAdmin.addEventListener('click', () => showSection('admin'));
-
-  // 항목 렌더링 함수
-  function renderList(list, container) {
-    container.innerHTML = '';
-    list.forEach((item, i) => {
-      const li = document.createElement('li');
-      li.textContent = item;
-      container.appendChild(li);
+    // 로그아웃 버튼
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      currentUser = null;
+      currentIP = null;
+      // 메뉴 초기화
+      resetMenu();
+      switchSection('nav-login');
     });
-  }
 
-  function syncLocalStorage() {
-    localStorage.setItem(STORAGE_FAQ, JSON.stringify(faqs));
-    localStorage.setItem(STORAGE_EXPOSE, JSON.stringify(exposes));
-    localStorage.setItem(STORAGE_REPORTS, JSON.stringify(reports));
-  }
+    // 로그인 <-> 회원가입 토글
+    document.getElementById('toggle-to-register').addEventListener('click', () => {
+      switchSection('nav-register');
+    });
+    document.getElementById('toggle-to-login').addEventListener('click', () => {
+      switchSection('nav-login');
+    });
 
-  // 추가 버튼
-  addFaqBtn.addEventListener('click', () => {
-    const text = faqText.value.trim();
-    if (!text) return;
-    faqs.push(text);
-    faqText.value = '';
-    syncLocalStorage();
-    renderList(faqs, faqList);
-  });
+    // 비밀번호 토글
+    function setupPasswordToggle(toggleId, inputId) {
+      document.getElementById(toggleId).addEventListener('click', () => {
+        const pwInput = document.getElementById(inputId);
+        pwInput.type = (pwInput.type === 'password') ? 'text' : 'password';
+      });
+    }
+    setupPasswordToggle('toggle-login-pw', 'login-pw');
+    setupPasswordToggle('toggle-register-pw', 'register-pw');
 
-  addExposeBtn.addEventListener('click', () => {
-    const text = exposeText.value.trim();
-    if (!text) return;
-    exposes.push(text);
-    exposeText.value = '';
-    syncLocalStorage();
-    renderList(exposes, exposeList);
-  });
+    // 로그인 폼 제출
+    document.getElementById('form-login').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('login-id').value.trim();
+      const pw = document.getElementById('login-pw').value;
+      if (!id || !pw) return alert('아이디와 비밀번호를 입력해주세요.');
 
-  addReportBtn.addEventListener('click', () => {
-    const text = reportText.value.trim();
-    if (!text) return;
-    reports.push(text);
-    reportText.value = '';
-    syncLocalStorage();
-    renderList(reports, reportList);
-  });
+      // 여기 실제 인증 대신 간단히 진행
+      currentUser = id;
 
-  // 초기 렌더링
-  renderList(faqs, faqList);
-  renderList(exposes, exposeList);
-  renderList(reports, reportList);
-</script>
+      // IP 가져오기
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        currentIP = data.ip;
+      } catch {
+        currentIP = '알 수 없음';
+      }
+
+      logUserIP(currentUser, currentIP);
+      activateMenuByRole(currentUser);
+      switchSection('nav-faq');
+    });
+
+    // 회원가입 폼 제출
+    document.getElementById('form-register').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('register-id').value.trim();
+      const pw = document.getElementById('register-pw').value;
+      if (!id || !pw) return alert('아이디와 비밀번호를 입력해주세요.');
+
+      // 실제 가입 로직 대신 예시 메시지
+      alert(`가입 완료: ${id} (실제 DB 미구현)`);
+      switchSection('nav-login');
+    });
+
+    // 관리자용 메뉴 활성화
+    function activateMenuByRole(id) {
+      // 로그인 상태에 따라 메뉴 표시
+      document.querySelectorAll('nav button').forEach(btn => {
+        if (btn.id === 'logout-btn') {
+          btn.classList.remove('hidden');
+        } else if (btn.id === 'nav-login' || btn.id === 'nav-register') {
+          btn.classList.add('hidden');
+        } else {
+          // 일반 사용자 메뉴
+          btn.classList.remove('hidden');
+        }
+      });
+
+      // 관리자 메뉴 조건
+      if (ADMIN_IDS.includes(id)) {
+        document.getElementById('nav-admin').classList.remove('hidden');
+        document.getElementById('form-faq').classList.remove('hidden');
+        document.getElementById('form-expose').classList.remove('hidden');
+      } else {
+        document.getElementById('nav-admin').classList.add('hidden');
+        document.getElementById('form-faq').classList.add('hidden');
+        document.getElementById('form-expose').classList.add('hidden');
+      }
+    }
+
+    // 로그아웃 등 메뉴 초기화
+    function resetMenu() {
+      document.querySelectorAll('nav button').forEach(btn => {
+        if (btn.id === 'nav-login' || btn.id === 'nav-register') {
+          btn.classList.remove('hidden');
+        } else {
+          btn.classList.add('hidden');
+        }
+        btn.classList.remove('active');
+      });
+      document.getElementById('logout-btn').classList.add('hidden');
+    }
+
+    // IP 로그 기록 - 관리자 화면에 추가
+    function logUserIP(id, ip) {
+      const ul = document.getElementById('ip-log-list');
+      const li = document.createElement('li');
+      const now = new Date();
+      li.textContent = `${now.toLocaleString()} - ID: ${id} / IP: ${ip}`;
+      ul.appendChild(li);
+    }
+
+    // FAQ 게시판 예시 데이터 및 기능
+    const faqListEl = document.getElementById('faq-list');
+    const faqs = [];
+    document.getElementById('form-faq').addEventListener('submit', e => {
+      e.preventDefault();
+      const title = document.getElementById('faq-title').value.trim();
+      const content = document.getElementById('faq-content').value.trim();
+      if (!title || !content) return alert('제목과 내용을 입력하세요.');
+      faqs.push({title, content});
+      renderFAQ();
+      e.target.reset();
+    });
+    function renderFAQ() {
+      faqListEl.innerHTML = '';
+      faqs.forEach(({title, content}, i) => {
+        const div = document.createElement('div');
+        div.style.borderBottom = '1px solid var(--primary)';
+        div.style.padding = '0.8rem 0';
+        div.innerHTML = `<strong>${title}</strong><p style="margin-top:0.3rem;">${content}</p>`;
+        faqListEl.appendChild(div);
+      });
+    }
+
+    // 박제 게시판 예시 데이터 및 기능
+    const exposeListEl = document.getElementById('expose-list');
+    const exposes = [];
+
+    document.getElementById('form-expose').addEventListener('submit', e => {
+      e.preventDefault();
+      const title = document.getElementById('expose-title').value.trim();
+      const content = document.getElementById('expose-content').value.trim();
+      if (!title || !content) return alert('제목과 내용을 입력하세요.');
+
+      exposes.push({ title, content });
+      renderExpose();
+      e.target.reset();
+    });
+
+    function renderExpose() {
+      exposeListEl.innerHTML = '';
+      exposes.forEach(({title, content}, i) => {
+        const div = document.createElement('div');
+        div.style.borderBottom = '1px solid var(--primary)';
+        div.style.padding = '0.8rem 0';
+        // 간단 마크다운 처리 (줄바꿈만)
+        const safeContent = content.replace(/\n/g, '<br>');
+        div.innerHTML = `<strong>${title}</strong><p style="margin-top:0.3rem;">${safeContent}</p>`;
+        exposeListEl.appendChild(div);
+      });
+    }
+
+    // 제보 게시판 처리 (간단히 알림 처리)
+    document.getElementById('form-report').addEventListener('submit', e => {
+      e.preventDefault();
+      const title = document.getElementById('report-title').value.trim();
+      const content = document.getElementById('report-content').value.trim();
+      if (!title || !content) return alert('제목과 내용을 입력하세요.');
+
+      alert(`제보가 접수되었습니다.\n제목: ${title}`);
+      e.target.reset();
+    });
+
+    // 관리자 - 새 관리자 아이디 추가
+    document.getElementById('form-admin-add').addEventListener('submit', e => {
+      e.preventDefault();
+      const newAdminId = document.getElementById('new-admin-id').value.trim();
+      if (!newAdminId) return alert('관리자 아이디를 입력하세요.');
+      if (ADMIN_IDS.includes(newAdminId)) return alert('이미 등록된 관리자입니다.');
+
+      ADMIN_IDS.push(newAdminId);
+      alert(`${newAdminId} 님이 관리자에 추가되었습니다.`);
+      document.getElementById('new-admin-id').value = '';
+      // 혹시 현재 로그인한 사용자가 새 관리자면 메뉴 갱신
+      if(currentUser === newAdminId) activateMenuByRole(currentUser);
+    });
+
+  </script>
 </body>
 </html>
