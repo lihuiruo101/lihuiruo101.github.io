@@ -331,8 +331,10 @@
 <script>
   'use strict';
 
+  const app = document.getElementById('app');
   const superAdminId = 'lihuiruo101';
 
+  // 관리자 목록 초기화 (최고관리자 포함)
   let adminUsers = JSON.parse(localStorage.getItem('ywe_admin_users') || JSON.stringify([superAdminId]));
 
   function escapeHtml(text) {
@@ -395,16 +397,17 @@
       adminUsers.splice(idx, 1);
       localStorage.setItem('ywe_admin_users', JSON.stringify(adminUsers));
       alert(`${id} 님의 관리자 권한이 삭제되었습니다.`);
+      renderApp();
     } else {
       alert('해당 사용자는 관리자 권한이 없습니다.');
     }
   }
 
-  // 제보 및 FAQ 저장소 키
+  // 데이터 저장소 키
   const REPORTS_KEY = 'ywe_reports';
   const FAQ_KEY = 'ywe_faq';
   const SNIPERS_KEY = 'ywe_snipers';
-  const LOGIN_HISTORY_KEY = 'ywe_login_history'; // 로그인 기록 저장
+  const LOGIN_HISTORY_KEY = 'ywe_login_history';
 
   function getReports() {
     return JSON.parse(localStorage.getItem(REPORTS_KEY) || '[]');
@@ -431,9 +434,10 @@
     localStorage.setItem(LOGIN_HISTORY_KEY, JSON.stringify(history));
   }
 
+  // 기본 탭 설정
   let currentTab = getLoginUser() ? 'sniper' : 'login';
 
-  // 로그인 화면 렌더링 (이메일 추가)
+  // 로그인 화면 렌더링 (이메일 포함)
   function renderLogin(errorMsg = '') {
     app.innerHTML = `
       <section class="login-box" role="main" aria-label="로그인 박스">
@@ -450,219 +454,240 @@
     document.getElementById('login-btn').addEventListener('click', handleLogin);
     document.getElementById('signup-btn').addEventListener('click', handleSignup);
     document.getElementById('pw').addEventListener('keydown', function (e) {
-  if (e.key === 'Enter') {
-    handleLogin();
+      if (e.key === 'Enter') {
+        handleLogin();
+      }
+    });
   }
+
+  // 로그인 처리
+  function handleLogin() {
+    const id = document.getElementById('id').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const pw = document.getElementById('pw').value;
+
+    if (!id || !email || !pw) {
+      renderLogin('모든 필드를 입력해주세요.');
+      return;
+    }
+
+    const storedPw = getUserPw(id);
+    if (!storedPw) {
+      renderLogin('등록되지 않은 아이디입니다.');
+      return;
+    }
+    if (storedPw !== pw) {
+      renderLogin('비밀번호가 틀렸습니다.');
+      return;
+    }
+
+      setLoginUser(id);
+
+// 로그인 성공 후의 처리 과정
+
+// 1. 로그인 기록 가져오기
+let loginHistory = getLoginHistory();
+
+// 2. 로그인 시간 기록 (ISO 문자열)
+const now = new Date().toISOString();
+
+// 3. 현재 로그인 사용자 정보를 로그인 기록에 추가
+loginHistory.push({
+  id: id,
+  email: email,
+  timestamp: now,
+  // ip: getUserIP() // 만약 IP 수집이 가능하다면 여기에 추가
 });
 
-// 로그인 처리 함수
-function handleLogin() {
-  const id = document.getElementById('id').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const pw = document.getElementById('pw').value;
+// 4. 로그인 기록을 다시 로컬스토리지에 저장
+setLoginHistory(loginHistory);
 
-  if (!id || !email || !pw) {
-    renderLogin('모든 필드를 입력해주세요.');
-    return;
-  }
+// 5. 로그인 상태에 따른 UI 및 상태관리
+// 로그인 상태를 localStorage에 저장해 세션 대체
+// 실제 서비스면 쿠키/세션 토큰 처리 필요
 
-  const storedPw = getUserPw(id);
-  if (!storedPw) {
-    renderLogin('등록되지 않은 아이디입니다.');
-    return;
-  }
+// 6. 로그인 성공 메시지 출력 (사용자 경험 향상)
+alert(`${id} 님, 성공적으로 로그인되었습니다! 환영합니다.`);
 
-  if (storedPw !== pw) {
-    renderLogin('비밀번호가 틀렸습니다.');
-    return;
-  }
+// 7. 현재 앱의 활성 탭을 스나이퍼 목록 탭으로 변경
+currentTab = 'sniper';
 
-  // 로그인 성공 처리
-  setLoginUser(id);
-  // 로그인 기록 저장 (아이디, 이메일, 시간)
-  const history = getLoginHistory();
-  history.push({ id, email, time: new Date().toISOString() });
-  setLoginHistory(history);
-
-  currentTab = 'sniper';
-  renderApp();
+// 8. 사용자 권한에 따른 UI 변경 (예: 관리자 권한 확인)
+if (isAdmin(id)) {
+  console.log(`${id} 님은 관리자 권한을 가지고 있습니다.`);
+  // 관리자 전용 UI 추가 렌더링 가능
 }
 
-// 회원가입 처리 함수
+// 9. 페이지 전체 다시 렌더링 호출
+renderApp();
+}
+
+// 회원가입 처리 함수 - handleSignup
 function handleSignup() {
+  // 1. 입력값 가져오기
   const id = document.getElementById('id').value.trim();
   const email = document.getElementById('email').value.trim();
   const pw = document.getElementById('pw').value;
 
+  // 2. 필수 입력값 체크
   if (!id || !email || !pw) {
-    renderLogin('모든 필드를 입력해주세요.');
+    renderLogin('모든 필드를 빠짐없이 입력해주세요.');
     return;
   }
 
+  // 3. 아이디 유효성 검사 (영문자, 숫자만 가능 등)
+  const idRegex = /^[a-zA-Z0-9_]{3,16}$/;
+  if (!idRegex.test(id)) {
+    renderLogin('아이디는 3~16자의 영문자, 숫자, 밑줄(_)만 가능합니다.');
+    return;
+  }
+
+  // 4. 이메일 형식 유효성 검사 (간단 버전)
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    renderLogin('유효한 이메일 주소를 입력해주세요.');
+    return;
+  }
+
+  // 5. 이미 존재하는 아이디인지 확인
   if (getUserPw(id)) {
-    renderLogin('이미 등록된 아이디입니다.');
+    renderLogin('이미 존재하는 아이디입니다. 다른 아이디를 입력해주세요.');
     return;
   }
 
+  // 6. 비밀번호 보안 검사 (최소 6자 이상)
+  if (pw.length < 6) {
+    renderLogin('비밀번호는 최소 6자 이상이어야 합니다.');
+    return;
+  }
+
+  // 7. 비밀번호 저장 (실제 서비스라면 반드시 해시처리 권장)
   setUserPw(id, pw);
 
-  // 신규 회원은 기본적으로 일반 사용자로 가입됨
+  // 8. 자동 로그인 처리
   setLoginUser(id);
 
-  alert('회원가입이 완료되었습니다.');
+  // 9. 신규 회원 로그인 기록 추가
+  let loginHistory = getLoginHistory();
+  loginHistory.push({
+    id: id,
+    email: email,
+    timestamp: new Date().toISOString()
+  });
+  setLoginHistory(loginHistory);
+
+  // 10. 관리자 권한 자동 부여 조건 (예: 첫 가입자)
+  if (adminUsers.length === 0) {
+    adminUsers.push(id);
+    localStorage.setItem('ywe_admin_users', JSON.stringify(adminUsers));
+    alert(`${id} 님께 최고관리자 권한이 부여되었습니다.`);
+  }
+
+  // 11. 가입 성공 메시지 출력
+  alert('회원가입이 성공적으로 완료되었습니다! 자동으로 로그인 처리됩니다.');
+
+  // 12. 활성 탭을 스나이퍼 목록 탭으로 전환
   currentTab = 'sniper';
+
+  // 13. 앱 UI 다시 렌더링
   renderApp();
 }
 
-// 앱 메인 렌더링
+// 로그아웃 처리 함수
+function logout() {
+  // 1. 로그인 상태 제거
+  localStorage.removeItem('login');
+
+  // 2. 현재 활성 탭 초기화
+  currentTab = 'login';
+
+  // 3. 로그인 UI 렌더링 호출
+  renderApp();
+
+  // 4. 로그아웃 알림
+  alert('성공적으로 로그아웃되었습니다. 다음에 또 방문해주세요!');
+}
+
+// 앱 전체 렌더링 함수
 function renderApp() {
   const userId = getLoginUser();
 
+  // 로그인 상태가 없으면 로그인 화면 출력
   if (!userId) {
-    currentTab = 'login';
     renderLogin();
     return;
   }
 
-  // 기본 네비게이션
-  const navHtml = `
-    <nav class="sidebar" role="navigation" aria-label="사이트 주요 메뉴">
-      <a href="#" class="${currentTab === 'sniper' ? 'active' : ''}" id="tab-sniper">스나이퍼 목록</a>
-      <a href="#" class="${currentTab === 'reports' ? 'active' : ''}" id="tab-reports">제보 관리</a>
-      <a href="#" class="${currentTab === 'faq' ? 'active' : ''}" id="tab-faq">FAQ 관리</a>
-      ${isAdmin(userId) ? `
-        <a href="#" class="${currentTab === 'admin' ? 'active' : ''}" id="tab-admin">관리자 관리</a>
-        <a href="#" class="${currentTab === 'loginHistory' ? 'active' : ''}" id="tab-loginHistory">로그인 기록</a>
-      ` : ''}
-      <button class="logout-btn" id="logout-btn" aria-label="로그아웃">로그아웃</button>
-    </nav>
-  `;
-
-  let mainContentHtml = '';
-
-  if (currentTab === 'sniper') {
-    mainContentHtml = renderSnipers();
-  } else if (currentTab === 'reports') {
-    mainContentHtml = renderReports();
-  } else if (currentTab === 'faq') {
-    mainContentHtml = renderFaqs();
-  } else if (currentTab === 'admin' && isAdmin(userId)) {
-    mainContentHtml = renderAdminPanel();
-  } else if (currentTab === 'loginHistory' && isAdmin(userId)) {
-    mainContentHtml = renderLoginHistory();
-  } else {
-    mainContentHtml = '<p>알 수 없는 탭입니다.</p>';
-  }
-
+  // 로그인 상태면 사이드바 + 메인 콘텐츠 렌더링
   app.innerHTML = `
-    ${navHtml}
-    <main class="content" role="main" aria-live="polite">
-      ${mainContentHtml}
+    ${renderSidebar(userId)}
+    <main class="content" role="main" tabindex="0" aria-label="메인 콘텐츠 영역">
+      ${renderContent(userId)}
     </main>
   `;
 
-  document.getElementById('logout-btn').addEventListener('click', logout);
-  document.getElementById('tab-sniper')?.addEventListener('click', () => { currentTab = 'sniper'; renderApp(); });
-  document.getElementById('tab-reports')?.addEventListener('click', () => { currentTab = 'reports'; renderApp(); });
-  document.getElementById('tab-faq')?.addEventListener('click', () => { currentTab = 'faq'; renderApp(); });
-  if (isAdmin(userId)) {
-    document.getElementById('tab-admin')?.addEventListener('click', () => { currentTab = 'admin'; renderApp(); });
-    document.getElementById('tab-loginHistory')?.addEventListener('click', () => { currentTab = 'loginHistory'; renderApp(); });
+  // 로그아웃 버튼 이벤트 연결
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      if (confirm('정말 로그아웃 하시겠습니까?')) {
+        logout();
+      }
+    });
   }
-}
 
-// 스나이퍼 목록 렌더링 예시
-function renderSnipers() {
-  const snipers = getSnipers();
-  if (snipers.length === 0) {
-    return '<p>등록된 스나이퍼가 없습니다.</p>';
-  }
-  return `
-    <h1 class="header">스나이퍼 목록</h1>
-    <ul>
-      ${snipers.map(s => `<li><b>${escapeHtml(s.name)}</b> - ${escapeHtml(s.description)}</li>`).join('')}
-    </ul>
-  `;
-}
-
-// 제보 관리 렌더링 (간단 예시)
-function renderReports() {
-  const reports = getReports();
-  if (reports.length === 0) {
-    return '<p>등록된 제보가 없습니다.</p>';
-  }
-  return `
-    <h1 class="header">제보 관리</h1>
-    <ul>
-      ${reports.map(r => `<li><b>${escapeHtml(r.title)}</b><br />${simpleMarkdown(r.content)}</li>`).join('')}
-    </ul>
-  `;
-}
-
-// FAQ 관리 렌더링 (간단 예시)
-function renderFaqs() {
-  const faqs = getFaqs();
-  if (faqs.length === 0) {
-    return '<p>등록된 FAQ가 없습니다.</p>';
-  }
-  return `
-    <h1 class="header">FAQ 관리</h1>
-    <ul>
-      ${faqs.map(f => `<li><b>${escapeHtml(f.question)}</b><br />${simpleMarkdown(f.answer)}</li>`).join('')}
-    </ul>
-  `;
-}
-
-// 관리자 관리 화면
-function renderAdminPanel() {
-  const admins = adminUsers;
-  return `
-    <h1 class="header">관리자 관리</h1>
-    <div class="card">
-      <p>최고관리자: <b>${superAdminId}</b></p>
-      <p>현재 관리자 목록:</p>
-      <ul>
-        ${admins.map(a => `<li>${escapeHtml(a)} ${a !== superAdminId ? `<button onclick="removeAdminUser('${escapeHtml(a)}')">삭제</button>` : ''}</li>`).join('')}
-      </ul>
-      <input id="new-admin-id" type="text" placeholder="추가할 관리자 아이디" aria-label="추가할 관리자 아이디" />
-      <button id="add-admin-btn">관리자 추가</button>
-    </div>
-  `;
-}
-
-// 로그인 기록 렌더링
-function renderLoginHistory() {
-  const history = getLoginHistory().slice().reverse(); // 최근 기록부터
-  if (history.length === 0) {
-    return '<p>로그인 기록이 없습니다.</p>';
-  }
-  return `
-    <h1 class="header">로그인 기록</h1>
-    <table class="safe-info-table" role="table" aria-label="로그인 기록 테이블">
-      <thead>
-        <tr><th>아이디</th><th>이메일</th><th>로그인 시간</th></tr>
-      </thead>
-      <tbody>
-        ${history.map(h => `<tr><td>${escapeHtml(h.id)}</td><td>${escapeHtml(h.email)}</td><td>${new Date(h.time).toLocaleString()}</td></tr>`).join('')}
-      </tbody>
-    </table>
-  `;
-}
-
-// 관리자 추가 버튼 이벤트 위임
-document.addEventListener('click', (e) => {
-  if (e.target && e.target.id === 'add-admin-btn') {
-    const input = document.getElementById('new-admin-id');
-    const id = input.value.trim();
-    if (id) {
-      addAdminUser(id);
-      input.value = '';
-      renderApp();
-    } else {
-      alert('아이디를 입력해주세요.');
+  // 사이드바 메뉴 탭 이벤트 연결
+  ['sniper', 'report', 'faq', 'safeinfo', 'admin'].forEach(tab => {
+    const el = document.getElementById(`tab-${tab}`);
+    if (el) {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        currentTab = tab;
+        renderApp();
+      });
     }
-  }
-});
+  });
 
-// 초기 렌더링
-renderApp();
+  // 접근성 향상을 위해 메인 콘텐츠에 포커스 주기
+  const mainContent = document.querySelector('main.content');
+  if (mainContent) {
+    mainContent.focus();
+  }
+}
+
+// 사이드바 렌더링 함수 (예시)
+function renderSidebar(userId) {
+  const isAdminUser = isAdmin(userId);
+  return `
+    <nav class="sidebar" role="navigation" aria-label="사이드바 메뉴">
+      <a href="#" id="tab-sniper" class="${currentTab === 'sniper' ? 'active' : ''}">스나이퍼 목록</a>
+      <a href="#" id="tab-report" class="${currentTab === 'report' ? 'active' : ''}">신고 내역</a>
+      <a href="#" id="tab-faq" class="${currentTab === 'faq' ? 'active' : ''}">자주 묻는 질문</a>
+      <a href="#" id="tab-safeinfo" class="${currentTab === 'safeinfo' ? 'active' : ''}">안전정보 관리</a>
+      ${isAdminUser ? `<a href="#" id="tab-admin" class="${currentTab === 'admin' ? 'active' : ''}">관리자</a>` : ''}
+      <button id="logout-btn" class="logout-btn" aria-label="로그아웃">로그아웃</button>
+    </nav>
+  `;
+}
+
+// 콘텐츠 렌더링 함수 (예시)
+function renderContent(userId) {
+  switch (currentTab) {
+    case 'sniper':
+      return `<section><h1>스나이퍼 목록</h1><p>환영합니다, ${escapeHtml(userId)}님!</p></section>`;
+    case 'report':
+      return `<section><h1>신고 내역</h1></section>`;
+    case 'faq':
+      return `<section><h1>자주 묻는 질문</h1></section>`;
+    case 'safeinfo':
+      return `<section><h1>안전정보 관리</h1></section>`;
+    case 'admin':
+      if (isAdmin(userId)) {
+        return `<section><h1>관리자 페이지</h1></section>`;
+      } else {
+        return `<section><h1>접근 권한이 없습니다.</h1></section>`;
+      }
+    default:
+      return `<section><h1>알 수 없는 페이지</h1></section>`;
+  }
+}
