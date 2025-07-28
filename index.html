@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>YWE 스나이퍼 공식 사이트</title>
 <style>
-  /* Reset & 기본 설정 */
+  /* 기본 스타일 생략 (위에서 제공한 스타일 그대로 사용) */
   * {
     margin: 0; padding: 0; box-sizing: border-box;
   }
@@ -23,7 +23,6 @@
     min-height: 100vh;
     flex-direction: row;
   }
-  /* 사이드바 */
   nav.sidebar {
     background: #021a35;
     width: 240px;
@@ -73,7 +72,6 @@
     background: #ff2222;
     box-shadow: 0 0 16px #ff2222dd;
   }
-  /* 콘텐츠 영역 */
   main.content {
     margin-left: 240px;
     padding: 2.5rem 3.5rem;
@@ -111,20 +109,6 @@
     margin-bottom: 1.2rem;
     text-shadow: 0 0 8px #00ffffcc;
     user-select: text;
-  }
-  .edit-pencil {
-    position: absolute;
-    right: 18px;
-    top: 18px;
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-    fill: #00ffffcc;
-    transition: fill 0.3s ease, filter 0.3s ease;
-  }
-  .edit-pencil:hover {
-    fill: #00ffff;
-    filter: drop-shadow(0 0 4px #00ffffcc);
   }
   textarea, input[type=text] {
     width: 100%;
@@ -184,7 +168,6 @@
   ul li {
     margin-bottom: 0.6rem;
   }
-  /* 로그인 박스 */
   .login-box {
     background: #011f4b;
     padding: 50px 45px;
@@ -253,8 +236,6 @@
     user-select: none;
     min-height: 1.4em;
   }
-
-  /* 반응형 */
   @media (max-width: 800px) {
     body {
       flex-direction: column;
@@ -306,8 +287,10 @@
 <script>
   'use strict';
 
-  // 최고 관리자 아이디 (관리자 권한 부여 및 해제 가능)
+  // 최고 관리자 ID (고정)
   const superAdminId = 'lihuiruo101';
+
+  // 관리자 권한 배열 로컬스토리지에서 불러오기 (없으면 superAdminId 포함)
   let adminUsers = JSON.parse(localStorage.getItem('ywe_admin_users') || JSON.stringify([superAdminId]));
 
   // HTML 특수문자 이스케이프
@@ -317,20 +300,19 @@
     return div.innerHTML;
   }
 
-  // 간단한 마크다운 변환 함수
-  // 지원 : **굵게**, *기울임*, `코드`, [링크](url), ![이미지](url), 줄바꿈
+  // 간단 마크다운 변환 (**, *, `, 링크, 이미지, 줄바꿈)
   function simpleMarkdown(text) {
     if (!text) return '';
     return escapeHtml(text)
       .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
       .replace(/\*(.+?)\*/g, '<i>$1</i>')
       .replace(/`(.+?)`/g, '<code>$1</code>')
-      .replace(/!(.*?)(.*?)/g, '<img src="$2" alt="$1" class="preview" />')
-      .replace(/(.+?)(.+?)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+      .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="preview" />')
+      .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
       .replace(/\n/g, '<br>');
   }
 
-  // 로그인 사용자 관리
+  // 로그인/로그아웃 관련
   function getLoginUser() {
     return localStorage.getItem('login');
   }
@@ -343,7 +325,7 @@
     renderApp();
   }
 
-  // 사용자 비밀번호 저장
+  // 회원 비밀번호 저장/불러오기
   function getUserPw(id) {
     return localStorage.getItem('user_' + id);
   }
@@ -351,15 +333,17 @@
     localStorage.setItem('user_' + id, pw);
   }
 
-  // 관리자 리스트
-  function getAdminUsers() {
-    return adminUsers;
+  // 관리자 권한 체크
+  function isAdmin(userId) {
+    return adminUsers.includes(userId);
   }
+
+  // 관리자 권한 추가/삭제
   function addAdminUser(id) {
     if (!adminUsers.includes(id)) {
       adminUsers.push(id);
       localStorage.setItem('ywe_admin_users', JSON.stringify(adminUsers));
-      alert(`${id} 님에게 관리자 권한이 추가되었습니다.`);
+      alert(`${id} 님에게 관리자 권한이 성공적으로 추가되었습니다.`);
     } else {
       alert('이미 관리자 권한이 있는 사용자입니다.');
     }
@@ -383,6 +367,7 @@
   const REPORTS_KEY = 'ywe_reports';
   const FAQ_KEY = 'ywe_faq';
 
+  // 제보, FAQ 불러오기/저장
   function getReports() {
     return JSON.parse(localStorage.getItem(REPORTS_KEY) || '[]');
   }
@@ -396,7 +381,7 @@
     localStorage.setItem(FAQ_KEY, JSON.stringify(faqs));
   }
 
-  // 전역 상태
+  // 현재 탭 상태
   const app = document.getElementById('app');
   let currentTab = getLoginUser() ? 'sniper' : 'login';
 
@@ -445,246 +430,298 @@
       return;
     }
     setUserPw(id, pw);
-    alert('회원가입이 완료되었습니다. 로그인 해 주십시오.');
+    alert('회원가입이 성공적으로 완료되었습니다. 로그인해 주십시오.');
     renderLogin();
   }
 
-  // 관리자 권한 확인
-  function isAdmin(userId) {
-    return adminUsers.includes(userId);
-  }
-
-  // 사이드바 렌더링
+  // 사이드바 렌더링 (lihuiruo101은 무조건 FAQ와 스나이퍼 가능)
   function renderSidebar(active) {
     const loginUser = getLoginUser();
-    return `
+    if (!loginUser) return '';
+
+    // 항상 보이는 탭
+    let navHtml = `
       <nav class="sidebar" role="navigation" aria-label="메인 메뉴">
         <a href="#" id="nav-sniper" class="${active === 'sniper' ? 'active' : ''}" onclick="switchTab('sniper')" aria-current="${active === 'sniper' ? 'page' : undefined}">스나이퍼</a>
         <a href="#" id="nav-submit" class="${active === 'submit' ? 'active' : ''}" onclick="switchTab('submit')" aria-current="${active === 'submit' ? 'page' : undefined}">제보 신청</a>
         <a href="#" id="nav-faq" class="${active === 'faq' ? 'active' : ''}" onclick="switchTab('faq')" aria-current="${active === 'faq' ? 'page' : undefined}">자주 묻는 질문</a>
-        ${isAdmin(loginUser) ? `<a href="#" id="nav-admin" class="${active === 'admin' ? 'active' : ''}" onclick="switchTab('admin')" aria-current="${active === 'admin' ? 'page' : undefined}">관리자</a>` : ''}
-        <button class="logout-btn" onclick="logout()" aria-label="로그아웃">${escapeHtml(loginUser)} 님 로그아웃</button>
+    `;
+
+    // 관리자 권한 있는 경우 관리자 메뉴 추가
+    if (isAdmin(loginUser)) {
+      navHtml += `<a href="#" id="nav-admin" class="${active === 'admin' ? 'active' : ''}" onclick="switchTab('admin')" aria-current="${active === 'admin' ? 'page' : undefined}">관리자</a>`;
+    }
+
+    navHtml += `
+      <button class="logout-btn" onclick="logout()" aria-label="로그아웃">${escapeHtml(loginUser)} 님 로그아웃</button>
       </nav>
     `;
+    return navHtml;
   }
 
   // 스나이퍼 탭 렌더링
   function renderSniper() {
     const reports = getReports();
     let html = `
-      <h1 class="header">YWE 스나이퍼 제보 목록</h1>
-      ${reports.length === 0 ? `<p>등록된 제보가 없습니다.</p>` : ''}
+      <h1 class="header">스나이퍼 목록</h1>
+      <section>
     `;
-    reports.forEach((report, index) => {
-      html += `
-        <section class="card" role="region" aria-labelledby="report-title-${index}">
-          <h2 id="report-title-${index}" class="report-title">${escapeHtml(report.title)}</h2>
-          <p>${simpleMarkdown(report.content)}</p>
-          <small>작성자: ${escapeHtml(report.author)}</small>
-        </section>
-      `;
-    });
+    if (reports.length === 0) {
+      html += `<div class="card">등록된 스나이퍼가 없습니다.</div>`;
+    } else {
+      reports.forEach((report, i) => {
+        html += `
+          <article class="card" tabindex="0" aria-label="스나이퍼 ${i + 1}">
+            <div class="report-title">${escapeHtml(report.title || '제목 없음')}</div>
+            <div>${simpleMarkdown(report.content)}</div>
+          </article>
+        `;
+      });
+    }
+    html += `</section>`;
     return html;
   }
 
   // 제보 신청 탭 렌더링
   function renderSubmit() {
     return `
-      <h1 class="header">YWE 제보 신청</h1>
-      <label for="report-title-input">제목</label>
-      <input type="text" id="report-title-input" aria-required="true" placeholder="제목을 입력하세요" />
-      <label for="report-content-input">내용</label>
-      <textarea id="report-content-input" rows="8" aria-required="true" placeholder="내용을 입력하세요"></textarea>
-      <button onclick="submitReport()">제출하기</button>
-      <div id="submit-message" role="alert" aria-live="polite"></div>
+      <h1 class="header">스나이퍼 제보 신청</h1>
+      <section>
+        <label for="submit-title">제목</label>
+        <input type="text" id="submit-title" placeholder="제목을 입력하세요" aria-required="true" />
+        <label for="submit-content">내용</label>
+        <textarea id="submit-content" rows="6" placeholder="내용을 입력하세요" aria-required="true"></textarea>
+        <button onclick="submitReport()">제보하기</button>
+        <div id="submit-msg" role="alert" aria-live="assertive" style="margin-top:1rem;"></div>
+      </section>
     `;
   }
 
   // FAQ 탭 렌더링
   function renderFaq() {
     const faqs = getFaqs();
-    let html = `
-      <h1 class="header">자주 묻는 질문</h1>
-      ${faqs.length === 0 ? '<p>등록된 FAQ가 없습니다.</p>' : ''}
-      <ul>
-    `;
-    faqs.forEach((faq, index) => {
-      html += `<li><strong>${escapeHtml(faq.question)}</strong><br>${simpleMarkdown(faq.answer)}</li>`;
-    });
-    html += '</ul>';
+    let html = `<h1 class="header">자주 묻는 질문</h1><section>`;
+    if (faqs.length === 0) {
+      html += `<div class="card">등록된 FAQ가 없습니다.</div>`;
+    } else {
+      faqs.forEach((faq, i) => {
+        html += `
+          <article class="card" tabindex="0" aria-label="FAQ ${i + 1}">
+            <div class="report-title">${escapeHtml(faq.question || '질문 없음')}</div>
+            <div>${simpleMarkdown(faq.answer)}</div>
+          </article>
+        `;
+      });
+    }
+    html += `</section>`;
     return html;
   }
 
-  // 관리자 탭 렌더링
+  // 관리자 탭 렌더링 (관리자만 접근 가능)
   function renderAdmin() {
-    const loginUser = getLoginUser();
-    if (!isAdmin(loginUser)) {
-      return `<p>관리자 권한이 없습니다.</p>`;
-    }
-
-    const admins = getAdminUsers();
+    const reports = getReports();
+    const faqs = getFaqs();
     let html = `
       <h1 class="header">관리자 페이지</h1>
-      <section class="card" aria-label="관리자 권한 관리">
-        <h2>관리자 권한 관리</h2>
-        <input type="text" id="admin-add-input" placeholder="추가할 관리자 아이디 입력" aria-label="관리자 추가 아이디" />
-        <button onclick="handleAddAdmin()">추가</button>
-        <input type="text" id="admin-remove-input" placeholder="삭제할 관리자 아이디 입력" aria-label="관리자 삭제 아이디" />
-        <button onclick="handleRemoveAdmin()">삭제</button>
-        <p>현재 관리자 목록: ${admins.map(id => escapeHtml(id)).join(', ')}</p>
+      <section>
+        <h2>관리자 권한 사용자</h2>
+        <ul id="admin-list">
+    `;
+    adminUsers.forEach(user => {
+      html += `<li>${escapeHtml(user)} ${user !== superAdminId ? `<button onclick="removeAdminUser('${user}')">삭제</button>` : '(최고관리자)'}</li>`;
+    });
+    html += `
+        </ul>
+        <input type="text" id="add-admin-id" placeholder="관리자 추가할 아이디" aria-label="관리자 추가할 아이디" />
+        <button onclick="handleAddAdmin()">관리자 추가</button>
       </section>
-      <section class="card" aria-label="FAQ 관리">
+
+      <section style="margin-top:2rem;">
         <h2>FAQ 관리</h2>
-        <button onclick="renderFaqEdit()">FAQ 편집하기</button>
+        <button onclick="renderFaqEditor()">FAQ 편집하기</button>
+      </section>
+
+      <section style="margin-top:2rem;">
+        <h2>제보 관리</h2>
+        <button onclick="renderReportsEditor()">제보 편집하기</button>
       </section>
     `;
     return html;
   }
 
-  // FAQ 편집 화면 렌더링 (간단 예시)
-  function renderFaqEdit() {
+  // FAQ 편집 화면
+  function renderFaqEditor() {
     const faqs = getFaqs();
     let html = `
       <h1 class="header">FAQ 편집</h1>
-      <div id="faq-list-edit">
+      <section>
+        <button onclick="renderApp()">뒤로가기</button>
+        <button onclick="addFaq()">FAQ 추가</button>
+        <div id="faq-editor-list">
     `;
-    faqs.forEach((faq, idx) => {
+    faqs.forEach((faq, i) => {
       html += `
         <div class="card">
-          <input type="text" id="faq-question-${idx}" value="${escapeHtml(faq.question)}" />
-          <textarea id="faq-answer-${idx}" rows="4">${escapeHtml(faq.answer)}</textarea>
-          <button onclick="removeFaq(${idx})">삭제</button>
+          <input type="text" value="${escapeHtml(faq.question)}" placeholder="질문" oninput="updateFaqQuestion(${i}, this.value)" />
+          <textarea rows="4" oninput="updateFaqAnswer(${i}, this.value)">${escapeHtml(faq.answer)}</textarea>
+          <button onclick="removeFaq(${i})">삭제</button>
         </div>
       `;
     });
-    html += `
-      </div>
-      <button onclick="addFaq()">FAQ 추가</button>
-      <button onclick="saveFaq()">저장하기</button>
-      <button onclick="switchTab('admin')">취소</button>
-      <div id="faq-edit-message" role="alert" aria-live="polite"></div>
+    html += `</div></section>`;
+    app.innerHTML = renderSidebar('admin') + `<main class="content">${html}</main>`;
+  }
+
+  // 제보 편집 화면
+  function renderReportsEditor() {
+    const reports = getReports();
+    let html = `
+      <h1 class="header">제보 편집</h1>
+      <section>
+        <button onclick="renderApp()">뒤로가기</button>
+        <button onclick="addReport()">제보 추가</button>
+        <div id="report-editor-list">
     `;
+    reports.forEach((report, i) => {
+      html += `
+        <div class="card">
+          <input type="text" value="${escapeHtml(report.title)}" placeholder="제목" oninput="updateReportTitle(${i}, this.value)" />
+          <textarea rows="4" oninput="updateReportContent(${i}, this.value)">${escapeHtml(report.content)}</textarea>
+          <button onclick="removeReport(${i})">삭제</button>
+        </div>
+      `;
+    });
+    html += `</div></section>`;
     app.innerHTML = renderSidebar('admin') + `<main class="content">${html}</main>`;
   }
 
   // FAQ 편집 함수들
   function addFaq() {
-    const faqList = document.getElementById('faq-list-edit');
-    const idx = faqList.children.length;
-    const div = document.createElement('div');
-    div.className = 'card';
-    div.innerHTML = `
-      <input type="text" id="faq-question-${idx}" placeholder="질문 입력" />
-      <textarea id="faq-answer-${idx}" rows="4" placeholder="답변 입력"></textarea>
-      <button onclick="removeFaq(${idx})">삭제</button>
-    `;
-    faqList.appendChild(div);
+    const faqs = getFaqs();
+    faqs.push({question: '', answer: ''});
+    setFaqs(faqs);
+    renderFaqEditor();
+  }
+  function updateFaqQuestion(idx, val) {
+    const faqs = getFaqs();
+    faqs[idx].question = val;
+    setFaqs(faqs);
+  }
+  function updateFaqAnswer(idx, val) {
+    const faqs = getFaqs();
+    faqs[idx].answer = val;
+    setFaqs(faqs);
   }
   function removeFaq(idx) {
-    const faqList = document.getElementById('faq-list-edit');
-    if (faqList.children[idx]) {
-      faqList.removeChild(faqList.children[idx]);
-      // 재정렬 필요 (간단 구현 생략 가능)
-      renderFaqEdit(); 
-    }
-  }
-  function saveFaq() {
-    const faqList = document.getElementById('faq-list-edit');
-    const faqs = [];
-    for (let i = 0; i < faqList.children.length; i++) {
-      const q = faqList.children[i].querySelector(`#faq-question-${i}`).value.trim();
-      const a = faqList.children[i].querySelector(`#faq-answer-${i}`).value.trim();
-      if (q && a) {
-        faqs.push({question: q, answer: a});
-      }
-    }
+    const faqs = getFaqs();
+    faqs.splice(idx, 1);
     setFaqs(faqs);
-    document.getElementById('faq-edit-message').textContent = 'FAQ가 저장되었습니다.';
+    renderFaqEditor();
+  }
+
+  // 제보 편집 함수들
+  function addReport() {
+    const reports = getReports();
+    reports.push({title: '', content: ''});
+    setReports(reports);
+    renderReportsEditor();
+  }
+  function updateReportTitle(idx, val) {
+    const reports = getReports();
+    reports[idx].title = val;
+    setReports(reports);
+  }
+  function updateReportContent(idx, val) {
+    const reports = getReports();
+    reports[idx].content = val;
+    setReports(reports);
+  }
+  function removeReport(idx) {
+    const reports = getReports();
+    reports.splice(idx, 1);
+    setReports(reports);
+    renderReportsEditor();
+  }
+
+  // 관리자 추가 처리
+  function handleAddAdmin() {
+    const idInput = document.getElementById('add-admin-id');
+    const id = idInput.value.trim();
+    if (!id) {
+      alert('아이디를 입력해 주세요.');
+      return;
+    }
+    addAdminUser(id);
+    idInput.value = '';
+    renderApp();
   }
 
   // 제보 제출 처리
   function submitReport() {
-    const titleInput = document.getElementById('report-title-input');
-    const contentInput = document.getElementById('report-content-input');
-    const msgDiv = document.getElementById('submit-message');
+    const titleInput = document.getElementById('submit-title');
+    const contentInput = document.getElementById('submit-content');
+    const msgDiv = document.getElementById('submit-msg');
     const title = titleInput.value.trim();
     const content = contentInput.value.trim();
-    const author = getLoginUser();
-
     if (!title || !content) {
       msgDiv.textContent = '제목과 내용을 모두 입력해 주세요.';
       return;
     }
-
     const reports = getReports();
-    reports.push({title, content, author});
+    reports.push({title, content});
     setReports(reports);
-
     msgDiv.textContent = '제보가 정상적으로 제출되었습니다.';
     titleInput.value = '';
     contentInput.value = '';
-    renderApp();
+    renderApp('submit');
   }
 
-  // 탭 전환
+  // 탭 전환 처리
   function switchTab(tab) {
     currentTab = tab;
     renderApp();
   }
 
-  // 앱 렌더링
-  function renderApp() {
-    if (currentTab === 'login') {
-      renderLogin();
+  // 메인 렌더 함수
+  function renderApp(forceTab) {
+    const loginUser = getLoginUser();
+    if (!loginUser) {
+      currentTab = 'login';
+      app.innerHTML = renderLogin();
       return;
     }
+    if (forceTab) currentTab = forceTab;
 
-    const loginUser = getLoginUser();
-    app.innerHTML = renderSidebar(currentTab) + `<main class="content" role="main">`;
+    let sidebar = renderSidebar(currentTab);
+    let mainContent = '';
 
-    switch (currentTab) {
+    switch(currentTab) {
       case 'sniper':
-        app.innerHTML += renderSniper();
+        mainContent = renderSniper();
         break;
       case 'submit':
-        app.innerHTML += renderSubmit();
+        mainContent = renderSubmit();
         break;
       case 'faq':
-        app.innerHTML += renderFaq();
+        mainContent = renderFaq();
         break;
       case 'admin':
-        app.innerHTML += renderAdmin();
+        if (isAdmin(loginUser)) {
+          mainContent = renderAdmin();
+        } else {
+          mainContent = `<main class="content"><h1>접근 권한이 없습니다.</h1></main>`;
+        }
         break;
+      case 'login':
       default:
-        app.innerHTML += '<p>잘못된 탭입니다.</p>';
+        app.innerHTML = renderLogin();
+        return;
     }
-
-    app.innerHTML += '</main>';
+    app.innerHTML = sidebar + `<main class="content">${mainContent}</main>`;
   }
 
   // 초기 렌더링
   renderApp();
-
-  // 전역 함수 노출 (onclick 등에서 사용하기 위해)
-  window.handleLogin = handleLogin;
-  window.handleSignup = handleSignup;
-  window.logout = logout;
-  window.switchTab = switchTab;
-  window.submitReport = submitReport;
-  window.handleAddAdmin = () => {
-    const id = document.getElementById('admin-add-input').value.trim();
-    if (id) addAdminUser(id);
-    renderApp();
-  };
-  window.handleRemoveAdmin = () => {
-    const id = document.getElementById('admin-remove-input').value.trim();
-    if (id) removeAdminUser(id);
-    renderApp();
-  };
-  window.renderFaqEdit = renderFaqEdit;
-  window.addFaq = addFaq;
-  window.removeFaq = removeFaq;
-  window.saveFaq = saveFaq;
 
 </script>
 </body>
