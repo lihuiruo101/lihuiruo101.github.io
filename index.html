@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>YWE 스나이퍼 공식 사이트</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: #0a0a0a;
+      color: #0ff;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 220px;
+      background: #111;
+      padding-top: 30px;
+      box-shadow: 2px 0 10px #00ffcc55;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+    }
+    .sidebar a {
+      padding: 16px;
+      color: #0ff;
+      text-decoration: none;
+      cursor: pointer;
+      user-select: none;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background: #222;
+    }
+    .content {
+      margin-left: 220px;
+      padding: 20px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .header {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .card {
+      background: #121212;
+      border: 1px solid #00ffcc;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      position: relative;
+    }
+    .edit-pencil {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+      fill: #00ffcc;
+    }
+    .report-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+    textarea, input[type=text] {
+      width: 100%;
+      background: #111;
+      color: #0ff;
+      border: 1px solid #00ffcc;
+      border-radius: 5px;
+      padding: 8px;
+      font-family: 'Orbitron', monospace;
+      margin-bottom: 10px;
+    }
+    button {
+      background: #00ffcc;
+      border: none;
+      padding: 10px 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+      color: #000;
+      margin-right: 10px;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    img.preview {
+      max-width: 100%;
+      margin-bottom: 10px;
+      border: 1px solid #00ffcc;
+      border-radius: 6px;
+    }
+    .logout-btn {
+      margin-top: auto;
+      margin-bottom: 20px;
+      padding: 10px 16px;
+      background: #ff5555;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+      user-select: none;
+    }
+    .login-box {
+      background: #111;
+      padding: 40px;
+      border: 1px solid #00ffcc;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00ffcc44;
+      width: 320px;
+      margin: auto;
+      margin-top: 100px;
+      color: #00ffcc;
+    }
+    input.login-input, button.login-button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 4px;
+      border: none;
+      outline: none;
+    }
+    input.login-input {
+      background: #000;
+      color: #00ffcc;
+      border: 1px solid #00ffcc;
+    }
+    input.login-input::placeholder {
+      color: #00ffccaa;
+    }
+    button.login-button {
+      background: #00ffcc;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      border: 1px solid #00ffcc;
+    }
+    button.login-button:hover {
+      background: #00ddb3;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+  const adminId = 'lihuiruo101';
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // 간단한 마크다운 지원 (볼드, 이탤릭, 코드, 링크, 이미지)
+  function simpleMarkdown(text) {
+    if (!text) return '';
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+      .replace(/\*(.+?)\*/g, '<i>$1</i>')
+      .replace(/`(.+?)`/g, '<code>$1</code>')
+      .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" style="max-width:100%;margin:5px 0;border-radius:6px;"/>')
+      .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+      .replace(/\n/g, '<br>');
+  }
+
+  // 로그인 상태 확인
+  function getLoginUser() {
+    return localStorage.getItem('login');
+  }
+  function setLoginUser(id) {
+    localStorage.setItem('login', id);
+  }
+  function logout() {
+    localStorage.removeItem('login');
+    renderLogin();
+  }
+
+  // 회원 정보 저장/불러오기
+  function getUserPw(id) {
+    return localStorage.getItem('user_' + id);
+  }
+  function setUserPw(id, pw) {
+    localStorage.setItem('user_' + id, pw);
+  }
+
+  // 보고서, FAQ 저장소
+  const REPORTS_KEY = 'ywe_reports';
+  const FAQ_KEY = 'ywe_faq';
+
+  function getReports() {
+    return JSON.parse(localStorage.getItem(REPORTS_KEY) || '[]');
+  }
+  function setReports(reports) {
+    localStorage.setItem(REPORTS_KEY, JSON.stringify(reports));
+  }
+  function getFaqs() {
+    return JSON.parse(localStorage.getItem(FAQ_KEY) || '[]');
+  }
+  function setFaqs(faqs) {
+    localStorage.setItem(FAQ_KEY, JSON.stringify(faqs));
+  }
+
+  // 앱 메인 컨테이너
+  const app = document.getElementById('app');
+
+  // 화면 렌더링
+  function renderLogin() {
+    app.innerHTML = `
+      <div class="login-box">
+        <h2>YWE 로그인</h2>
+        <input id="id" class="login-input" placeholder="아이디" />
+        <input id="pw" class="login-input" placeholder="비밀번호" type="password" />
+        <button class="login-button" onclick="handleLogin()">로그인</button>
+        <button class="login-button" onclick="handleSignup()">회원가입</button>
+      </div>
+    `;
+  }
+
+  function handleLogin() {
+    const id = document.getElementById('id').value.trim();
+    const pw = document.getElementById('pw').value.trim();
+    if (!id || !pw) {
+      alert('아이디와 비밀번호를 모두 입력하세요.');
+      return;
+    }
+    const savedPw = getUserPw(id);
+    if (savedPw === pw) {
+      setLoginUser(id);
+      renderMain();
+    } else {
+      alert('아이디 또는 비밀번호가 일치하지 않습니다.');
+    }
+  }
+
+  function handleSignup() {
+    const id = document.getElementById('id').value.trim();
+    const pw = document.getElementById('pw').value.trim();
+    if (!id || !pw) {
+      alert('아이디와 비밀번호를 모두 입력하세요.');
+      return;
+    }
+    if (getUserPw(id)) {
+      alert('이미 존재하는 아이디입니다.');
+      return;
+    }
+    setUserPw(id, pw);
+    alert('회원가입이 완료되었습니다.');
+  }
+
+  // 사이드바 메뉴
+  function renderSidebar(active) {
+    const loginUser = getLoginUser();
+    return `
+      <nav class="sidebar">
+        <a href="#" id="nav-sniper" class="${active==='sniper'?'active':''}" onclick="switchTab('sniper')">스나이퍼</a>
+        <a href="#" id="nav-submit" class="${active==='submit'?'active':''}" onclick="switchTab('submit')">제보 신청</a>
+        <a href="#" id="nav-faq" class="${active==='faq'?'active':''}" onclick="switchTab('faq')">자주 묻는 질문</a>
+        <button class="logout-btn" onclick="logout()">로그아웃 (${escapeHtml(loginUser)})</button>
+      </nav>
+    `;
+  }
+
+  // 메인 콘텐츠 렌더 함수들
+  function renderSniper() {
+    const reports = getReports();
+    const loginUser = getLoginUser();
+    let html = `<h2 class="header">스나이퍼 - 사기꾼 목록</h2>`;
+    if (reports.length === 0) {
+      html += '<p>등록된 사기꾼이 없습니다.</p>';
+    } else {
+      reports.forEach((r,i) => {
+        html += `<div class="card">
+          <div class="report-title">${escapeHtml(r.title)}</div>
+          <div>작성자: ${escapeHtml(r.author)}</div>
+          <div>${simpleMarkdown(r.content)}</div>`;
+        if (r.images && r.images.length > 0) {
+          r.images.forEach(src => {
+            html += `<img class="preview" src="${src}" alt="이미지 증거" />`;
+          });
+        }
+        if (loginUser === adminId && r.author === adminId) {
+          html += `<svg class="edit-pencil" onclick="editReport(${i})" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" title="수정">
+            <path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zM21.41 6.34a1.25 1.25 0 000-1.77l-2.98-2.98a1.25 1.25 0 00-1.77 0l-1.83 1.83 4.75 4.75 1.83-1.83z"/>
+          </svg>`;
+        }
+        html += `</div>`;
+      });
+    }
+    return html;
+  }
+
+  function renderSubmit() {
+    return `
+      <h2 class="header">스나이퍼 제보 신청</h2>
+      <label>제목</label>
+      <input type="text" id="report-title" placeholder="제목을 입력하세요" />
+      <label>내용 (마크다운 지원)</label>
+      <textarea id="report-content" rows="6" placeholder="내용을 입력하세요..."></textarea>
+      <label>이미지 업로드</label>
+      <input type="file" id="report-images" multiple accept="image/*" onchange="previewImages(event)" />
+      <div id="image-preview" style="margin-top:10px;"></div>
+      <button onclick="submitReport()">제보 제출</button>
+    `;
+  }
+
+  // 이미지 미리보기용 전역 변수
+  let uploadedImages = [];
+
+  function previewImages(event) {
+    const files = event.target.files;
+    uploadedImages = [];
+    const preview = document.getElementById('image-preview');
+    preview.innerHTML = '';
+    for (const file of files) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedImages.push(e.target.result);
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.className = 'preview';
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function submitReport() {
+    const title = document.getElementById('report-title').value.trim();
+    const content = document.getElementById('report-content').value.trim();
+    const author = getLoginUser();
+    if (!title || !content) {
+      alert('제목과 내용을 입력해주세요.');
+      return;
+    }
+    const reports = getReports();
+    reports.unshift({ title, content, author, images: uploadedImages });
+    setReports(reports);
+    alert('제보가 등록되었습니다.');
+    switchTab('sniper');
+  }
