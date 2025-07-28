@@ -3,688 +3,833 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>YWE 스나이퍼 공식 사이트</title>
+<title>스나이퍼 공식 사이트 | YWE</title>
 <style>
-  /* Reset & 기본 네온 스타일 */
-  * {
-    margin: 0; padding: 0; box-sizing: border-box;
-  }
-  html, body {
-    height: 100%;
-    background: linear-gradient(135deg, #001122, #003355);
-    color: #00ffff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    user-select: none;
-  }
   body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-    padding: 30px 20px;
-    overflow-y: auto;
+    font-family: 'Malgun Gothic', Arial, sans-serif;
+    margin: 0; padding: 0; background: #f0f2f5; color: #222;
   }
-  h1 {
-    font-size: 3.2rem;
-    margin-bottom: 1rem;
-    text-shadow: 0 0 20px #00ffffcc;
-    letter-spacing: 0.15em;
-    user-select: none;
+  #container {
+    max-width: 960px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 25px 40px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    border-radius: 8px;
   }
-  .container {
-    background: #012233dd;
-    padding: 40px 50px;
-    border-radius: 25px;
-    box-shadow: 0 0 40px #00ffffaa;
-    width: 100%;
-    max-width: 800px;
-    min-height: 600px;
+  header {
+    border-bottom: 2px solid #2a8fbd;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
   }
-  label {
-    display: block;
-    margin-top: 20px;
-    font-weight: 700;
-    user-select: text;
-  }
-  input[type=text], input[type=password], textarea {
-    width: 100%;
-    padding: 14px 18px;
-    margin-top: 8px;
-    border-radius: 14px;
-    border: 2.5px solid #00ffffcc;
-    background: #001122;
-    color: #00ffff;
-    font-size: 1.25rem;
-    font-weight: 600;
-    box-shadow: inset 0 0 15px #00ffff88;
-    transition: 0.4s;
-    user-select: text;
-    resize: vertical;
-  }
-  input[type=text]:focus, input[type=password]:focus, textarea:focus {
-    outline: none;
-    border-color: #00ffff;
-    box-shadow: 0 0 35px #00ffffcc;
-    background: #003355;
-  }
-  button {
-    width: 100%;
-    padding: 18px 0;
-    margin-top: 30px;
-    border-radius: 16px;
-    border: none;
-    background: #00ffff;
-    color: #003344;
-    font-size: 1.4rem;
+  header h1 {
     font-weight: 900;
-    cursor: pointer;
-    box-shadow: 0 0 35px #00ffffbb;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    user-select: none;
+    color: #2a8fbd;
+    font-size: 2.5rem;
   }
-  button:hover:not(:disabled) {
-    background: #00e6cc;
-    box-shadow: 0 0 45px #00e6ccff;
+  nav {
+    margin-top: 10px;
   }
-  button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    box-shadow: none;
-  }
-  .link-button {
-    margin-top: 15px;
-    color: #00ffffcc;
-    text-align: center;
-    cursor: pointer;
-    user-select: none;
-    font-weight: 600;
+  nav button {
+    background: #2a8fbd;
+    color: #fff;
     border: none;
-    background: none;
+    margin-right: 10px;
+    padding: 8px 18px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s ease;
   }
-  .link-button:hover {
-    color: #00ffff;
-    text-decoration: underline;
+  nav button:hover {
+    background: #1e6f93;
   }
-  .message {
-    margin-top: 15px;
-    font-weight: 700;
-    min-height: 1.5em;
-    user-select: none;
+  #sidebar {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    width: 220px;
+    background: #ffffffdd;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    padding: 20px;
+    font-size: 0.9rem;
   }
-  .error {
-    color: #ff5555;
-    text-shadow: 0 0 8px #ff5555cc;
+  #sidebar strong {
+    display: inline-block;
+    width: 70px;
   }
-  .success {
-    color: #55ff55;
-    text-shadow: 0 0 8px #55ff55cc;
+  main h2 {
+    color: #2a8fbd;
+    margin-top: 0;
   }
-  /* 관리자 제보 리스트 */
-  #report-list {
-    max-height: 300px;
-    overflow-y: auto;
-    margin-top: 20px;
-    border: 2px solid #00ffffaa;
-    border-radius: 12px;
-    padding: 15px;
-    background: #003344dd;
-  }
-  #report-list h2 {
-    text-align: center;
-    margin-bottom: 12px;
-    font-weight: 900;
-    letter-spacing: 0.1em;
-    user-select: none;
-  }
-  #report-list ul {
+  ul {
     list-style: none;
     padding-left: 0;
   }
-  #report-list li {
-    padding: 12px 15px;
-    margin-bottom: 12px;
-    background: #004466cc;
-    border-radius: 12px;
-    font-size: 1.05rem;
-    word-break: break-word;
-    user-select: text;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  ul li {
+    margin-bottom: 18px;
+    border-bottom: 1px solid #e3e3e3;
+    padding-bottom: 15px;
   }
-  #report-list li button.delete-report-btn {
-    background: #ff4444;
-    border: none;
-    border-radius: 12px;
-    padding: 6px 12px;
-    color: white;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 0 10px #ff4444bb;
-    transition: background 0.3s ease;
+  ul li strong {
+    font-size: 1.1rem;
   }
-  #report-list li button.delete-report-btn:hover {
-    background: #ff2222;
-  }
-  /* 사이드바 */
-  #sidebar {
-    position: fixed;
-    right: 10px;
-    top: 50px;
-    width: 300px;
-    background: #001f3fdd;
-    border: 2px solid #00ffffcc;
-    border-radius: 15px;
-    box-shadow: 0 0 30px #00ffffcc;
-    padding: 20px;
-    color: #00ffff;
-    font-weight: 700;
-    user-select: text;
+  .markdown {
+    margin-top: 8px;
     font-size: 1rem;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  #sidebar h3 {
-    margin-bottom: 15px;
-    text-align: center;
-    text-shadow: 0 0 8px #00ffffcc;
-  }
-  #sidebar p {
-    margin: 8px 0;
-    word-break: break-word;
-  }
-  /* 반응형 */
-  @media screen and (max-width: 720px) {
-    #sidebar {
-      position: static;
-      width: 100%;
-      max-height: none;
-      margin-top: 30px;
-      box-shadow: none;
-      border: none;
-      background: transparent;
-      padding: 0;
-    }
-    body {
-      padding: 20px 10px;
-    }
-    .container {
-      max-width: 100%;
-      border-radius: 12px;
-      padding: 30px 25px;
-      min-height: auto;
-    }
-  }
-  /* 이미지 미리보기 */
-  .image-preview {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 10px;
+    line-height: 1.5em;
   }
   .image-preview img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 12px;
-    box-shadow: 0 0 10px #00ffffbb;
+    max-width: 140px;
+    margin-right: 10px;
+    border-radius: 4px;
+    vertical-align: middle;
   }
-  /* 마크다운 스타일 (간단하게) */
-  .markdown {
-    white-space: pre-wrap;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  button.btn-small {
+    background: #eee;
+    color: #333;
+    font-size: 0.85rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-left: 8px;
   }
-  .markdown h1 { font-size: 2rem; }
-  .markdown h2 { font-size: 1.75rem; }
-  .markdown h3 { font-size: 1.5rem; }
-  .markdown strong { font-weight: 900; }
-  .markdown em { font-style: italic; }
-  .markdown code {
-    background: #002233;
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-family: monospace;
+  button.btn-small:hover {
+    background: #ccc;
   }
-  .markdown a {
-    color: #00ffff;
-    text-decoration: underline;
+  form label {
+    font-weight: 600;
+    display: block;
+    margin: 15px 0 5px 0;
+  }
+  form input[type="text"], form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: 'Malgun Gothic', Arial, sans-serif;
+  }
+  form textarea {
+    resize: vertical;
+    min-height: 140px;
+  }
+  form button {
+    margin-top: 20px;
+    background: #2a8fbd;
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  form button:hover {
+    background: #1e6f93;
+  }
+  .message.error {
+    color: #d93333;
+    margin-top: 10px;
+    font-size: 0.9rem;
+  }
+  .message.success {
+    color: #2a9d2a;
+    margin-top: 10px;
+    font-size: 0.9rem;
   }
 </style>
 </head>
 <body>
+<div id="container">
+  <header>
+    <h1>스나이퍼 공식 사이트 | YWE</h1>
+    <nav>
+      <button id="nav-login">로그인</button>
+      <button id="nav-signup">회원가입</button>
+      <button id="nav-main" style="display:none;">홈</button>
+      <button id="nav-logout" style="display:none;">로그아웃</button>
+    </nav>
+  </header>
 
-<h1>YWE 스나이퍼 공식 사이트</h1>
-<div class="container" id="app">
-  <!-- JS 렌더 영역 -->
-</div>
+  <aside id="sidebar">
+    <div><strong>사용자:</strong> <span id="sidebar-userid">-</span></div>
+    <div id="sidebar-ip-wrapper" style="display:none;"><strong>IP:</strong> <span id="sidebar-ip">알 수 없음</span></div>
+  </aside>
 
-<div id="sidebar" aria-label="유저 정보 사이드바">
-  <h3>사용자 정보</h3>
-  <p><strong>아이디: </strong><span id="sidebar-userid">-</span></p>
-  <p id="sidebar-ip-wrapper" style="display:none;"><strong>IP 주소: </strong><span id="sidebar-ip">로딩 중...</span></p>
+  <main id="app">
+    <!-- 여기에 로그인, 회원가입, FAQ, 스나이퍼 내용 렌더링 -->
+  </main>
 </div>
 
 <script>
-'use strict';
+  // 상수 및 상태
+  const FAQ_KEY = 'ywe_faqs';
+  const SNIPER_KEY = 'ywe_snipers';
+  const USER_KEY = 'ywe_users';
+  const ADMIN_ID = 'admin';
 
-const USERS_KEY = 'ywe_users';
-const REPORTS_KEY = 'ywe_reports';
-const FAQ_KEY = 'ywe_faq';
-const SNIPER_KEY = 'ywe_snipers';
-
-const ADMIN_ID = 'lihuiruo101';
-
-let currentUserId = null;
-let state = {
-  page: 'login', // login, signup, main, findPw, resetPw, report, adminReports, faq, sniperAdd, faqAdd
-  findPwUserId: null,
-  findPwVerified: false,
-  messages: { error: '', success: '' },
-  faqEditingId: null,
-  sniperEditingId: null,
-};
-
-// HTML 이스케이프 함수
-function escapeHtml(text) {
-  if (!text) return '';
-  return text.replace(/[&<>"']/g, m => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  })[m]);
-}
-
-// 간단한 마크다운 파서 (제목, 굵게, 기울임, 링크, 코드 블록 일부 지원)
-function parseMarkdown(text) {
-  if (!text) return '';
-  // 간단한 변환: 제목 (#, ##, ###), 굵게(**text**), 기울임(*text*), 링크 [text](url), 코드 `code`
-  let html = escapeHtml(text);
-  html = html.replace(/^### (.*)$/gm, '<h3>$1</h3>');
-  html = html.replace(/^## (.*)$/gm, '<h2>$1</h2>');
-  html = html.replace(/^# (.*)$/gm, '<h1>$1</h1>');
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-  html = html.replace(/([^]+)\]([^)]+)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-  html = html.replace(/\n/g, '<br>');
-  return html;
-}
-
-// 로컬스토리지 불러오기/저장 함수들
-function loadUsers() {
-  return JSON.parse(localStorage.getItem(USERS_KEY) || '{}');
-}
-function saveUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-}
-function loadReports() {
-  return JSON.parse(localStorage.getItem(REPORTS_KEY) || '[]');
-}
-function saveReports(reports) {
-  localStorage.setItem(REPORTS_KEY, JSON.stringify(reports));
-}
-function loadFaqs() {
-  return JSON.parse(localStorage.getItem(FAQ_KEY) || '[]');
-}
-function saveFaqs(faqs) {
-  localStorage.setItem(FAQ_KEY, JSON.stringify(faqs));
-}
-function loadSnipers() {
-  return JSON.parse(localStorage.getItem(SNIPER_KEY) || '[]');
-}
-function saveSnipers(snipers) {
-  localStorage.setItem(SNIPER_KEY, JSON.stringify(snipers));
-}
-
-// 사용자 정보 표시 (사이드바)
-function updateSidebar() {
-  const useridSpan = document.getElementById('sidebar-userid');
-  const ipWrapper = document.getElementById('sidebar-ip-wrapper');
-  const ipSpan = document.getElementById('sidebar-ip');
-
-  if (!currentUserId) {
-    useridSpan.textContent = '-';
-    ipWrapper.style.display = 'none';
-    return;
-  }
-  useridSpan.textContent = currentUserId;
-
-  // 관리자만 IP 노출
-  if (currentUserId === ADMIN_ID) {
-    ipWrapper.style.display = 'block';
-    getUserIP().then(ip => {
-      ipSpan.textContent = ip || '알 수 없음';
-    });
-  } else {
-    ipWrapper.style.display = 'none';
-  }
-}
-
-// 외부 IP 가져오기 (간단한 공개 API 사용)
-async function getUserIP() {
-  try {
-    const res = await fetch('https://api.ipify.org?format=json');
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.ip;
-  } catch {
-    return null;
-  }
-}
-
-// 로그인 폼 렌더링
-function renderLogin() {
-  const html = `
-    <h2>로그인</h2>
-    <label for="login-id">아이디</label>
-    <input type="text" id="login-id" autocomplete="username" />
-    <label for="login-pw">비밀번호</label>
-    <input type="password" id="login-pw" autocomplete="current-password" />
-    <button id="btn-login">로그인</button>
-    <button class="link-button" id="go-signup">회원가입</button>
-    <div class="message error">${escapeHtml(state.messages.error)}</div>
-  `;
-  document.getElementById('app').innerHTML = html;
-
-  document.getElementById('btn-login').onclick = () => {
-    const id = document.getElementById('login-id').value.trim();
-    const pw = document.getElementById('login-pw').value;
-    const users = loadUsers();
-    if (!id || !pw) {
-      state.messages.error = '아이디와 비밀번호를 입력해주세요.';
-      renderLogin();
-      return;
-    }
-    if (!users[id] || users[id].password !== pw) {
-      state.messages.error = '아이디 또는 비밀번호가 올바르지 않습니다.';
-      renderLogin();
-      return;
-    }
-    currentUserId = id;
-    state.messages.error = '';
-    state.page = 'main';
-    updateSidebar();
-    renderMain();
+  let currentUserId = null;
+  const state = {
+    page: 'login',
+    messages: { error: '' },
+    faqEditingId: null,
+    sniperEditingId: null
   };
 
-  document.getElementById('go-signup').onclick = () => {
+  // HTML 이스케이프
+  function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/[&<>"']/g, c => {
+      switch(c) {
+        case '&': return '&amp;';
+        case '<': return '&lt;';
+        case '>': return '&gt;';
+        case '"': return '&quot;';
+        case "'": return '&#39;';
+      }
+    });
+  }
+
+  // 로컬스토리지 데이터 불러오기/저장하기
+  function loadUsers() {
+    return JSON.parse(localStorage.getItem(USER_KEY) || '{}');
+  }
+  function saveUsers(users) {
+    localStorage.setItem(USER_KEY, JSON.stringify(users));
+  }
+  function loadFaqs() {
+    return JSON.parse(localStorage.getItem(FAQ_KEY) || '[]');
+  }
+  function saveFaqs(faqs) {
+    localStorage.setItem(FAQ_KEY, JSON.stringify(faqs));
+  }
+  function loadSnipers() {
+    return JSON.parse(localStorage.getItem(SNIPER_KEY) || '[]');
+  }
+  function saveSnipers(snipers) {
+    localStorage.setItem(SNIPER_KEY, JSON.stringify(snipers));
+  }
+
+  // 관리자 여부
+  function isAdmin() {
+    if (!currentUserId) return false;
+    const users = loadUsers();
+    return users[currentUserId] && users[currentUserId].isAdmin === true;
+  }
+
+  // 고유 ID 생성
+  function generateUniqueId() {
+    return Math.random().toString(36).slice(2,11);
+  }
+
+  // IP 가져오기
+  async function getUserIP() {
+    try {
+      const res = await fetch('https://api.ipify.org?format=json');
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.ip;
+    } catch {
+      return null;
+    }
+  }
+
+  // 사이드바 업데이트
+  async function updateSidebar() {
+    document.getElementById('sidebar-userid').textContent = currentUserId || '-';
+    const ipWrapper = document.getElementById('sidebar-ip-wrapper');
+    const ipSpan = document.getElementById('sidebar-ip');
+    if (currentUserId === ADMIN_ID) {
+      ipWrapper.style.display = 'block';
+      const ip = await getUserIP();
+      ipSpan.textContent = ip || '알 수 없음';
+    } else {
+      ipWrapper.style.display = 'none';
+    }
+  }
+
+  // 마크다운 아주 간단 변환 (제목, 굵게, 기울임)
+  function parseMarkdown(text) {
+    if (!text) return '';
+    let html = escapeHtml(text);
+    html = html.replace(/^### (.*)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^## (.*)$/gm, '<h2>$1</h2>');
+    html = html.replace(/^# (.*)$/gm, '<h1>$1</h1>');
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    html = html.replace(/\n/g, '<br/>');
+    return html;
+  }
+
+  // 렌더링 함수들
+
+  // 로그인 화면
+  function renderLogin() {
+    state.page = 'login';
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+    const h2 = document.createElement('h2');
+    h2.textContent = '로그인';
+    app.appendChild(h2);
+
+    const labelId = document.createElement('label');
+    labelId.textContent = '아이디';
+    labelId.setAttribute('for', 'login-id');
+    app.appendChild(labelId);
+
+    const inputId = document.createElement('input');
+    inputId.type = 'text';
+    inputId.id = 'login-id';
+    inputId.autocomplete = 'username';
+    app.appendChild(inputId);
+
+    const labelPw = document.createElement('label');
+    labelPw.textContent = '비밀번호';
+    labelPw.setAttribute('for', 'login-pw');
+    app.appendChild(labelPw);
+
+    const inputPw = document.createElement('input');
+    inputPw.type = 'password';
+    inputPw.id = 'login-pw';
+    inputPw.autocomplete = 'current-password';
+    app.appendChild(inputPw);
+
+    const btnLogin = document.createElement('button');
+    btnLogin.id = 'btn-login';
+    btnLogin.textContent = '로그인';
+    app.appendChild(btnLogin);
+
+    const btnSignupLink = document.createElement('button');
+    btnSignupLink.className = 'link-button';
+    btnSignupLink.id = 'go-signup';
+    btnSignupLink.textContent = '회원가입';
+    app.appendChild(btnSignupLink);
+
+    const msgError = document.createElement('div');
+    msgError.className = 'message error';
+    msgError.id = 'login-error';
+    msgError.textContent = state.messages.error || '';
+    app.appendChild(msgError);
+
+    btnLogin.onclick = () => {
+      const id = inputId.value.trim();
+      const pw = inputPw.value;
+      const users = loadUsers();
+      if (!id || !pw) {
+        state.messages.error = '아이디와 비밀번호를 입력해주세요.';
+        renderLogin();
+        return;
+      }
+      if (!users[id] || users[id].password !== pw) {
+        state.messages.error = '아이디 또는 비밀번호가 올바르지 않습니다.';
+        renderLogin();
+        return;
+      }
+      currentUserId = id;
+      state.messages.error = '';
+      updateSidebar();
+      renderMain();
+      updateNavButtons();
+    };
+
+    btnSignupLink.onclick = () => {
+      state.messages.error = '';
+      renderSignup();
+      updateNavButtons();
+    };
+  }
+
+  // 회원가입 화면
+  function renderSignup() {
     state.page = 'signup';
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+
+    const h2 = document.createElement('h2');
+    h2.textContent = '회원가입';
+    app.appendChild(h2);
+
+    const labelId = document.createElement('label');
+    labelId.textContent = '아이디';
+    labelId.setAttribute('for', 'signup-id');
+    app.appendChild(labelId);
+
+    const inputId = document.createElement('input');
+    inputId.type = 'text';
+    inputId.id = 'signup-id';
+    inputId.autocomplete = 'username';
+    app.appendChild(inputId);
+
+    const labelPw = document.createElement('label');
+    labelPw.textContent = '비밀번호';
+    labelPw.setAttribute('for', 'signup-pw');
+    app.appendChild(labelPw);
+
+    const inputPw = document.createElement('input');
+    inputPw.type = 'password';
+    inputPw.id = 'signup-pw';
+    inputPw.autocomplete = 'new-password';
+    app.appendChild(inputPw);
+
+    const labelPw2 = document.createElement('label');
+    labelPw2.textContent = '비밀번호 확인';
+    labelPw2.setAttribute('for', 'signup-pw2');
+    app.appendChild(labelPw2);
+
+    const inputPw2 = document.createElement('input');
+    inputPw2.type = 'password';
+    inputPw2.id = 'signup-pw2';
+    inputPw2.autocomplete = 'new-password';
+    app.appendChild(inputPw2);
+
+    const btnSignup = document.createElement('button');
+    btnSignup.id = 'btn-signup';
+    btnSignup.textContent = '회원가입';
+    app.appendChild(btnSignup);
+
+    const btnLoginLink = document.createElement('button');
+    btnLoginLink.className = 'link-button';
+    btnLoginLink.id = 'go-login';
+    btnLoginLink.textContent = '로그인';
+    app.appendChild(btnLoginLink);
+
+    const msgError = document.createElement('div');
+    msgError.className = 'message error';
+    msgError.id = 'signup-error';
+    msgError.textContent = state.messages.error || '';
+    app.appendChild(msgError);
+
+    btnSignup.onclick = () => {
+      const id = inputId.value.trim();
+      const pw = inputPw.value;
+      const pw2 = inputPw2.value;
+      const users = loadUsers();
+
+      if (!id || !pw || !pw2) {
+        state.messages.error = '모든 항목을 입력해주세요.';
+        renderSignup();
+        return;
+      }
+      if (users[id]) {
+        state.messages.error = '이미 존재하는 아이디입니다.';
+        renderSignup();
+        return;
+      }
+      if (pw !== pw2) {
+        state.messages.error = '비밀번호가 일치하지 않습니다.';
+        renderSignup();
+        return;
+      }
+      users[id] = { password: pw, isAdmin: false };
+      saveUsers(users);
+      alert('회원가입이 완료되었습니다. 로그인 해주세요.');
+      state.messages.error = '';
+      renderLogin();
+      updateNavButtons();
+    };
+
+    btnLoginLink.onclick = () => {
+      state.messages.error = '';
+      renderLogin();
+      updateNavButtons();
+    };
+  }
+
+  // 메인 화면 (FAQ + 스나이퍼 목록)
+  function renderMain() {
+    state.page = 'main';
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+
+    // FAQ Section
+    const h2faq = document.createElement('h2');
+    h2faq.textContent = 'FAQ';
+    app.appendChild(h2faq);
+
+    const faqList = document.createElement('ul');
+    const faqs = loadFaqs();
+    faqs.forEach(faq => {
+      const li = document.createElement('li');
+      const title = document.createElement('strong');
+      title.textContent = faq.title;
+      li.appendChild(title);
+
+      const desc = document.createElement('div');
+      desc.className = 'markdown';
+      desc.innerHTML = parseMarkdown(faq.description);
+      li.appendChild(desc);
+
+      if (isAdmin()) {
+        const btnEdit = document.createElement('button');
+        btnEdit.textContent = '수정';
+        btnEdit.className = 'btn-small';
+        btnEdit.onclick = () => {
+          state.faqEditingId = faq.id;
+          renderFaqAddEdit();
+        };
+        li.appendChild(btnEdit);
+
+        const btnDel = document.createElement('button');
+        btnDel.textContent = '삭제';
+        btnDel.className = 'btn-small';
+        btnDel.onclick = () => {
+          if (confirm('정말 삭제하시겠습니까?')) {
+            deleteFaq(faq.id);
+          }
+        };
+        li.appendChild(btnDel);
+      }
+
+      faqList.appendChild(li);
+    });
+    app.appendChild(faqList);
+
+    if (isAdmin()) {
+      const btnAddFaq = document.createElement('button');
+      btnAddFaq.textContent = 'FAQ 추가';
+      btnAddFaq.onclick = () => {
+        state.faqEditingId = null;
+        renderFaqAddEdit();
+      };
+      app.appendChild(btnAddFaq);
+    }
+
+    // Sniper Section
+    const h2sniper = document.createElement('h2');
+    h2sniper.textContent = '스나이퍼';
+    app.appendChild(h2sniper);
+
+    const sniperList = document.createElement('ul');
+    const snipers = loadSnipers();
+    snipers.forEach(snip => {
+      const li = document.createElement('li');
+      const title = document.createElement('strong');
+      title.textContent = snip.title;
+      li.appendChild(title);
+
+      const desc = document.createElement('div');
+      desc.className = 'markdown';
+      desc.innerHTML = parseMarkdown(snip.description);
+      li.appendChild(desc);
+
+      if (snip.images && snip.images.length) {
+        const imgWrapper = document.createElement('div');
+        imgWrapper.className = 'image-preview';
+        snip.images.forEach(src => {
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = '스나이퍼 이미지';
+          imgWrapper.appendChild(img);
+        });
+        li.appendChild(imgWrapper);
+      }
+
+      if (isAdmin()) {
+        const btnEdit = document.createElement('button');
+        btnEdit.textContent = '수정';
+        btnEdit.className = 'btn-small';
+        btnEdit.onclick = () => {
+          state.sniperEditingId = snip.id;
+          renderSniperAddEdit();
+        };
+        li.appendChild(btnEdit);
+
+        const btnDel = document.createElement('button');
+        btnDel.textContent = '삭제';
+        btnDel.className = 'btn-small';
+        btnDel.onclick = () => {
+          if (confirm('정말 삭제하시겠습니까?')) {
+            deleteSniper(snip.id);
+          }
+        };
+        li.appendChild(btnDel);
+      }
+
+      sniperList.appendChild(li);
+    });
+    app.appendChild(sniperList);
+
+    if (isAdmin()) {
+      const btnAddSniper = document.createElement('button');
+      btnAddSniper.textContent = '스나이퍼 추가';
+      btnAddSniper.onclick = () => {
+        state.sniperEditingId = null;
+        renderSniperAddEdit();
+      };
+      app.appendChild(btnAddSniper);
+    }
+  }
+
+  // FAQ 추가/수정 폼
+function renderFaqAddEdit() {
+  state.page = 'faq-edit';
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  const faqs = loadFaqs();
+  let editingFaq = null;
+  if (state.faqEditingId) {
+    editingFaq = faqs.find(f => f.id === state.faqEditingId);
+  }
+
+  const h2 = document.createElement('h2');
+  h2.textContent = editingFaq ? 'FAQ 수정' : 'FAQ 추가';
+  app.appendChild(h2);
+
+  const labelTitle = document.createElement('label');
+  labelTitle.textContent = '제목';
+  labelTitle.setAttribute('for', 'faq-title');
+  app.appendChild(labelTitle);
+
+  const inputTitle = document.createElement('input');
+  inputTitle.type = 'text';
+  inputTitle.id = 'faq-title';
+  inputTitle.value = editingFaq ? editingFaq.title : '';
+  app.appendChild(inputTitle);
+
+  const labelDesc = document.createElement('label');
+  labelDesc.textContent = '설명 (마크다운 지원)';
+  labelDesc.setAttribute('for', 'faq-description');
+  app.appendChild(labelDesc);
+
+  const textareaDesc = document.createElement('textarea');
+  textareaDesc.id = 'faq-description';
+  textareaDesc.value = editingFaq ? editingFaq.description : '';
+  app.appendChild(textareaDesc);
+
+  const btnSave = document.createElement('button');
+  btnSave.textContent = '저장';
+  app.appendChild(btnSave);
+
+  const btnCancel = document.createElement('button');
+  btnCancel.textContent = '취소';
+  btnCancel.style.marginLeft = '10px';
+  app.appendChild(btnCancel);
+
+  const msgError = document.createElement('div');
+  msgError.className = 'message error';
+  msgError.id = 'faq-edit-error';
+  app.appendChild(msgError);
+
+  btnSave.onclick = () => {
+    const title = inputTitle.value.trim();
+    const description = textareaDesc.value.trim();
+
+    if (!title || !description) {
+      msgError.textContent = '제목과 설명을 모두 입력해주세요.';
+      return;
+    }
+
+    if (editingFaq) {
+      // 수정
+      const idx = faqs.findIndex(f => f.id === editingFaq.id);
+      if (idx !== -1) {
+        faqs[idx].title = title;
+        faqs[idx].description = description;
+        saveFaqs(faqs);
+        state.faqEditingId = null;
+        renderMain();
+        updateNavButtons();
+      }
+    } else {
+      // 새로 추가
+      const newFaq = {
+        id: generateUniqueId(),
+        title,
+        description
+      };
+      faqs.push(newFaq);
+      saveFaqs(faqs);
+      renderMain();
+      updateNavButtons();
+    }
+  };
+
+  btnCancel.onclick = () => {
+    state.faqEditingId = null;
+    state.messages.error = '';
+    renderMain();
+    updateNavButtons();
+  };
+}
+
+// FAQ 삭제 함수
+function deleteFaq(faqId) {
+  let faqs = loadFaqs();
+  faqs = faqs.filter(f => f.id !== faqId);
+  saveFaqs(faqs);
+  renderMain();
+  updateNavButtons();
+}
+
+// 스나이퍼 추가/수정 폼
+function renderSniperAddEdit() {
+  state.page = 'sniper-edit';
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  const snipers = loadSnipers();
+  let editingSniper = null;
+  if (state.sniperEditingId) {
+    editingSniper = snipers.find(s => s.id === state.sniperEditingId);
+  }
+
+  const h2 = document.createElement('h2');
+  h2.textContent = editingSniper ? '스나이퍼 수정' : '스나이퍼 추가';
+  app.appendChild(h2);
+
+  const labelTitle = document.createElement('label');
+  labelTitle.textContent = '제목';
+  labelTitle.setAttribute('for', 'sniper-title');
+  app.appendChild(labelTitle);
+
+  const inputTitle = document.createElement('input');
+  inputTitle.type = 'text';
+  inputTitle.id = 'sniper-title';
+  inputTitle.value = editingSniper ? editingSniper.title : '';
+  app.appendChild(inputTitle);
+
+  const labelDesc = document.createElement('label');
+  labelDesc.textContent = '설명 (마크다운 지원)';
+  labelDesc.setAttribute('for', 'sniper-description');
+  app.appendChild(labelDesc);
+
+  const textareaDesc = document.createElement('textarea');
+  textareaDesc.id = 'sniper-description';
+  textareaDesc.value = editingSniper ? editingSniper.description : '';
+  app.appendChild(textareaDesc);
+
+  const labelImages = document.createElement('label');
+  labelImages.textContent = '이미지 URL (콤마(,)로 구분)';
+  labelImages.setAttribute('for', 'sniper-images');
+  app.appendChild(labelImages);
+
+  const inputImages = document.createElement('input');
+  inputImages.type = 'text';
+  inputImages.id = 'sniper-images';
+  inputImages.value = editingSniper ? editingSniper.images.join(',') : '';
+  app.appendChild(inputImages);
+
+  const btnSave = document.createElement('button');
+  btnSave.textContent = '저장';
+  app.appendChild(btnSave);
+
+  const btnCancel = document.createElement('button');
+  btnCancel.textContent = '취소';
+  btnCancel.style.marginLeft = '10px';
+  app.appendChild(btnCancel);
+
+  const msgError = document.createElement('div');
+  msgError.className = 'message error';
+  msgError.id = 'sniper-edit-error';
+  app.appendChild(msgError);
+
+  btnSave.onclick = () => {
+    const title = inputTitle.value.trim();
+    const description = textareaDesc.value.trim();
+    const imagesRaw = inputImages.value.trim();
+
+    if (!title || !description) {
+      msgError.textContent = '제목과 설명을 모두 입력해주세요.';
+      return;
+    }
+
+    const images = imagesRaw ? imagesRaw.split(',').map(s => s.trim()).filter(s => s) : [];
+
+    if (editingSniper) {
+      const idx = snipers.findIndex(s => s.id === editingSniper.id);
+      if (idx !== -1) {
+        snipers[idx].title = title;
+        snipers[idx].description = description;
+        snipers[idx].images = images;
+        saveSnipers(snipers);
+        state.sniperEditingId = null;
+        renderMain();
+        updateNavButtons();
+      }
+    } else {
+      const newSniper = {
+        id: generateUniqueId(),
+        title,
+        description,
+        images
+      };
+      snipers.push(newSniper);
+      saveSnipers(snipers);
+      renderMain();
+      updateNavButtons();
+    }
+  };
+
+  btnCancel.onclick = () => {
+    state.sniperEditingId = null;
+    state.messages.error = '';
+    renderMain();
+    updateNavButtons();
+  };
+}
+
+// 스나이퍼 삭제 함수
+function deleteSniper(sniperId) {
+  let snipers = loadSnipers();
+  snipers = snipers.filter(s => s.id !== sniperId);
+  saveSnipers(snipers);
+  renderMain();
+  updateNavButtons();
+}
+
+// 네비게이션 버튼 상태 업데이트
+function updateNavButtons() {
+  const navLogin = document.getElementById('nav-login');
+  const navSignup = document.getElementById('nav-signup');
+  const navMain = document.getElementById('nav-main');
+  const navLogout = document.getElementById('nav-logout');
+
+  if (currentUserId) {
+    navLogin.style.display = 'none';
+    navSignup.style.display = 'none';
+    navMain.style.display = 'inline-block';
+    navLogout.style.display = 'inline-block';
+  } else {
+    navLogin.style.display = 'inline-block';
+    navSignup.style.display = 'inline-block';
+    navMain.style.display = 'none';
+    navLogout.style.display = 'none';
+  }
+}
+
+// 초기 네비게이션 버튼 이벤트 연결
+function initNavEvents() {
+  document.getElementById('nav-login').onclick = () => {
+    state.messages.error = '';
+    renderLogin();
+    updateNavButtons();
+  };
+  document.getElementById('nav-signup').onclick = () => {
     state.messages.error = '';
     renderSignup();
+    updateNavButtons();
   };
-}
-
-// 회원가입 폼 렌더링
-function renderSignup() {
-  const html = `
-    <h2>회원가입</h2>
-    <label for="signup-id">아이디</label>
-    <input type="text" id="signup-id" autocomplete="username" />
-    <label for="signup-pw">비밀번호</label>
-    <input type="password" id="signup-pw" autocomplete="new-password" />
-    <label for="signup-pw2">비밀번호 확인</label>
-    <input type="password" id="signup-pw2" autocomplete="new-password" />
-    <button id="btn-signup">회원가입</button>
-    <button class="link-button" id="go-login">로그인</button>
-    <div class="message error">${escapeHtml(state.messages.error)}</div>
-  `;
-  document.getElementById('app').innerHTML = html;
-
-  document.getElementById('btn-signup').onclick = () => {
-    const id = document.getElementById('signup-id').value.trim();
-    const pw = document.getElementById('signup-pw').value;
-    const pw2 = document.getElementById('signup-pw2').value;
-    const users = loadUsers();
-
-    if (!id || !pw || !pw2) {
-      state.messages.error = '모든 항목을 입력해주세요.';
-      renderSignup();
-      return;
-    }
-    if (users[id]) {
-      state.messages.error = '이미 존재하는 아이디입니다.';
-      renderSignup();
-      return;
-    }
-    if (pw !== pw2) {
-      state.messages.error = '비밀번호가 일치하지 않습니다.';
-      renderSignup();
-      return;
-    }
-    users[id] = { password: pw, isAdmin: false };
-    saveUsers(users);
-    state.messages.error = '';
-    alert('회원가입이 완료되었습니다. 로그인 해주세요.');
-    state.page = 'login';
-    renderLogin();
+  document.getElementById('nav-main').onclick = () => {
+    renderMain();
+    updateNavButtons();
   };
-
-  document.getElementById('go-login').onclick = () => {
-    state.page = 'login';
-    state.messages.error = '';
-    renderLogin();
-  };
-}
-
-// 메인 화면 (FAQ 목록 + 스나이퍼 목록 + 관리자 버튼)
-function renderMain() {
-  const faqs = loadFaqs();
-  const snipers = loadSnipers();
-
-  let html = `
-    <h2>FAQ</h2>
-    <ul>
-      ${faqs.map(faq => `
-        <li>
-          <strong>${escapeHtml(faq.title)}</strong><br />
-          <div class="markdown">${parseMarkdown(faq.description)}</div>
-          ${isAdmin() ? `<button data-id="${faq.id}" class="btn-faq-edit">수정</button>
-          <button data-id="${faq.id}" class="btn-faq-delete">삭제</button>` : ''}
-        </li>
-      `).join('')}
-    </ul>
-    ${isAdmin() ? `<button id="btn-faq-add">FAQ 추가</button>` : ''}
-
-    <h2>스나이퍼</h2>
-    <ul>
-      ${snipers.map(snip => `
-        <li>
-          <strong>${escapeHtml(snip.title)}</strong><br />
-          <div class="markdown">${parseMarkdown(snip.description)}</div>
-          <div class="image-preview">
-            ${snip.images.map(src => `<img src="${src}" alt="스나이퍼 이미지" />`).join('')}
-          </div>
-          ${isAdmin() ? `<button data-id="${snip.id}" class="btn-sniper-edit">수정</button>
-          <button data-id="${snip.id}" class="btn-sniper-delete">삭제</button>` : ''}
-        </li>
-      `).join('')}
-    </ul>
-    ${isAdmin() ? `<button id="btn-sniper-add">스나이퍼 추가</button>` : ''}
-
-    <button id="btn-logout">로그아웃</button>
-  `;
-
-  document.getElementById('app').innerHTML = html;
-
-  if (isAdmin()) {
-    document.querySelectorAll('.btn-faq-edit').forEach(btn =>
-      btn.addEventListener('click', e => {
-        state.faqEditingId = e.target.dataset.id;
-        state.page = 'faqAdd';
-        renderFaqAddEdit();
-      })
-    );
-    document.querySelectorAll('.btn-faq-delete').forEach(btn =>
-      btn.addEventListener('click', e => {
-        if(confirm('정말 삭제하시겠습니까?')) {
-          deleteFaq(e.target.dataset.id);
-        }
-      })
-    );
-    document.getElementById('btn-faq-add').onclick = () => {
-      state.faqEditingId = null;
-      state.page = 'faqAdd';
-      renderFaqAddEdit();
-    };
-
-    document.querySelectorAll('.btn-sniper-edit').forEach(btn =>
-      btn.addEventListener('click', e => {
-        state.sniperEditingId = e.target.dataset.id;
-        state.page = 'sniperAdd';
-        renderSniperAddEdit();
-      })
-    );
-    document.querySelectorAll('.btn-sniper-delete').forEach(btn =>
-      btn.addEventListener('click', e => {
-        if(confirm('정말 삭제하시겠습니까?')) {
-          deleteSniper(e.target.dataset.id);
-        }
-      })
-    );
-    document.getElementById('btn-sniper-add').onclick = () => {
-      state.sniperEditingId = null;
-      state.page = 'sniperAdd';
-      renderSniperAddEdit();
-    };
-  }
-
-  document.getElementById('btn-logout').onclick = () => {
-    currentUserId = null;
-    state.page = 'login';
-    updateSidebar();
-    renderLogin();
-  };
-}
-
-// FAQ 추가/편집 폼
-function renderFaqAddEdit() {
-  const faqs = loadFaqs();
-  const editingFaq = faqs.find(f => f.id === state.faqEditingId) || { title: '', description: '' };
-
-  const html = `
-    <h2>${state.faqEditingId ? 'FAQ 수정' : 'FAQ 추가'}</h2>
-    <label for="faq-title">제목</label>
-    <input type="text" id="faq-title" value="${escapeHtml(editingFaq.title)}" />
-    <label for="faq-description">설명 (마크다운 지원)</label>
-    <textarea id="faq-description" rows="8">${escapeHtml(editingFaq.description)}</textarea>
-    <button id="btn-faq-save">${state.faqEditingId ? '수정 완료' : '추가 완료'}</button>
-    <button class="link-button" id="btn-faq-cancel">취소</button>
-    <div class="message error" id="faq-error-message" style="
-  margin-top: 20px;
-  padding: 15px;
-  border: 2px solid #d32f2f;
-  background-color: #ffebee;
-  color: #b71c1c;
-  font-size: 14px;
-  font-weight: 600;
-  min-height: 60px;
-  border-radius: 8px;
-  white-space: pre-wrap;
-  word-break: break-word;
-">
-  <!-- 오류 메시지가 이곳에 표시됩니다. -->
-</div>
-
-<section style="
-  margin-top: 30px;
-  padding: 20px;
-  background-color: #fafafa;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 15px;
-  color: #222222;
-  line-height: 1.7;
-">
-  <h3 style="margin-top: 0; margin-bottom: 15px; font-weight: 700; font-size: 22px; color: #1976d2;">FAQ 작성 시 참고하세요</h3>
-  <p>FAQ 설명란에는 마크다운 문법을 적용할 수 있습니다. 마크다운 문법을 활용하면 보다 풍성하고 명확한 정보를 전달할 수 있으니 꼭 활용해 보세요.</p>
-  <ul style="list-style: disc inside; margin-left: 15px; margin-top: 10px; margin-bottom: 20px;">
-    <li><strong>제목 표시</strong>: <code># 큰 제목</code>, <code>## 중간 제목</code>, <code>### 작은 제목</code> 등을 사용하여 구조를 명확히 할 수 있습니다.</li>
-    <li><strong>텍스트 꾸미기</strong>: <code>**굵은 글씨**</code>, <code>*기울임*</code>, <code>~~취소선~~</code> 등을 활용해 강조할 수 있습니다.</li>
-    <li><strong>목록 만들기</strong>: <code>- 순서 없는 목록</code>이나 <code>1. 순서 있는 목록</code>으로 내용을 정리해보세요.</li>
-    <li><strong>링크 및 이미지</strong>: <code>[텍스트](URL)</code>로 링크 삽입, <code>![이미지 설명](이미지 URL)</code>로 이미지도 넣을 수 있습니다.</li>
-    <li><strong>코드 블록</strong>: <code>```자바스크립트<br>console.log('Hello world');<br>```</code> 형식으로 코드를 예쁘게 표현하세요.</li>
-  </ul>
-  <p>작성하신 내용을 꼼꼼히 확인한 뒤 <strong>추가 완료</strong> 혹은 <strong>수정 완료</strong> 버튼을 눌러 저장하시기 바랍니다. 만약 취소를 원하면 <strong>취소</strong> 버튼을 눌러 이전 화면으로 돌아갈 수 있습니다.</p>
-  <p>FAQ 작성은 사용자들에게 매우 중요한 정보 전달 수단이니, 친절하고 명확한 설명을 작성해 주세요.</p>
-  <p style="margin-top: 30px; font-style: italic; color: #555;">필요하다면 언제든지 FAQ를 수정하거나 삭제할 수 있으니 부담 없이 관리하세요.</p>
-</section>
-
-<script>
-  (function() {
-    // 오류 메시지를 표시하는 요소 가져오기
-    var errorDiv = document.getElementById('faq-error-message');
-
-    // 저장 버튼 이벤트 핸들러 등록
-    document.getElementById('btn-faq-save').addEventListener('click', function() {
-      // 제목과 설명 값 가져오기
-      var titleInput = document.getElementById('faq-title');
-      var descriptionInput = document.getElementById('faq-description');
-      var title = titleInput.value.trim();
-      var description = descriptionInput.value.trim();
-
-      // 빈 값 검증: 제목
-      if (title.length === 0) {
-        state.messages.error = '❌ 제목은 반드시 입력해야 합니다.';
-        errorDiv.textContent = state.messages.error;
-        titleInput.focus();
-        return;
-      }
-
-      // 빈 값 검증: 설명
-      if (description.length === 0) {
-        state.messages.error = '❌ 설명을 입력해주세요. 내용이 비어 있습니다.';
-        errorDiv.textContent = state.messages.error;
-        descriptionInput.focus();
-        return;
-      }
-
-      // 기존 FAQ 목록 불러오기
-      var faqs = loadFaqs();
-
-      // 편집 중인 FAQ가 있는지 확인
-      if (state.faqEditingId) {
-        var foundIndex = -1;
-        for (var i = 0; i < faqs.length; i++) {
-          if (faqs[i].id === state.faqEditingId) {
-            foundIndex = i;
-            break;
-          }
-        }
-        // 수정할 FAQ가 존재하면 업데이트
-        if (foundIndex !== -1) {
-          faqs[foundIndex].title = title;
-          faqs[foundIndex].description = description;
-        } else {
-          // 없으면 새로 추가
-          faqs.push({ id: generateUniqueId(), title: title, description: description });
-        }
-      } else {
-        // 새 FAQ 추가
-        faqs.push({ id: generateUniqueId(), title: title, description: description });
-      }
-
-      // 저장 후 상태 초기화 및 메인 화면으로 이동
-      saveFaqs(faqs);
-      state.messages.error = '';
-      state.faqEditingId = null;
-      state.page = 'main';
+  document.getElementById('nav-logout').onclick = () => {
+    if (confirm('로그아웃 하시겠습니까?')) {
+      currentUserId = null;
       updateSidebar();
-      renderMain();
-    });
+      renderLogin();
+      updateNavButtons();
+    }
+  };
+}
 
-    // 취소 버튼 이벤트 핸들러 등록
-    document.getElementById('btn-faq-cancel').addEventListener('click', function() {
-      state.messages.error = '';
-      state.faqEditingId = null;
-      state.page = 'main';
-      updateSidebar();
-      renderMain();
-    });
-  })();
-</script>
+// 초기 실행 함수
+function init() {
+  initNavEvents();
+  renderLogin();
+  updateNavButtons();
+  updateSidebar();
+}
+
+init();
