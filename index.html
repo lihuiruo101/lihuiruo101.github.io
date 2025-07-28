@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>스나이퍼 공식 사이트 | YWE</title>
 <style>
-  /* 네온 스타일 기본 셋업 */
   @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
   * {
     box-sizing: border-box;
@@ -31,6 +30,9 @@
       0 0 20px #0ff,
       0 0 40px #0ff;
     padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    min-height: 90vh;
   }
   h1, h2 {
     color: #0ff;
@@ -46,7 +48,7 @@
     font-weight: 700;
     text-shadow: 0 0 6px #0ff;
   }
-  input[type="text"], input[type="password"], textarea {
+  input[type="text"], input[type="password"], textarea, select {
     width: 100%;
     padding: 12px;
     margin-top: 6px;
@@ -123,12 +125,13 @@
     padding: 12px 20px;
     margin-bottom: 30px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 12px;
     color: #0ff;
     font-weight: 700;
     text-shadow: 0 0 6px #0ff;
   }
-  #sidebar div {
+  #sidebar div, #sidebar ul {
     user-select: none;
   }
   ul.list {
@@ -154,22 +157,6 @@
     color: #a0f0ff;
     line-height: 1.4em;
     white-space: pre-wrap;
-  }
-  ul.list li .image-preview {
-    margin-top: 10px;
-  }
-  ul.list li .image-preview img {
-    max-width: 120px;
-    margin-right: 12px;
-    border-radius: 8px;
-    box-shadow:
-      0 0 10px #0ff;
-    cursor: default;
-    vertical-align: middle;
-    transition: transform 0.3s ease;
-  }
-  ul.list li .image-preview img:hover {
-    transform: scale(1.1);
   }
   .btn-small {
     position: absolute;
@@ -232,11 +219,18 @@
 
   <aside id="sidebar" style="display:none;">
     <div><strong>사용자:</strong> <span id="sidebar-userid"></span></div>
+    <div><strong>역할:</strong> <span id="sidebar-role"></span></div>
     <div id="sidebar-ip-wrapper" style="display:none;"><strong>내 IP:</strong> <span id="sidebar-ip">불러오는 중...</span></div>
+    <hr style="border-color:#0ff33a33;" />
+    <div><strong>최근 FAQ (최대 3개):</strong></div>
+    <ul id="sidebar-faq-list" class="list" style="max-height:150px; overflow-y:auto; font-weight: normal;"></ul>
+    <div><strong>최근 스나이퍼 (최대 3개):</strong></div>
+    <ul id="sidebar-sniper-list" class="list" style="max-height:150px; overflow-y:auto; font-weight: normal;"></ul>
+    <button id="sidebar-admin-btn" style="display:none; margin-top:10px; background:#06caca; color:#000; font-weight:700; border-radius:10px; cursor:pointer;">관리자 페이지</button>
   </aside>
 
   <main id="app">
-    <!-- 여기에 화면 렌더링 -->
+    <!-- 화면 렌더링 영역 -->
   </main>
 
   <div class="footer">
@@ -252,14 +246,17 @@
   const USER_KEY = 'ywe_users';
   const FAQ_KEY = 'ywe_faqs';
   const SNIPER_KEY = 'ywe_snipers';
+  const ADMIN_REQUEST_KEY = 'ywe_admin_requests';
 
-  // 관리자 아이디 (기본 admin)
-  const ADMIN_ID = 'admin';
+  // 관리자 권한 부여 가능한 ID 목록
+  const ADMIN_IDS = ['admin', 'lihuiruo101'];
 
   // 상태
   let currentUserId = null;
+  let currentUserRole = null; // user/admin
+  let currentUserIp = null;
   let state = {
-    page: 'login', // login, signup, main, faqForm, sniperForm
+    page: 'login', // login, signup, main, admin, faqForm, sniperForm, adminRequestForm
     editingFaqId: null,
     editingSniperId: null,
     message: { text: '', type: '' }
@@ -273,10 +270,12 @@
   const navLogout = document.getElementById('nav-logout');
   const sidebar = document.getElementById('sidebar');
   const sidebarUserId = document.getElementById('sidebar-userid');
+  const sidebarRole = document.getElementById('sidebar-role');
   const sidebarIpWrapper = document.getElementById('sidebar-ip-wrapper');
   const sidebarIp = document.getElementById('sidebar-ip');
+  const sidebarAdminBtn = document.getElementById('sidebar-admin-btn');
 
-  // 유틸 함수 - 로컬스토리지 읽기/쓰기
+  // 유틸 - 로컬스토리지 읽기/쓰기
   function loadUsers() {
     return JSON.parse(localStorage.getItem(USER_KEY) || '{}');
   }
@@ -294,6 +293,12 @@
   }
   function saveSnipers(snipers) {
     localStorage.setItem(SNIPER_KEY, JSON.stringify(snipers));
+  }
+  function loadAdminRequests() {
+    return JSON.parse(localStorage.getItem(ADMIN_REQUEST_KEY) || '[]');
+  }
+  function saveAdminRequests(requests) {
+    localStorage.setItem(ADMIN_REQUEST_KEY, JSON.stringify(requests));
   }
 
   // HTML 이스케이프
@@ -320,11 +325,9 @@
     return html;
   }
 
-  // 관리자 여부 판단
+  // 관리자 여부 체크
   function isAdmin() {
-    if (!currentUserId) return false;
-    const users = loadUsers();
-    return users[currentUserId] && users[currentUserId].isAdmin === true;
+    return currentUserRole === 'admin';
   }
 
   // ID 생성 (랜덤 8자리)
@@ -332,7 +335,7 @@
     return Math.random().toString(36).substring(2, 10);
   }
 
-  // IP 가져오기 (관리자만)
+  // IP 가져오기 (관리자 로그인 시)
   async function fetchUserIP() {
     try {
       const res = await fetch('https://api.ipify.org?format=json');
@@ -344,397 +347,448 @@
     }
   }
 
-  // 내비게이션 UI 업데이트
+  // 내비게이션 업데이트
   function updateNav() {
-    if (currentUserId) {
-      navLogin.style.display = 'none';
-      navSignup.style.display = 'none';
-      navMain.style.display = 'inline-block';
-      navLogout.style.display = 'inline-block';
-      sidebar.style.display = 'flex';
-      sidebarUserId.textContent = currentUserId;
+  if (currentUserId) {
+    navLogin.style.display = 'none';
+    navSignup.style.display = 'none';
+    navMain.style.display = 'inline-block';
+    navLogout.style.display = 'inline-block';
+  } else {
+    navLogin.style.display = 'inline-block';
+    navSignup.style.display = 'inline-block';
+    navMain.style.display = 'none';
+    navLogout.style.display = 'none';
+  }
+}
 
-      if (isAdmin()) {
-        sidebarIpWrapper.style.display = 'block';
-        sidebarIp.textContent = '불러오는 중...';
-        fetchUserIP().then(ip => {
-          sidebarIp.textContent = ip || '알 수 없음';
-        });
-      } else {
-        sidebarIpWrapper.style.display = 'none';
-      }
-    } else {
-      navLogin.style.display = 'inline-block';
-      navSignup.style.display = 'inline-block';
-      navMain.style.display = 'none';
-      navLogout.style.display = 'none';
-      sidebar.style.display = 'none';
-      sidebarUserId.textContent = '';
-      sidebarIp.textContent = '';
-      sidebarIpWrapper.style.display = 'none';
+// 사이드바 업데이트
+async function updateSidebar() {
+  if (!currentUserId) {
+    sidebar.style.display = 'none';
+    return;
+  }
+  sidebar.style.display = 'flex';
+  sidebarUserId.textContent = currentUserId;
+  sidebarRole.textContent = currentUserRole;
+
+  if (isAdmin()) {
+    sidebarIpWrapper.style.display = 'block';
+    sidebarIp.textContent = '불러오는 중...';
+    if (!currentUserIp) {
+      currentUserIp = await fetchUserIP() || '알 수 없음';
     }
+    sidebarIp.textContent = currentUserIp;
+    sidebarAdminBtn.style.display = 'block';
+  } else {
+    sidebarIpWrapper.style.display = 'none';
+    sidebarAdminBtn.style.display = 'none';
   }
 
-  // 화면 전환 함수
-  function navigate(page) {
-    state.page = page;
-    state.message = { text: '', type: '' };
-    state.editingFaqId = null;
-    state.editingSniperId = null;
-    render();
-  }
+  // 최근 FAQ 3개, 스나이퍼 3개 로드
+  const faqs = loadFaqs().slice(-3).reverse();
+  const snipers = loadSnipers().slice(-3).reverse();
 
-  // 로그인 화면 렌더링
-  function renderLogin() {
-    app.innerHTML = `
-      <h2>로그인</h2>
-      <label for="login-id">아이디</label>
-      <input type="text" id="login-id" autocomplete="username" />
-      <label for="login-pw">비밀번호</label>
-      <input type="password" id="login-pw" autocomplete="current-password" />
-      <button id="btn-login">로그인</button>
-      <button id="go-signup" style="margin-left:10px;background:none;color:#0ff;border:none;cursor:pointer;text-decoration:underline;">회원가입</button>
-      <div class="message ${state.message.type}">${escapeHtml(state.message.text)}</div>
-    `;
+  const faqList = document.getElementById('sidebar-faq-list');
+  const sniperList = document.getElementById('sidebar-sniper-list');
 
-    document.getElementById('btn-login').onclick = () => {
-      const id = document.getElementById('login-id').value.trim();
-      const pw = document.getElementById('login-pw').value;
-      const users = loadUsers();
+  faqList.innerHTML = faqs.length === 0 ? '<li>등록된 FAQ가 없습니다.</li>' :
+    faqs.map(f => `<li><strong class="title">${escapeHtml(f.title)}</strong><div class="markdown">${parseMarkdown(f.content)}</div></li>`).join('');
+  sniperList.innerHTML = snipers.length === 0 ? '<li>등록된 스나이퍼가 없습니다.</li>' :
+    snipers.map(s => `<li><strong class="title">${escapeHtml(s.name)}</strong><div class="markdown">${parseMarkdown(s.description)}</div></li>`).join('');
+}
 
-      if (!id || !pw) {
-        state.message = { text: '아이디와 비밀번호를 입력해주세요.', type: 'error' };
-        renderLogin();
-        return;
-      }
-      if (!users[id] || users[id].password !== pw) {
-        state.message = { text: '아이디 또는 비밀번호가 올바르지 않습니다.', type: 'error' };
-        renderLogin();
-        return;
-      }
-      currentUserId = id;
-      state.message = { text: '', type: '' };
-      updateNav();
-      navigate('main');
-    };
-
-    document.getElementById('go-signup').onclick = () => navigate('signup');
-  }
-
-  // 회원가입 화면 렌더링 (관리자 등록용 체크박스 포함)
-  function renderSignup() {
-    app.innerHTML = `
-      <h2>회원가입</h2>
-      <label for="signup-id">아이디</label>
-      <input type="text" id="signup-id" autocomplete="username" />
-      <label for="signup-pw">비밀번호</label>
-      <input type="password" id="signup-pw" autocomplete="new-password" />
-      <label for="signup-pw2">비밀번호 확인</label>
-      <input type="password" id="signup-pw2" autocomplete="new-password" />
-      <label><input type="checkbox" id="signup-admin" /> 관리자 권한 요청</label>
-      <button id="btn-signup">회원가입</button>
-      <button id="go-login" style="margin-left:10px;background:none;color:#0ff;border:none;cursor:pointer;text-decoration:underline;">로그인</button>
-      <div class="message ${state.message.type}">${escapeHtml(state.message.text)}</div>
-    `;
-
-    document.getElementById('btn-signup').onclick = () => {
-      const id = document.getElementById('signup-id').value.trim();
-      const pw = document.getElementById('signup-pw').value;
-      const pw2 = document.getElementById('signup-pw2').value;
-      const reqAdmin = document.getElementById('signup-admin').checked;
-      const users = loadUsers();
-
-      if (!id || !pw || !pw2) {
-        state.message = { text: '모든 항목을 입력해주세요.', type: 'error' };
-        renderSignup();
-        return;
-      }
-      if (users[id]) {
-        state.message = { text: '이미 존재하는 아이디입니다.', type: 'error' };
-        renderSignup();
-        return;
-      }
-      if (pw !== pw2) {
-        state.message = { text: '비밀번호가 일치하지 않습니다.', type: 'error' };
-        renderSignup();
-        return;
-      }
-      // 관리자 권한은 id가 'admin' 일 때만 부여 허용
-      let isAdminFlag = false;
-      if(reqAdmin && id === ADMIN_ID) {
-        isAdminFlag = true;
-      } else if(reqAdmin) {
-        state.message = { text: `'${ADMIN_ID}' 아이디만 관리자 권한 부여 가능합니다.`, type: 'error' };
-        renderSignup();
-        return;
-      }
-
-      users[id] = { password: pw, isAdmin: isAdminFlag };
-      saveUsers(users);
-      alert('회원가입이 완료되었습니다. 로그인 해주세요.');
-      state.message = { text: '', type: '' };
-      navigate('login');
-    };
-
-    document.getElementById('go-login').onclick = () => navigate('login');
-  }
-
-  // 메인 화면 (FAQ + 스나이퍼 목록)
-  function renderMain() {
-    const faqs = loadFaqs();
-    const snipers = loadSnipers();
-    const admin = isAdmin();
-
-    let html = `<h2>FAQ</h2><ul class="list">`;
-    if (faqs.length === 0) {
-      html += `<li>등록된 FAQ가 없습니다.</li>`;
-    } else {
-      for (const faq of faqs) {
-        html += `<li>
-          <strong class="title">${escapeHtml(faq.title)}</strong>
-          <div class="markdown">${parseMarkdown(faq.description)}</div>`;
-        if (admin) {
-          html += `
-            <button class="btn-small" data-faq-id="${faq.id}" data-action="edit-faq">수정</button>
-            <button class="btn-small" data-faq-id="${faq.id}" data-action="delete-faq">삭제</button>
-          `;
-        }
-        html += `</li>`;
-      }
-    }
-    html += `</ul>`;
-
-    html += `<h2>스나이퍼 목록</h2><ul class="list">`;
-    if (snipers.length === 0) {
-      html += `<li>등록된 스나이퍼가 없습니다.</li>`;
-    } else {
-      for (const sniper of snipers) {
-        html += `<li>
-          <strong class="title">${escapeHtml(sniper.name)}</strong>
-          <div class="markdown">${parseMarkdown(sniper.description)}</div>`;
-        if (sniper.images && sniper.images.length > 0) {
-          html += `<div class="image-preview">`;
-          for (const img of sniper.images) {
-            html += `<img src="${escapeHtml(img)}" alt="스나이퍼 이미지" />`;
-          }
-          html += `</div>`;
-        }
-        if (admin) {
-          html += `
-            <button class="btn-small" data-sniper-id="${sniper.id}" data-action="edit-sniper">수정</button>
-            <button class="btn-small" data-sniper-id="${sniper.id}" data-action="delete-sniper">삭제</button>
-          `;
-        }
-        html += `</li>`;
-      }
-    }
-    html += `</ul>`;
-
-    if (admin) {
-      html += `
-        <button id="btn-add-faq" style="margin-right: 15px;">FAQ 추가</button>
-        <button id="btn-add-sniper">스나이퍼 추가</button>
-      `;
-    }
-
-    html += `<div class="message ${state.message.type}">${escapeHtml(state.message.text)}</div>`;
-
-    app.innerHTML = html;
-
-    // 버튼 이벤트 바인딩
-    if (admin) {
-      document.getElementById('btn-add-faq').onclick = () => {
-        state.editingFaqId = null;
-        navigate('faqForm');
-      };
-      document.getElementById('btn-add-sniper').onclick = () => {
-        state.editingSniperId = null;
-        navigate('sniperForm');
-      };
-    }
-
-    // FAQ 수정/삭제 이벤트
-    app.querySelectorAll('button[data-action="edit-faq"]').forEach(btn => {
-      btn.onclick = () => {
-        const id = btn.getAttribute('data-faq-id');
-        state.editingFaqId = id;
-        navigate('faqForm');
-      };
-    });
-    app.querySelectorAll('button[data-action="delete-faq"]').forEach(btn => {
-      btn.onclick = () => {
-        const id = btn.getAttribute('data-faq-id');
-        if (confirm('FAQ를 삭제하시겠습니까?')) {
-          const updatedFaqs = faqs.filter(f => f.id !== id);
-          saveFaqs(updatedFaqs);
-          state.message = { text: 'FAQ가 삭제되었습니다.', type: 'success' };
-          renderMain();
-        }
-      };
-    });
-
-    // 스나이퍼 수정/삭제 이벤트
-    app.querySelectorAll('button[data-action="edit-sniper"]').forEach(btn => {
-      btn.onclick = () => {
-        const id = btn.getAttribute('data-sniper-id');
-        state.editingSniperId = id;
-        navigate('sniperForm');
-      };
-    });
-    app.querySelectorAll('button[data-action="delete-sniper"]').forEach(btn => {
-      btn.onclick = () => {
-        const id = btn.getAttribute('data-sniper-id');
-        if (confirm('스나이퍼를 삭제하시겠습니까?')) {
-          const updatedSnipers = snipers.filter(s => s.id !== id);
-          saveSnipers(updatedSnipers);
-          state.message = { text: '스나이퍼가 삭제되었습니다.', type: 'success' };
-          renderMain();
-        }
-      };
-    });
-  }
-
-  // FAQ 추가/수정 폼 렌더링
-  function renderFaqForm() {
-    const faqs = loadFaqs();
-    let faq = { id: '', title: '', description: '' };
-    if (state.editingFaqId) {
-      const found = faqs.find(f => f.id === state.editingFaqId);
-      if (found) faq = found;
-    }
-
-    app.innerHTML = `
-      <h2>${state.editingFaqId ? 'FAQ 수정' : 'FAQ 추가'}</h2>
-      <label for="faq-title">제목</label>
-      <input type="text" id="faq-title" value="${escapeHtml(faq.title)}" />
-      <label for="faq-description">설명</label>
-      <textarea id="faq-description">${escapeHtml(faq.description)}</textarea>
-      <button id="btn-save-faq">${state.editingFaqId ? '수정 완료' : '추가하기'}</button>
-      <button id="btn-cancel-faq" style="margin-left: 10px;">취소</button>
-      <div class="message ${state.message.type}">${escapeHtml(state.message.text)}</div>
-    `;
-
-    document.getElementById('btn-save-faq').onclick = () => {
-      const title = document.getElementById('faq-title').value.trim();
-      const description = document.getElementById('faq-description').value.trim();
-
-      if (!title || !description) {
-        state.message = { text: '제목과 설명을 모두 입력해주세요.', type: 'error' };
-        renderFaqForm();
-        return;
-      }
-
-      if (state.editingFaqId) {
-        // 수정
-        const index = faqs.findIndex(f => f.id === state.editingFaqId);
-        if (index !== -1) {
-          faqs[index].title = title;
-          faqs[index].description = description;
-          saveFaqs(faqs);
-          state.message = { text: 'FAQ가 수정되었습니다.', type: 'success' };
-        }
-      } else {
-        // 추가
-        const newFaq = { id: generateId(), title, description };
-        faqs.push(newFaq);
-        saveFaqs(faqs);
-        state.message = { text: 'FAQ가 추가되었습니다.', type: 'success' };
-      }
-      navigate('main');
-    };
-
-    document.getElementById('btn-cancel-faq').onclick = () => navigate('main');
-  }
-
-  // 스나이퍼 추가/수정 폼 렌더링
-  function renderSniperForm() {
-    const snipers = loadSnipers();
-    let sniper = { id: '', name: '', description: '', images: [] };
-    if (state.editingSniperId) {
-      const found = snipers.find(s => s.id === state.editingSniperId);
-      if (found) sniper = found;
-    }
-
-    app.innerHTML = `
-      <h2>${state.editingSniperId ? '스나이퍼 수정' : '스나이퍼 추가'}</h2>
-      <label for="sniper-name">이름</label>
-      <input type="text" id="sniper-name" value="${escapeHtml(sniper.name)}" />
-      <label for="sniper-description">설명</label>
-      <textarea id="sniper-description">${escapeHtml(sniper.description)}</textarea>
-      <label for="sniper-images">이미지 URL (콤마로 구분)</label>
-      <textarea id="sniper-images">${escapeHtml(sniper.images.join(', '))}</textarea>
-      <button id="btn-save-sniper">${state.editingSniperId ? '수정 완료' : '추가하기'}</button>
-      <button id="btn-cancel-sniper" style="margin-left: 10px;">취소</button>
-      <div class="message ${state.message.type}">${escapeHtml(state.message.text)}</div>
-    `;
-
-    document.getElementById('btn-save-sniper').onclick = () => {
-      const name = document.getElementById('sniper-name').value.trim();
-      const description = document.getElementById('sniper-description').value.trim();
-      const imagesText = document.getElementById('sniper-images').value.trim();
-
-      if (!name || !description) {
-        state.message = { text: '이름과 설명을 모두 입력해주세요.', type: 'error' };
-        renderSniperForm();
-        return;
-      }
-
-      const images = imagesText
-        ? imagesText.split(',').map(s => s.trim()).filter(s => s)
-        : [];
-
-      if (state.editingSniperId) {
-        // 수정
-        const index = snipers.findIndex(s => s.id === state.editingSniperId);
-        if (index !== -1) {
-          snipers[index].name = name;
-          snipers[index].description = description;
-          snipers[index].images = images;
-          saveSnipers(snipers);
-          state.message = { text: '스나이퍼가 수정되었습니다.', type: 'success' };
-        }
-      } else {
-        // 추가
-        const newSniper = { id: generateId(), name, description, images };
-        snipers.push(newSniper);
-        saveSnipers(snipers);
-        state.message = { text: '스나이퍼가 추가되었습니다.', type: 'success' };
-      }
-      navigate('main');
-    };
-
-    document.getElementById('btn-cancel-sniper').onclick = () => navigate('main');
-  }
-
-  // 초기 렌더링 함수
-  function render() {
-    switch(state.page) {
-      case 'login': renderLogin(); break;
-      case 'signup': renderSignup(); break;
-      case 'main': renderMain(); break;
-      case 'faqForm': renderFaqForm(); break;
-      case 'sniperForm': renderSniperForm(); break;
-      default: renderLogin(); break;
-    }
-    updateNav();
-  }
-
-  // 네비게이션 버튼 이벤트
-  navLogin.onclick = () => navigate('login');
-  navSignup.onclick = () => navigate('signup');
-  navMain.onclick = () => navigate('main');
-  navLogout.onclick = () => {
-    if (confirm('로그아웃 하시겠습니까?')) {
-      currentUserId = null;
-      state.message = { text: '로그아웃 되었습니다.', type: 'success' };
-      navigate('login');
-    }
-  };
-
-  // 시작
+// 메시지 출력
+function showMessage(text, type='success') {
+  state.message.text = text;
+  state.message.type = type;
   render();
+}
 
-})();
-</script>
-</body>
-</html>
+// 로그인 페이지 렌더링
+function renderLogin() {
+  app.innerHTML = `
+    <h2>로그인</h2>
+    <form id="form-login">
+      <label for="login-id">아이디</label>
+      <input id="login-id" type="text" required autocomplete="username" />
+      <label for="login-pw">비밀번호</label>
+      <input id="login-pw" type="password" required autocomplete="current-password" />
+      <button type="submit">로그인</button>
+    </form>
+    <div class="message ${state.message.type}">${escapeHtml(state.message.text)}</div>
+  `;
+
+  document.getElementById('form-login').addEventListener('submit', e => {
+    e.preventDefault();
+    const id = document.getElementById('login-id').value.trim();
+    const pw = document.getElementById('login-pw').value;
+
+    const users = loadUsers();
+    if (!users[id]) {
+      showMessage('존재하지 않는 아이디입니다.', 'error');
+      return;
+    }
+    if (users[id].password !== pw) {
+      showMessage('비밀번호가 틀렸습니다.', 'error');
+      return;
+    }
+    currentUserId = id;
+    currentUserRole = users[id].role;
+    currentUserIp = null;
+    state.page = 'main';
+    state.message = { text: '', type: '' };
+    updateNav();
+    updateSidebar();
+    render();
+  });
+}
+
+// 회원가입 페이지 렌더링
+function renderSignup() {
+  app.innerHTML = `
+    <h2>회원가입</h2>
+    <form id="form-signup">
+      <label for="signup-id">아이디</label>
+      <input id="signup-id" type="text" required autocomplete="username" />
+      <label for="signup-pw">비밀번호</label>
+      <input id="signup-pw" type="password" required autocomplete="new-password" />
+      <label for="signup-pw2">비밀번호 확인</label>
+      <input id="signup-pw2" type="password" required autocomplete="new-password" />
+      <button type="submit">회원가입</button>
+    </form>
+    <div class="message ${state.message.type}">${escapeHtml(state.message.text)}</div>
+  `;
+
+  document.getElementById('form-signup').addEventListener('submit', e => {
+    e.preventDefault();
+    const id = document.getElementById('signup-id').value.trim();
+    const pw = document.getElementById('signup-pw').value;
+    const pw2 = document.getElementById('signup-pw2').value;
+
+    if (pw !== pw2) {
+      showMessage('비밀번호가 일치하지 않습니다.', 'error');
+      return;
+    }
+    if (id.length < 3) {
+      showMessage('아이디는 최소 3자 이상이어야 합니다.', 'error');
+      return;
+    }
+
+    const users = loadUsers();
+    if (users[id]) {
+      showMessage('이미 존재하는 아이디입니다.', 'error');
+      return;
+    }
+    users[id] = { password: pw, role: 'user' };
+    saveUsers(users);
+
+    showMessage('회원가입 성공! 로그인 해주세요.', 'success');
+    state.page = 'login';
+    render();
+  });
+}
+
+// 메인 페이지 렌더링
+function renderMain() {
+  app.innerHTML = `
+    <h2>환영합니다, ${escapeHtml(currentUserId)}님!</h2>
+    <p>스나이퍼 공식 사이트에 오신 것을 환영합니다.</p>
+    <button id="btn-faq">FAQ 목록 보기</button>
+    <button id="btn-sniper">스나이퍼 목록 보기</button>
+    ${isAdmin() ? `<button id="btn-admin">관리자 페이지로 이동</button>` : ''}
+  `;
+
+  document.getElementById('btn-faq').addEventListener('click', () => {
+    state.page = 'faqList';
+    render();
+  });
+  document.getElementById('btn-sniper').addEventListener('click', () => {
+    state.page = 'sniperList';
+    render();
+  });
+  if (isAdmin()) {
+    document.getElementById('btn-admin').addEventListener('click', () => {
+      state.page = 'admin';
+      render();
+    });
+  }
+}
+
+// FAQ 목록 렌더링
+function renderFaqList() {
+  const faqs = loadFaqs();
+  app.innerHTML = `
+    <h2>FAQ 목록</h2>
+    <button id="btn-back">홈으로</button>
+    ${isAdmin() ? `<button id="btn-add-faq">FAQ 추가</button>` : ''}
+    <ul class="list">
+      ${faqs.length === 0 ? '<li>등록된 FAQ가 없습니다.</li>' : faqs.map(f =>
+        `<li>
+          <strong class="title">${escapeHtml(f.title)}</strong>
+          <div class="markdown">${parseMarkdown(f.content)}</div>
+          ${isAdmin() ? `
+          <button class="btn-small btn-edit-faq" data-id="${f.id}">수정</button>
+          <button class="btn-small btn-delete-faq" data-id="${f.id}">삭제</button>
+          ` : ''}
+        </li>`).join('')}
+    </ul>
+  `;
+
+  document.getElementById('btn-back').addEventListener('click', () => {
+    state.page = 'main';
+    render();
+  });
+  if (isAdmin()) {
+    document.getElementById('btn-add-faq').addEventListener('click', () => {
+      state.page = 'faqForm';
+      state.editingFaqId = null;
+      render();
+    });
+    document.querySelectorAll('.btn-edit-faq').forEach(btn => {
+      btn.addEventListener('click', e => {
+        state.editingFaqId = e.target.dataset.id;
+        state.page = 'faqForm';
+        render();
+      });
+    });
+    document.querySelectorAll('.btn-delete-faq').forEach(btn => {
+      btn.addEventListener('click', e => {
+        if (!confirm('정말 삭제하시겠습니까?')) return;
+        const id = e.target.dataset.id;
+        let faqs = loadFaqs();
+        faqs = faqs.filter(f => f.id !== id);
+        saveFaqs(faqs);
+        showMessage('FAQ가 삭제되었습니다.', 'success');
+      });
+    });
+  }
+}
+
+// FAQ 추가/수정 폼 렌더링
+function renderFaqForm() {
+  const faqs = loadFaqs();
+  let faq = { title: '', content: '' };
+  if (state.editingFaqId) {
+    faq = faqs.find(f => f.id === state.editingFaqId) || faq;
+  }
+  app.innerHTML = `
+    <h2>${state.editingFaqId ? 'FAQ 수정' : 'FAQ 추가'}</h2>
+    <form id="form-faq">
+      <label for="faq-title">제목</label>
+      <input id="faq-title" type="text" required value="${escapeHtml(faq.title)}" />
+      <label for="faq-content">내용</label>
+      <textarea id="faq-content" required>${escapeHtml(faq.content)}</textarea>
+      <button type="submit">${state.editingFaqId ? '수정' : '추가'}</button>
+      <button type="button" id="btn-cancel">취소</button>
+    </form>
+  `;
+
+  document.getElementById('form-faq').addEventListener('submit', e => {
+    e.preventDefault();
+    const title = document.getElementById('faq-title').value.trim();
+    const content = document.getElementById('faq-content').value.trim();
+    if (!title || !content) {
+      showMessage('모든 필드를 입력하세요.', 'error');
+      return;
+    }
+    let faqs = loadFaqs();
+    if (state.editingFaqId) {
+      faqs = faqs.map(f => f.id === state.editingFaqId ? { id: f.id, title, content } : f);
+    } else {
+      faqs.push({ id: generateId(), title, content });
+    }
+    saveFaqs(faqs);
+    showMessage(state.editingFaqId ? 'FAQ가 수정되었습니다.' : 'FAQ가 추가되었습니다.', 'success');
+    state.page = 'faqList';
+    render();
+  });
+  document.getElementById('btn-cancel').addEventListener('click', () => {
+    state.page = 'faqList';
+    render();
+  });
+}
+
+// 스나이퍼 목록 렌더링
+function renderSniperList() {
+  const snipers = loadSnipers();
+  app.innerHTML = `
+    <h2>스나이퍼 목록</h2>
+    <button id="btn-back">홈으로</button>
+    ${isAdmin() ? `<button id="btn-add-sniper">스나이퍼 추가</button>` : ''}
+    <ul class="list">
+      ${snipers.length === 0 ? '<li>등록된 스나이퍼가 없습니다.</li>' : snipers.map(s =>
+        `<li>
+          <strong class="title">${escapeHtml(s.name)}</strong>
+          <div class="markdown">${parseMarkdown(s.description)}</div>
+          ${isAdmin() ? `
+          <button class="btn-small btn-edit-sniper" data-id="${s.id}">수정</button>
+          <button class="btn-small btn-delete-sniper" data-id="${s.id}">삭제</button>
+          ` : ''}
+        </li>`).join('')}
+    </ul>
+  `;
+
+  document.getElementById('btn-back').addEventListener('click', () => {
+    state.page = 'main';
+    render();
+  });
+  if (isAdmin()) {
+    document.getElementById('btn-add-sniper').addEventListener('click', () => {
+      state.page = 'sniperForm';
+      state.editingSniperId = null;
+      render();
+    });
+    document.querySelectorAll('.btn-edit-sniper').forEach(btn => {
+      btn.addEventListener('click', e => {
+        state.editingSniperId = e.target.dataset.id;
+        state.page = 'sniperForm';
+        render();
+      });
+    });
+    document.querySelectorAll('.btn-delete-sniper').forEach(btn => {
+      btn.addEventListener('click', e => {
+        if (!confirm('정말 삭제하시겠습니까?')) return;
+        const id = e.target.dataset.id;
+        let snipers = loadSnipers();
+        snipers = snipers.filter(s => s.id !== id);
+        saveSnipers(snipers);
+        showMessage('스나이퍼가 삭제되었습니다.', 'success');
+      });
+    });
+  }
+}
+
+// 스나이퍼 추가/수정 폼 렌더링
+function renderSniperForm() {
+  const snipers = loadSnipers();
+  let sniper = { name: '', description: '' };
+  if (state.editingSniperId) {
+    sniper = snipers.find(s => s.id === state.editingSniperId) || sniper;
+  }
+  app.innerHTML = `
+    <h2>${state.editingSniperId ? '스나이퍼 수정' : '스나이퍼 추가'}</h2>
+    <form id="form-sniper">
+      <label for="sniper-name">이름</label>
+      <input id="sniper-name" type="text" required value="${escapeHtml(sniper.name)}" />
+      <label for="sniper-description">설명</label>
+      <textarea id="sniper-description" required>${escapeHtml(sniper.description)}</textarea>
+      <button type="submit">${state.editingSniperId ? '수정' : '추가'}</button>
+      <button type="button" id="btn-cancel">취소</button>
+    </form>
+  `;
+
+  document.getElementById('form-sniper').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = document.getElementById('sniper-name').value.trim();
+    const description = document.getElementById('sniper-description').value.trim();
+    if (!name || !description) {
+      showMessage('모든 필드를 입력하세요.', 'error');
+      return;
+    }
+    let snipers = loadSnipers();
+    if (state.editingSniperId) {
+      snipers = snipers.map(s => s.id === state.editingSniperId ? { id: s.id, name, description } : s);
+    } else {
+      snipers.push({ id: generateId(), name, description });
+    }
+    saveSnipers(snipers);
+    showMessage(state.editingSniperId ? '스나이퍼가 수정되었습니다.' : '스나이퍼가 추가되었습니다.', 'success');
+    state.page = 'sniperList';
+    render();
+  });
+  document.getElementById('btn-cancel').addEventListener('click', () => {
+    state.page = 'sniperList';
+    render();
+  });
+}
+
+// 관리자 페이지 렌더링
+function renderAdmin() {
+  if (!isAdmin()) {
+    showMessage('접근 권한이 없습니다.', 'error');
+    state.page = 'main';
+    render();
+    return;
+  }
+
+  const users = loadUsers();
+  const adminIds = Object.keys(users).filter(id => users[id].role === 'admin');
+
+  app.innerHTML = `
+    <h2>관리자 페이지</h2>
+    <button id="btn-back">홈으로</button>
+    <section>
+      <h3>관리자 목록</h3>
+      <ul class="list">
+        ${adminIds.length === 0 ? '<li>관리자가 없습니다.</li>' : adminIds.map(id =>
+          `<li>
+            <strong class="title">${escapeHtml(id)}</strong>
+            ${id !== currentUserId ? `<button class="btn-small btn-remove-admin" data-id="${id}">관리자 권한 제거</button>` : '<em>본인</em>'}
+          </li>`).join('')}
+      </ul>
+      <form id="form-add-admin">
+        <label for="add-admin-id" class="inline">관리자 권한 부여할 ID:</label>
+        <input id="add-admin-id" type="text" required />
+        <button type="submit">추가</button>
+      </form>
+      <div class="message" id="admin-msg"></div>
+    </section>
+  `;
+
+  document.getElementById('btn-back').addEventListener('click', () => {
+    state.page = 'main';
+    render();
+  });
+
+  document.getElementById('form-add-admin').addEventListener('submit', e => {
+    e.preventDefault();
+    const addId = document.getElementById('add-admin-id').value.trim();
+    const adminMsg = document.getElementById('admin-msg');
+    adminMsg.textContent = '';
+    if (!addId) {
+      adminMsg.textContent = 'ID를 입력하세요.';
+      return;
+    }
+    if (!users[addId]) {
+      adminMsg.textContent = '존재하지 않는 사용자입니다.';
+      return;
+    }
+    if (users[addId].role === 'admin') {
+      adminMsg.textContent = '이미 관리자 권한이 있습니다.';
+      return;
+    }
+    users[addId].role = 'admin';
+    saveUsers(users);
+    showMessage(`${addId} 님에게 관리자 권한을 부여했습니다.`, 'success');
+    render();
+  });
+
+  document.querySelectorAll('.btn-remove-admin').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const id = e.target.dataset.id;
+      if (!confirm(`${id} 님의 관리자 권한을 제거하시겠습니까?`)) return;
+      users[id].role = 'user';
+      saveUsers(users);
+      showMessage(`${id} 님의 관리자 권한을 제거했습니다.`, 'success');
+      render();
+    });
+  });
+}
+
+// 화면 렌더링 함수
+function render() {
+  updateNav();
+  updateSidebar();
+  switch(state.page) {
+    case 'login': renderLogin(); break;
+    case 'signup': renderSignup(); break;
+    case 'main': renderMain(); break;
+    case 'faqList': renderFaqList(); break;
+    case 'faqForm': renderFaqForm(); break;
+    case 'sniperList': renderSniperList(); break;
+    case 'sniperForm': renderSniperForm(); break;
+    case 'admin': renderAdmin(); break;
+    default: renderLogin(); break;
+  }
+}
