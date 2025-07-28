@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>YWE 로그인한 사용자 인원수</title>
+<style>
+  body {
+    background: #001f3f;
+    color: #00f0ff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 2rem;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 8px #00ffffaa;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #022f5f;
+    box-shadow: 0 0 20px #00ffff88;
+  }
+  th, td {
+    padding: 12px 16px;
+    border: 1px solid #00ffffaa;
+    text-align: center;
+  }
+  th {
+    background: #004080;
+    font-weight: 900;
+  }
+  tbody tr:nth-child(even) {
+    background: #013a7c;
+  }
+</style>
+</head>
+<body>
+<h1>YWE 로그인한 사용자 목록</h1>
+<table role="table" aria-label="로그인 사용자 목록">
+  <thead>
+    <tr>
+      <th scope="col">사용자 ID</th>
+      <th scope="col">이메일</th>
+      <th scope="col">접속 기기 정보</th>
+    </tr>
+  </thead>
+  <tbody id="user-list">
+    <tr><td colspan="3">데이터를 불러오는 중입니다...</td></tr>
+  </tbody>
+</table>
+
+<script>
+  // 예제용: 실제로는 로그인 시점에 ID와 이메일, 기기 정보를 저장해야 함
+  // 로컬스토리지에 저장된 로그인 사용자 정보 구조 예시 (JSON 문자열)
+  // key: 'ywe_users_info' - 배열 [{id, email, device}]
+  
+  // 이 예시 데이터를 직접 만들어 저장하는 코드(첫 실행 시)
+  if (!localStorage.getItem('ywe_users_info')) {
+    const exampleUsers = [
+      {id: 'lihuiruo101', email: 'admin@ywe.today', device: navigator.userAgent},
+      {id: 'user123', email: 'user123@example.com', device: navigator.userAgent},
+      {id: 'guest77', email: 'guest77@example.com', device: navigator.userAgent}
+    ];
+    localStorage.setItem('ywe_users_info', JSON.stringify(exampleUsers));
+  }
+
+  function renderUserList() {
+    const tbody = document.getElementById('user-list');
+    const data = localStorage.getItem('ywe_users_info');
+    if (!data) {
+      tbody.innerHTML = `<tr><td colspan="3">사용자 정보가 없습니다.</td></tr>`;
+      return;
+    }
+
+    const users = JSON.parse(data);
+    if (users.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3">로그인한 사용자가 없습니다.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = users.map(user => `
+      <tr>
+        <td>${escapeHtml(user.id)}</td>
+        <td>${escapeHtml(user.email)}</td>
+        <td>${escapeHtml(user.device)}</td>
+      </tr>
+    `).join('');
+  }
+
+  // HTML 특수문자 이스케이프 함수
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  renderUserList();
+</script>
+</body>
+</html>
