@@ -3,100 +3,57 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>YWE 로그인한 사용자 인원수</title>
+<title>YWE 로그인 인원수</title>
 <style>
   body {
     background: #001f3f;
     color: #00f0ff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    padding: 2rem;
+    text-align: center;
+    padding-top: 5rem;
   }
   h1 {
-    text-align: center;
-    margin-bottom: 2rem;
-    text-shadow: 0 0 8px #00ffffaa;
+    font-size: 3rem;
+    text-shadow: 0 0 15px #00ffffaa;
   }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #022f5f;
-    box-shadow: 0 0 20px #00ffff88;
-  }
-  th, td {
-    padding: 12px 16px;
-    border: 1px solid #00ffffaa;
-    text-align: center;
-  }
-  th {
-    background: #004080;
+  #count {
+    font-size: 5rem;
+    margin-top: 2rem;
     font-weight: 900;
-  }
-  tbody tr:nth-child(even) {
-    background: #013a7c;
+    text-shadow: 0 0 30px #00ffffee;
   }
 </style>
 </head>
 <body>
-<h1>YWE 로그인한 사용자 목록</h1>
-<table role="table" aria-label="로그인 사용자 목록">
-  <thead>
-    <tr>
-      <th scope="col">사용자 ID</th>
-      <th scope="col">이메일</th>
-      <th scope="col">접속 기기 정보</th>
-    </tr>
-  </thead>
-  <tbody id="user-list">
-    <tr><td colspan="3">데이터를 불러오는 중입니다...</td></tr>
-  </tbody>
-</table>
+
+<h1>현재 YWE 로그인 인원수</h1>
+<div id="count">0</div>
 
 <script>
-  // 예제용: 실제로는 로그인 시점에 ID와 이메일, 기기 정보를 저장해야 함
-  // 로컬스토리지에 저장된 로그인 사용자 정보 구조 예시 (JSON 문자열)
-  // key: 'ywe_users_info' - 배열 [{id, email, device}]
-  
-  // 이 예시 데이터를 직접 만들어 저장하는 코드(첫 실행 시)
-  if (!localStorage.getItem('ywe_users_info')) {
-    const exampleUsers = [
-      {id: 'lihuiruo101', email: 'admin@ywe.today', device: navigator.userAgent},
-      {id: 'user123', email: 'user123@example.com', device: navigator.userAgent},
-      {id: 'guest77', email: 'guest77@example.com', device: navigator.userAgent}
-    ];
-    localStorage.setItem('ywe_users_info', JSON.stringify(exampleUsers));
-  }
-
-  function renderUserList() {
-    const tbody = document.getElementById('user-list');
-    const data = localStorage.getItem('ywe_users_info');
-    if (!data) {
-      tbody.innerHTML = `<tr><td colspan="3">사용자 정보가 없습니다.</td></tr>`;
-      return;
+  // 로그인 시 아이디 저장 (예시)
+  function addLoginUser(id) {
+    if (!id) return;
+    let users = JSON.parse(localStorage.getItem('ywe_logged_users') || '[]');
+    if (!users.includes(id)) {
+      users.push(id);
+      localStorage.setItem('ywe_logged_users', JSON.stringify(users));
     }
-
-    const users = JSON.parse(data);
-    if (users.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="3">로그인한 사용자가 없습니다.</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = users.map(user => `
-      <tr>
-        <td>${escapeHtml(user.id)}</td>
-        <td>${escapeHtml(user.email)}</td>
-        <td>${escapeHtml(user.device)}</td>
-      </tr>
-    `).join('');
   }
 
-  // HTML 특수문자 이스케이프 함수
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+  // 현재 로그인 유저 수 보여주기
+  function showLoginCount() {
+    let users = JSON.parse(localStorage.getItem('ywe_logged_users') || '[]');
+    document.getElementById('count').textContent = users.length;
   }
 
-  renderUserList();
+  // 테스트용: 새로 로그인 시 addLoginUser('아이디') 호출해야 함
+  // 예: addLoginUser('lihuiruo101');
+
+  showLoginCount();
+
+  // 필요하면 실시간 업데이트, 예를 들어 10초마다
+  setInterval(showLoginCount, 10000);
 </script>
+
 </body>
 </html>
