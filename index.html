@@ -2,873 +2,553 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>스나이퍼 공식 사이트 | YWE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>YWE | 스나이핑</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
-* {
-  box-sizing: border-box;
-}
-body {
-  margin:0; padding:0;
-  font-family: 'Orbitron', monospace, 'Malgun Gothic', sans-serif;
-  background: radial-gradient(circle at top left, #003322 0%, #001100 80%);
-  color: #39ff14;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  user-select:none;
-}
-header {
-  background: #001100;
-  box-shadow: 0 0 20px #39ff14;
-  padding: 20px 30px;
-  text-align: center;
-  position: relative;
-}
-header h1 {
-  margin:0;
-  font-size: 2rem;
-  text-shadow:
-    0 0 8px #39ff14,
-    0 0 16px #39ff14,
-    0 0 20px #39ff14;
-}
-nav {
-  margin-top: 15px;
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-nav button {
-  background: transparent;
-  border: 2px solid #39ff14;
-  color: #39ff14;
-  font-weight: 700;
-  font-size: 1rem;
-  padding: 10px 22px;
-  border-radius: 15px;
-  cursor: pointer;
-  box-shadow: 0 0 15px #39ff14;
-  transition: all 0.3s ease;
-  user-select:none;
-  min-width: 110px;
-}
-nav button:hover {
-  background: #39ff14;
-  color: #001100;
-  box-shadow:
-    0 0 20px #39ff14,
-    0 0 40px #39ff14;
-}
-.container {
-  flex: 1;
-  display: flex;
-  min-height: 0;
-  overflow: hidden;
-}
-#sidebar {
-  width: 280px;
-  background: #002200dd;
-  border-right: 2px solid #39ff14;
-  padding: 20px;
-  color: #39ff14;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  overflow-y: auto;
-  user-select:none;
-}
-#sidebar strong.section-title {
-  font-size: 1.3rem;
-  margin-bottom: 10px;
-  text-shadow: 0 0 8px #39ff14;
-  border-bottom: 1px solid #39ff14;
-  padding-bottom: 6px;
-}
-#sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 300px;
-  overflow-y: auto;
-}
-#sidebar ul li {
-  background: #003300;
-  margin-bottom: 12px;
-  padding: 12px 15px;
-  border-radius: 10px;
-  box-shadow: inset 0 0 10px #006600;
-  cursor: default;
-  word-break: break-word;
-  transition: background-color 0.3s ease;
-}
-#sidebar ul li:hover {
-  background: #005500;
-}
-#sidebar ul li strong.title {
-  display: block;
-  font-size: 1.1rem;
-  margin-bottom: 4px;
-  text-shadow: 0 0 12px #39ff14;
-}
-#sidebar .admin-ip-list {
-  font-size: 0.85rem;
-  line-height: 1.2em;
-  max-height: 200px;
-  overflow-y: auto;
-  border: 1px solid #39ff14;
-  padding: 10px;
-  border-radius: 8px;
-  background: #001a00;
-  user-select:text;
-  word-break: break-all;
-}
-#sidebar button#sidebar-admin-btn {
-  margin-top: auto;
-  background: #39ff14;
-  color: #001100;
-  border: none;
-  border-radius: 12px;
-  font-weight: 700;
-  padding: 14px 0;
-  cursor: pointer;
-  box-shadow: 0 0 20px #39ff14;
-  user-select: none;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-#sidebar button#sidebar-admin-btn:hover {
-  background: #2ecc40;
-  box-shadow: 0 0 28px #2ecc40;
-}
-main#app {
-  flex: 1;
-  padding: 35px 45px;
-  background: #001100;
-  border-left: 2px solid #39ff14;
-  color: #39ff14;
-  overflow-y: auto;
-  min-height: 0;
-}
-h2, h3 {
-  text-align: center;
-  margin-bottom: 22px;
-  text-shadow:
-    0 0 8px #39ff14,
-    0 0 16px #39ff14;
-}
-form label {
-  display: block;
-  margin-top: 18px;
-  font-weight: 700;
-  text-shadow: 0 0 6px #39ff14;
-}
-input[type="text"], input[type="password"], textarea {
-  width: 100%;
-  padding: 14px;
-  margin-top: 8px;
-  background: #002200;
-  border: 1.5px solid #39ff14;
-  border-radius: 12px;
-  color: #39ff14;
-  font-size: 1.1rem;
-  box-shadow: inset 0 0 10px #39ff14;
-  font-family: 'Orbitron', monospace;
-}
-textarea {
-  resize: vertical;
-  min-height: 140px;
-}
-button {
-  margin-top: 25px;
-  background: #39ff14;
-  border: none;
-  padding: 14px 28px;
-  font-weight: 700;
-  color: #001100;
-  border-radius: 18px;
-  cursor: pointer;
-  font-size: 1.1rem;
-  box-shadow: 0 0 20px #39ff14;
-  transition: background-color 0.3s ease;
-  user-select: none;
-  display: inline-block;
-  min-width: 130px;
-}
-button:hover {
-  background: #2ecc40;
-  color: #001100;
-  box-shadow:
-    0 0 40px #2ecc40,
-    0 0 60px #2ecc40;
-}
-ul.list {
-  list-style: none;
-  padding-left: 0;
-}
-ul.list li {
-  background: #003300;
-  border-radius: 14px;
-  padding: 22px 24px;
-  margin-bottom: 20px;
-  box-shadow: inset 0 0 14px #006600;
-  position: relative;
-  word-break: break-word;
-}
-ul.list li strong.title {
-  font-size: 1.4rem;
-  margin-bottom: 12px;
-  display: block;
-  text-shadow: 0 0 16px #39ff14;
-}
-ul.list li .markdown {
-  color: #a0f5a0;
-  line-height: 1.5em;
-  white-space: pre-wrap;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-.btn-small {
-  position: absolute;
-  top: 20px;
-  right: 18px;
-  background: #39ff14;
-  border: none;
-  color: #001100;
-  font-weight: 700;
-  border-radius: 10px;
-  padding: 8px 18px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background 0.3s ease;
-  box-shadow: 0 0 15px #39ff14;
-  user-select: none;
-}
-.btn-small + .btn-small {
-  right: 110px;
-}
-.btn-small:hover {
-  background: #2ecc40;
-  color: #001100;
-}
-.message {
-  margin-top: 22px;
-  font-weight: 700;
-  text-align: center;
-  font-size: 1.05rem;
-}
-.message.error {
-  color: #ff3366;
-  text-shadow: 0 0 12px #ff3366;
-}
-.message.success {
-  color: #33ff99;
-  text-shadow: 0 0 12px #33ff99;
-}
-form label.inline {
-  display: inline-block;
-  margin-right: 16px;
-  font-size: 1rem;
-}
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-}
-::-webkit-scrollbar-thumb {
-  background: #39ff14;
-  border-radius: 12px;
-}
-::-webkit-scrollbar-track {
-  background: #001100;
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-  .container {
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron&family=Nanum+Gothic&display=swap');
+  /* Reset */
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  body {
+    font-family: 'Nanum Gothic', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #eee;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  /* 사이드바 */
+  nav {
+    width: 280px;
+    background: rgba(30,30,30,0.95);
+    border-right: 2px solid #1e90ff;
+    display: flex;
     flex-direction: column;
+    user-select: none;
+    box-shadow: 4px 0 8px rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
   }
-  #sidebar {
-    width: 100%;
-    max-height: 280px;
-    border-right: none;
-    border-bottom: 2px solid #39ff14;
-    overflow-y: auto;
-  }
-  main#app {
-    border-left: none;
-    padding: 25px 20px;
-    min-height: 320px;
+  nav h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.7rem;
+    padding: 2rem 1.5rem;
+    color: #1e90ff;
+    border-bottom: 2px solid #1e90ff;
+    text-align: center;
+    letter-spacing: 2px;
   }
   nav button {
-    margin: 6px 8px;
-    padding: 12px 18px;
-    font-size: 0.95rem;
-    min-width: 100px;
+    background: none;
+    border: none;
+    color: #ccc;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 1.2rem 2rem;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
   }
-}
+  nav button:hover {
+    background: #1e90ff;
+    color: #121212;
+  }
+  nav button.active {
+    background: #1e90ff;
+    color: #121212;
+    font-weight: 700;
+  }
+  nav button#logout-btn {
+    margin-top: auto;
+    border-top: 1px solid #333;
+    color: #f44336;
+  }
+  nav button#logout-btn:hover {
+    background: #f44336;
+    color: #fff;
+  }
+  /* 메인 컨텐츠 */
+  main {
+    flex: 1;
+    padding: 2rem 3rem;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #1e90ff #121212;
+    background: rgba(10,10,10,0.8);
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.7);
+  }
+  main::-webkit-scrollbar {
+    width: 12px;
+  }
+  main::-webkit-scrollbar-track {
+    background: #121212;
+  }
+  main::-webkit-scrollbar-thumb {
+    background-color: #1e90ff;
+    border-radius: 10px;
+    border: 3px solid #121212;
+  }
+  /* 공통 타이틀 */
+  h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    color: #1e90ff;
+    margin-bottom: 1.2rem;
+    font-size: 2rem;
+    text-align: center;
+    text-shadow: 0 0 10px #1e90ff;
+  }
+  /* 폼 스타일 */
+  form {
+    max-width: 480px;
+    margin: 0 auto;
+    background: rgba(30,30,30,0.7);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 15px #1e90ffaa;
+  }
+  label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #aad4ff;
+    user-select:none;
+  }
+  input[type=text], input[type=password] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: none;
+    background: #121212;
+    color: #eee;
+    font-size: 1.1rem;
+    box-shadow: inset 0 0 8px #1e90ff88;
+    transition: box-shadow 0.3s ease;
+  }
+  input[type=text]:focus, input[type=password]:focus {
+    outline: none;
+    box-shadow: 0 0 15px #1e90ff;
+  }
+  /* 비밀번호 눈 아이콘 래퍼 */
+  .password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .password-wrapper input {
+    flex: 1;
+  }
+  .password-toggle {
+    position: absolute;
+    right: 1rem;
+    cursor: pointer;
+    fill: #666;
+    width: 24px;
+    height: 24px;
+    transition: fill 0.3s ease;
+  }
+  .password-toggle:hover {
+    fill: #1e90ff;
+  }
+  /* 버튼 스타일 */
+  button.submit-btn {
+    margin-top: 1.6rem;
+    background: #1e90ff;
+    border: none;
+    color: #121212;
+    font-weight: 700;
+    font-size: 1.2rem;
+    padding: 0.9rem 2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 12px #1e90ffbb;
+    transition: background 0.3s ease;
+  }
+  button.submit-btn:hover {
+    background: #0d6efd;
+    box-shadow: 0 0 20px #0d6efdcc;
+  }
+  /* 링크 스타일 */
+  .toggle-auth {
+    text-align: center;
+    margin-top: 1.4rem;
+    color: #aad4ff;
+    font-weight: 600;
+    cursor: pointer;
+    user-select:none;
+    transition: color 0.3s ease;
+  }
+  .toggle-auth:hover {
+    color: #66aaff;
+  }
+  /* 로그인/회원가입 컨테이너 */
+  #auth-container, #register-container {
+    width: 100%;
+    max-width: 480px;
+    margin: auto;
+    padding-top: 6rem;
+  }
+  /* 숨김 처리 */
+  .hidden {
+    display: none !important;
+  }
+  /* 컨텐츠 섹션 */
+  section.content-section {
+    max-width: 700px;
+    margin: auto;
+  }
+  /* 리스트 스타일 */
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  li {
+    background: #1e90ff22;
+    margin: 0.5rem 0;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  li:hover {
+    background: #1e90ff44;
+  }
+  /* 텍스트 박스 */
+  textarea {
+    width: 100%;
+    height: 80px;
+    padding: 1rem;
+    margin-top: 0.7rem;
+    border-radius: 8px;
+    border: none;
+    background: #121212;
+    color: #eee;
+    font-size: 1rem;
+    box-shadow: inset 0 0 8px #1e90ff88;
+    resize: vertical;
+  }
+  /* 관리자 메뉴 버튼 */
+  button.admin-action-btn {
+    background: #f44336;
+    border: none;
+    color: #fff;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    font-weight: 700;
+    transition: background 0.3s ease;
+  }
+  button.admin-action-btn:hover {
+    background: #d32f2f;
+  }
 </style>
 </head>
 <body>
-<header>
-  <h1>스나이퍼 공식 사이트 | YWE</h1>
-  <nav id="nav-bar">
-    <!-- JS로 로그인 상태 따라 버튼 생성 -->
-  </nav>
-</header>
-<div class="container">
-  <aside id="sidebar" style="display:none;">
-    <strong class="section-title">관리자 메뉴</strong>
-    <ul id="admin-menu-list">
-      <li><button class="sidebar-btn" data-page="admin-ip">모든 접속 IP 보기</button></li>
-      <li><button class="sidebar-btn" data-page="admin-faq">FAQ 관리</button></li>
-      <li><button class="sidebar-btn" data-page="admin-sniper">스나이퍼 관리</button></li>
-      <li><button id="sidebar-logout-btn" style="margin-top: 12px; background:#ff4466; box-shadow:none;">로그아웃</button></li>
-    </ul>
-    <hr style="border-color:#39ff14;" />
-    <strong class="section-title">FAQ 목록</strong>
-    <ul id="sidebar-faq-list"></ul>
-    <strong class="section-title" style="margin-top: 15px;">스나이퍼 목록</strong>
-    <ul id="sidebar-sniper-list"></ul>
-  </aside>
-  <main id="app">
-    <!-- JS로 페이지 렌더링 -->
-  </main>
-</div>
+<nav aria-label="메인 메뉴">
+  <h1>YWE | 스나이핑</h1>
+  <button id="nav-faq" class="hidden">FAQ</button>
+  <button id="nav-expose" class="hidden">박제</button>
+  <button id="nav-report" class="hidden">제보 요청</button>
+  <button id="nav-admin" class="hidden">관리자 메뉴</button>
+  <button id="logout-btn" class="hidden">로그아웃</button>
+</nav>
+<main>
+  <!-- 로그인/회원가입 -->
+  <section id="auth-container">
+    <h2>로그인</h2>
+    <form id="login-form" autocomplete="off" novalidate>
+      <label for="login-id">아이디</label>
+      <input type="text" id="login-id" required autocomplete="username" />
+      <label for="login-pw">비밀번호</label>
+      <div class="password-wrapper">
+        <input type="password" id="login-pw" required autocomplete="current-password" />
+        <svg id="toggle-login-pw" class="password-toggle" viewBox="0 0 24 24" aria-label="비밀번호 표시/숨기기" role="button" tabindex="0">
+          <path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5
+          5 2.24 5 5-2.24 5-5 5z"/>
+          <circle cx="12" cy="12" r="2.5"/>
+        </svg>
+      </div>
+      <button type="submit" class="submit-btn">로그인</button>
+    </form>
+    <div class="toggle-auth" id="go-register">계정이 없으신가요? 회원가입</div>
+  </section>
+  <section id="register-container" class="hidden">
+    <h2>회원가입</h2>
+    <form id="register-form" autocomplete="off" novalidate>
+      <label for="reg-id">아이디</label>
+      <input type="text" id="reg-id" required autocomplete="username" />
+      <label for="reg-pw">비밀번호</label>
+      <div class="password-wrapper">
+        <input type="password" id="reg-pw" required autocomplete="new-password" />
+        <svg id="toggle-reg-pw" class="password-toggle" viewBox="0 0 24 24" aria-label="비밀번호 표시/숨기기" role="button" tabindex="0">
+          <path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5
+          5 2.24 5 5-2.24 5-5 5z"/>
+          <circle cx="12" cy="12" r="2.5"/>
+        </svg>
+      </div>
+      <button type="submit" class="submit-btn">회원가입</button>
+    </form>
+    <div class="toggle-auth" id="go-login">로그인 하러 가기</div>
+  </section>
+
+  <!-- FAQ 섹션 -->
+  <section id="faq-section" class="hidden content-section">
+    <h2>FAQ</h2>
+    <ul id="faq-list"></ul>
+    <div id="faq-admin-controls" class="hidden">
+      <textarea id="faq-text" placeholder="FAQ 내용을 입력하세요..."></textarea>
+      <button id="add-faq-btn" class="admin-action-btn">FAQ 추가</button>
+    </div>
+  </section>
+
+  <!-- 박제 섹션 -->
+  <section id="expose-section" class="hidden content-section">
+    <h2>박제</h2>
+    <ul id="expose-list"></ul>
+    <div id="expose-admin-controls" class="hidden">
+      <textarea id="expose-text" placeholder="박제 내용을 입력하세요..."></textarea>
+      <button id="add-expose-btn" class="admin-action-btn">박제 추가</button>
+    </div>
+  </section>
+
+  <!-- 제보 요청 섹션 -->
+  <section id="report-section" class="hidden content-section">
+    <h2>제보 요청</h2>
+    <ul id="report-list"></ul>
+    <div id="report-admin-controls" class="hidden">
+      <textarea id="report-text" placeholder="제보 내용을 입력하세요..."></textarea>
+      <button id="add-report-btn" class="admin-action-btn">제보 추가</button>
+    </div>
+  </section>
+
+  <!-- 관리자 메뉴 -->
+  <section id="admin-section" class="hidden content-section">
+    <h2>관리자 메뉴</h2>
+    <p>관리자용 추가 기능을 구현하세요.</p>
+  </section>
+</main>
 
 <script>
-(() => {
-  const ADMIN_IDS = ['admin', 'root', 'master']; // 관리자 아이디 예시
-  let currentUserId = null;
-  let currentUserRole = null; // 'admin' or 'user'
-  let state = { page: 'login', message: { text:'', type:'' }, editingFaqId: null, editingSniperId: null };
+  // 저장 키
+  const STORAGE_USERS = 'ywe_sniping_users';
+  const STORAGE_ADMINS = 'ywe_sniping_admins';
+  const STORAGE_FAQ = 'ywe_sniping_faqs';
+  const STORAGE_EXPOSE = 'ywe_sniping_exposes';
+  const STORAGE_REPORTS = 'ywe_sniping_reports';
 
-  // --- Utility ---
-  function escapeHtml(text) {
-    return text.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
-  function parseMarkdown(md) {
-    if (!md) return '';
-    // 아주 간단한 마크다운: # 제목, **굵게**, 줄바꿈
-    return md.replace(/^# (.*)$/gm, '<h4>$1</h4>')
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\n/g, '<br>');
-  }
-  function generateId() {
-    return '_' + Math.random().toString(36).substr(2,9);
-  }
-  function saveUsers(users) {
-    localStorage.setItem('ywe_users', JSON.stringify(users));
-  }
-  function loadUsers() {
-    try {
-      return JSON.parse(localStorage.getItem('ywe_users')) || {};
-    } catch {
-      return {};
-    }
-  }
-  function saveFaqs(faqs) {
-    localStorage.setItem('ywe_faqs', JSON.stringify(faqs));
-  }
-  function loadFaqs() {
-    try {
-      return JSON.parse(localStorage.getItem('ywe_faqs')) || [];
-    } catch {
-      return [];
-    }
-  }
-  function saveSnipers(snipers) {
-    localStorage.setItem('ywe_snipers', JSON.stringify(snipers));
-  }
-  function loadSnipers() {
-    try {
-      return JSON.parse(localStorage.getItem('ywe_snipers')) || [];
-    } catch {
-      return [];
-    }
-  }
-  // --- Message ---
-  function showMessage(text, type='') {
-    state.message.text = text;
-    state.message.type = type;
-    render();
-  }
-  // --- Authentication ---
-  function isAdmin() {
-    return currentUserRole === 'admin';
-  }
+  // 현재 로그인 유저
+  let currentUser = null;
 
-  // --- Render Navigation ---
-  function renderNav() {
-    const navBar = document.getElementById('nav-bar');
-    navBar.innerHTML = '';
-    if (!currentUserId) {
-      navBar.appendChild(createNavButton('로그인', () => {
-        state.page = 'login';
-        state.message = { text:'', type:'' };
-        render();
-      }));
-      navBar.appendChild(createNavButton('회원가입', () => {
-        state.page = 'signup';
-        state.message = { text:'', type:'' };
-        render();
-      }));
-    } else {
-      navBar.appendChild(createNavButton('FAQ', () => {
-        state.page = 'faq';
-        state.message = { text:'', type:'' };
-        render();
-      }));
-      navBar.appendChild(createNavButton('FAQ', () => {
-        state.page = 'faq';
-        state.message = { text:'', type:'' };
-        render();
-      }));
-      navBar.appendChild(createNavButton('스나이퍼', () => {
-        state.page = 'sniper';
-        state.message = { text:'', type:'' };
-        render();
-      }));
-      if (isAdmin()) {
-        navBar.appendChild(createNavButton('관리자 메뉴', () => {
-          state.page = 'admin-menu';
-          state.message = { text:'', type:'' };
-          render();
-        }));
-      }
-      navBar.appendChild(createNavButton('로그아웃', () => {
-        logout();
-      }));
-    }
-  }
+  // 데이터 로드
+  let users = JSON.parse(localStorage.getItem(STORAGE_USERS)) || {};
+  let admins = JSON.parse(localStorage.getItem(STORAGE_ADMINS)) || ['lihuiruo101'];
+  let faqs = JSON.parse(localStorage.getItem(STORAGE_FAQ)) || [];
+  let exposes = JSON.parse(localStorage.getItem(STORAGE_EXPOSE)) || [];
+  let reports = JSON.parse(localStorage.getItem(STORAGE_REPORTS)) || [];
 
-  function createNavButton(text, onClick) {
-    const btn = document.createElement('button');
-    btn.textContent = text;
-    btn.onclick = onClick;
-    return btn;
-  }
+  // DOM
+  const navFAQ = document.getElementById('nav-faq');
+  const navExpose = document.getElementById('nav-expose');
+  const navReport = document.getElementById('nav-report');
+  const navAdmin = document.getElementById('nav-admin');
+  const logoutBtn = document.getElementById('logout-btn');
 
-  // --- Logout ---
-  function logout() {
-    currentUserId = null;
-    currentUserRole = null;
-    state.page = 'login';
-    state.message = { text:'로그아웃 되었습니다.', type: 'success' };
-    render();
-  }
+  const authContainer = document.getElementById('auth-container');
+  const registerContainer = document.getElementById('register-container');
 
-  // --- Render Sidebar ---
-  function renderSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    if (isAdmin()) {
-      sidebar.style.display = 'flex';
+  const loginForm = document.getElementById('login-form');
+  const registerForm = document.getElementById('register-form');
 
-      // FAQ 목록 사이드바
-      const faqListEl = document.getElementById('sidebar-faq-list');
-      const faqs = loadFaqs();
-      faqListEl.innerHTML = '';
-      if (faqs.length === 0) {
-        faqListEl.innerHTML = '<li>등록된 FAQ가 없습니다.</li>';
+  const goRegister = document.getElementById('go-register');
+  const goLogin = document.getElementById('go-login');
+
+  const faqSection = document.getElementById('faq-section');
+  const exposeSection = document.getElementById('expose-section');
+  const reportSection = document.getElementById('report-section');
+  const adminSection = document.getElementById('admin-section');
+
+  const faqList = document.getElementById('faq-list');
+  const exposeList = document.getElementById('expose-list');
+  const reportList = document.getElementById('report-list');
+
+  const faqAdminControls = document.getElementById('faq-admin-controls');
+  const exposeAdminControls = document.getElementById('expose-admin-controls');
+  const reportAdminControls = document.getElementById('report-admin-controls');
+
+  const faqText = document.getElementById('faq-text');
+  const exposeText = document.getElementById('expose-text');
+  const reportText = document.getElementById('report-text');
+
+  const addFaqBtn = document.getElementById('add-faq-btn');
+  const addExposeBtn = document.getElementById('add-expose-btn');
+  const addReportBtn = document.getElementById('add-report-btn');
+
+  // 비밀번호 눈 토글 함수
+  function togglePassword(inputId, toggleBtnId) {
+    const input = document.getElementById(inputId);
+    const toggleBtn = document.getElementById(toggleBtnId);
+    toggleBtn.addEventListener('click', () => {
+      if(input.type === 'password') {
+        input.type = 'text';
+        toggleBtn.innerHTML = `
+          <path d="M12 4.5C7 4.5 3.1 7.6 1.5 12c1.6 4.4 5.5 7.5 10.5 7.5s8.9-3.1 10.5-7.5c-1.6-4.4-5.5-7.5-10.5-7.5zm0 12a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9zm0-7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" />`;
       } else {
-        for (const f of faqs) {
-          const li = document.createElement('li');
-          li.textContent = f.question;
-          faqListEl.appendChild(li);
-        }
+        input.type = 'password';
+        toggleBtn.innerHTML = `
+          <path d="M12 5c-7 0-9 7-9 7s2 7 9 7 9-7 9-7-2-7-9-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5
+          5 2.24 5 5-2.24 5-5 5z"/>
+          <circle cx="12" cy="12" r="2.5"/>`;
       }
+    });
+  }
+  togglePassword('login-pw','toggle-login-pw');
+  togglePassword('reg-pw','toggle-reg-pw');
 
-      // 스나이퍼 목록 사이드바
-      const sniperListEl = document.getElementById('sidebar-sniper-list');
-      const snipers = loadSnipers();
-      sniperListEl.innerHTML = '';
-      if (snipers.length === 0) {
-        sniperListEl.innerHTML = '<li>등록된 스나이퍼가 없습니다.</li>';
-      } else {
-        for (const s of snipers) {
-          const li = document.createElement('li');
-          li.textContent = s.name;
-          sniperListEl.appendChild(li);
-        }
-      }
+  // 화면 전환
+  goRegister.addEventListener('click', () => {
+    authContainer.classList.add('hidden');
+    registerContainer.classList.remove('hidden');
+  });
+  goLogin.addEventListener('click', () => {
+    registerContainer.classList.add('hidden');
+    authContainer.classList.remove('hidden');
+  });
 
-    } else {
-      sidebar.style.display = 'none';
+  // 로그인 함수
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const id = loginForm['login-id'].value.trim();
+    const pw = loginForm['login-pw'].value.trim();
+    if (!id || !pw) {
+      alert('아이디와 비밀번호를 모두 입력해주세요.');
+      return;
     }
-  }
+    if (!users[id] || users[id] !== pw) {
+      alert('아이디 또는 비밀번호가 올바르지 않습니다.');
+      return;
+    }
+    currentUser = id;
+    afterLogin();
+  });
 
-  // --- Render Main Content ---
-  function render() {
-    renderNav();
-    renderSidebar();
-    const app = document.getElementById('app');
-    app.innerHTML = '';
+  // 회원가입
+  registerForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const id = registerForm['reg-id'].value.trim();
+    const pw = registerForm['reg-pw'].value.trim();
+    if (!id || !pw) {
+      alert('아이디와 비밀번호를 입력해주세요.');
+      return;
+    }
+    if (users[id]) {
+      alert('이미 존재하는 아이디입니다.');
+      return;
+    }
+    users[id] = pw;
+    localStorage.setItem(STORAGE_USERS, JSON.stringify(users));
+    alert('회원가입 완료! 로그인 해주세요.');
+    registerContainer.classList.add('hidden');
+    authContainer.classList.remove('hidden');
+  });
 
-    // 메시지 표시
-    if(state.message.text){
-      const msgDiv = document.createElement('div');
-      msgDiv.className = 'message ' + (state.message.type || '');
-      msgDiv.textContent = state.message.text;
-      app.appendChild(msgDiv);
+  // 로그인 후 처리
+  function afterLogin() {
+    authContainer.classList.add('hidden');
+    registerContainer.classList.add('hidden');
+    navFAQ.classList.remove('hidden');
+    navExpose.classList.remove('hidden');
+    navReport.classList.remove('hidden');
+    logoutBtn.classList.remove('hidden');
+
+    if (admins.includes(currentUser)) {
+      navAdmin.classList.remove('hidden');
     }
 
-    switch(state.page){
-      case 'login': renderLogin(app); break;
-      case 'signup': renderSignup(app); break;
-      case 'faq': renderFaqPage(app); break;
-      case 'sniper': renderSniperPage(app); break;
-      case 'admin-menu': renderAdminMenu(app); break;
-      case 'admin-ip': renderAdminIp(app); break;
-      case 'admin-faq': renderAdminFaq(app); break;
-      case 'admin-sniper': renderAdminSniper(app); break;
-      default:
-        app.innerHTML = '<h2>알 수 없는 페이지입니다.</h2>';
-    }
+    showSection('faq');
   }
 
-  // --- Render Login Form ---
-  function renderLogin(container){
-    const form = document.createElement('form');
-    form.innerHTML = `
-      <h2>로그인</h2>
-      <label for="login-id">아이디</label>
-      <input id="login-id" type="text" autocomplete="username" required />
-      <label for="login-pw">비밀번호</label>
-      <input id="login-pw" type="password" autocomplete="current-password" required />
-      <button type="submit">로그인</button>
-    `;
-    form.onsubmit = e => {
-      e.preventDefault();
-      const id = form.querySelector('#login-id').value.trim();
-      const pw = form.querySelector('#login-pw').value;
-      const users = loadUsers();
-      if(!users[id]){
-        showMessage('존재하지 않는 아이디입니다.', 'error');
-        return;
-      }
-      if(users[id].password !== pw){
-        showMessage('비밀번호가 틀렸습니다.', 'error');
-        return;
-      }
-      currentUserId = id;
-      currentUserRole = ADMIN_IDS.includes(id) ? 'admin' : 'user';
-      state.page = 'faq';
-      state.message = { text:'로그인 성공! 환영합니다, '+id+'님.', type:'success' };
-      render();
-    };
-    container.appendChild(form);
+  // 로그아웃
+  logoutBtn.addEventListener('click', () => {
+    currentUser = null;
+    location.reload();
+  });
+
+  // 섹션 보여주기
+  function showSection(section) {
+    [faqSection, exposeSection, reportSection, adminSection].forEach(sec => sec.classList.add('hidden'));
+    if (section === 'faq') faqSection.classList.remove('hidden');
+    if (section === 'expose') exposeSection.classList.remove('hidden');
+    if (section === 'report') reportSection.classList.remove('hidden');
+    if (section === 'admin') adminSection.classList.remove('hidden');
+
+    // 버튼 active 처리
+    [navFAQ, navExpose, navReport, navAdmin].forEach(btn => btn.classList.remove('active'));
+    if (section === 'faq') navFAQ.classList.add('active');
+    if (section === 'expose') navExpose.classList.add('active');
+    if (section === 'report') navReport.classList.add('active');
+    if (section === 'admin') navAdmin.classList.add('active');
+
+    // 관리자 컨트롤 노출
+    const isAdmin = admins.includes(currentUser);
+    faqAdminControls.classList.toggle('hidden', !isAdmin);
+    exposeAdminControls.classList.toggle('hidden', !isAdmin);
+    reportAdminControls.classList.toggle('hidden', !isAdmin);
   }
 
-  // --- Render Signup Form ---
-  function renderSignup(container){
-    const form = document.createElement('form');
-    form.innerHTML = `
-      <h2>회원가입</h2>
-      <label for="signup-id">아이디 (영문+숫자)</label>
-      <input id="signup-id" type="text" pattern="^[a-zA-Z0-9]{3,12}$" autocomplete="username" required />
-      <label for="signup-pw">비밀번호 (6자 이상)</label>
-      <input id="signup-pw" type="password" minlength="6" autocomplete="new-password" required />
-      <label for="signup-pw2">비밀번호 확인</label>
-      <input id="signup-pw2" type="password" minlength="6" autocomplete="new-password" required />
-      <button type="submit">회원가입</button>
-    `;
-    form.onsubmit = e => {
-      e.preventDefault();
-      const id = form.querySelector('#signup-id').value.trim();
-      const pw = form.querySelector('#signup-pw').value;
-      const pw2 = form.querySelector('#signup-pw2').value;
-      if(pw !== pw2){
-        showMessage('비밀번호가 일치하지 않습니다.', 'error');
-        return;
-      }
-      const users = loadUsers();
-      if(users[id]){
-        showMessage('이미 존재하는 아이디입니다.', 'error');
-        return;
-      }
-      users[id] = {password: pw};
-      saveUsers(users);
-      showMessage('회원가입 성공! 로그인 해주세요.', 'success');
-      state.page = 'login';
-      render();
-    };
-    container.appendChild(form);
-  }
+  navFAQ.addEventListener('click', () => showSection('faq'));
+  navExpose.addEventListener('click', () => showSection('expose'));
+  navReport.addEventListener('click', () => showSection('report'));
+  navAdmin.addEventListener('click', () => showSection('admin'));
 
-  // --- Render FAQ Page ---
-  function renderFaqPage(container){
-    const faqs = loadFaqs();
-    const div = document.createElement('div');
-    div.innerHTML = '<h2>FAQ</h2>';
-    if(faqs.length === 0){
-      div.innerHTML += '<p>등록된 FAQ가 없습니다.</p>';
-    } else {
-      const ul = document.createElement('ul');
-      ul.className = 'list';
-      faqs.forEach(faq => {
-        const li = document.createElement('li');
-        li.innerHTML = `<strong class="title">${escapeHtml(faq.question)}</strong><div class="markdown">${parseMarkdown(faq.answer)}</div>`;
-        ul.appendChild(li);
-      });
-      div.appendChild(ul);
-    }
-    container.appendChild(div);
-  }
-
-  // --- Render Sniper Page ---
-  function renderSniperPage(container){
-    const snipers = loadSnipers();
-    const div = document.createElement('div');
-    div.innerHTML = '<h2>스나이퍼 목록</h2>';
-    if(snipers.length === 0){
-      div.innerHTML += '<p>등록된 스나이퍼가 없습니다.</p>';
-    } else {
-      const ul = document.createElement('ul');
-      ul.className = 'list';
-      snipers.forEach(snip => {
-        const li = document.createElement('li');
-        li.innerHTML = `<strong class="title">${escapeHtml(snip.name)}</strong><div class="markdown">${parseMarkdown(snip.description)}</div>`;
-        ul.appendChild(li);
-      });
-      div.appendChild(ul);
-    }
-    container.appendChild(div);
-  }
-
-  // --- Render Admin Menu ---
-  function renderAdminMenu(container){
-    container.innerHTML = `
-      <h2>관리자 메뉴</h2>
-      <p>좌측 사이드바에서 원하는 메뉴를 선택하세요.</p>
-    `;
-  }
-
-  // --- Render Admin IP List ---
-  function renderAdminIp(container){
-    const users = loadUsers();
-    const ips = Object.entries(users).map(([id, u]) => `${id} - ${u.ip || '접속기록 없음'}`).join('\n');
-    container.innerHTML = `<h2>접속 IP 목록</h2>
-      <pre class="admin-ip-list">${escapeHtml(ips)}</pre>
-    `;
-  }
-
-  // --- Render Admin FAQ Management ---
-  function renderAdminFaq(container){
-    const faqs = loadFaqs();
-    const div = document.createElement('div');
-    div.innerHTML = '<h2>FAQ 관리</h2>';
-    const ul = document.createElement('ul');
-    ul.className = 'list';
-    faqs.forEach(faq => {
+  // 항목 렌더링 함수
+  function renderList(list, container) {
+    container.innerHTML = '';
+    list.forEach((item, i) => {
       const li = document.createElement('li');
-      li.innerHTML = `
-        <strong class="title">${escapeHtml(faq.question)}</strong>
-        <div class="markdown">${parseMarkdown(faq.answer)}</div>
-        <button class="btn-small edit-faq" data-id="${faq.id}">수정</button>
-        <button class="btn-small delete-faq" data-id="${faq.id}">삭제</button>
-      `;
-      ul.appendChild(li);
+      li.textContent = item;
+      container.appendChild(li);
     });
-    div.appendChild(ul);
-    const form = document.createElement('form');
-    form.innerHTML = `
-      <h3>새 FAQ 추가</h3>
-      <label for="faq-q">질문</label>
-      <input id="faq-q" type="text" required />
-      <label for="faq-a">답변 (마크다운 지원)</label>
-      <textarea id="faq-a" required></textarea>
-      <button type="submit">추가</button>
-    `;
-    form.onsubmit = e => {
-      e.preventDefault();
-      const q = form.querySelector('#faq-q').value.trim();
-      const a = form.querySelector('#faq-a').value.trim();
-      if(!q || !a){
-        showMessage('질문과 답변을 모두 입력하세요.', 'error');
-        return;
-      }
-      const newFaq = {id: generateId(), question: q, answer: a};
-      faqs.push(newFaq);
-      saveFaqs(faqs);
-      showMessage('FAQ가 추가되었습니다.', 'success');
-      render();
-    };
-    div.appendChild(form);
-
-    // 이벤트 바인딩: 수정/삭제
-    setTimeout(() => {
-      div.querySelectorAll('.edit-faq').forEach(btn => {
-        btn.onclick = () => {
-          const id = btn.getAttribute('data-id');
-          const faq = faqs.find(f => f.id === id);
-          if(!faq) return;
-          const qNew = prompt('질문을 수정하세요:', faq.question);
-          if(qNew === null) return;
-          const aNew = prompt('답변을 수정하세요:', faq.answer);
-          if(aNew === null) return;
-          faq.question = qNew.trim() || faq.question;
-          faq.answer = aNew.trim() || faq.answer;
-          saveFaqs(faqs);
-          showMessage('FAQ가 수정되었습니다.', 'success');
-          render();
-        };
-      });
-      div.querySelectorAll('.delete-faq').forEach(btn => {
-        btn.onclick = () => {
-          const id = btn.getAttribute('data-id');
-          if(!confirm('정말 삭제하시겠습니까?')) return;
-          const idx = faqs.findIndex(f => f.id === id);
-          if(idx !== -1){
-            faqs.splice(idx,1);
-            saveFaqs(faqs);
-            showMessage('FAQ가 삭제되었습니다.', 'success');
-            render();
-          }
-        };
-      });
-    }, 10);
-
-    container.appendChild(div);
   }
 
-  // --- Render Admin Sniper Management ---
-  function renderAdminSniper(container){
-    const snipers = loadSnipers();
-    const div = document.createElement('div');
-    div.innerHTML = '<h2>스나이퍼 관리</h2>';
-    const ul = document.createElement('ul');
-    ul.className = 'list';
-    snipers.forEach(snip => {
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <strong class="title">${escapeHtml(snip.name)}</strong>
-        <div class="markdown">${parseMarkdown(snip.description)}</div>
-        <button class="btn-small edit-sniper" data-id="${snip.id}">수정</button>
-        <button class="btn-small delete-sniper" data-id="${snip.id}">삭제</button>
-      `;
-      ul.appendChild(li);
-    });
-    div.appendChild(ul);
-
-    const form = document.createElement('form');
-    form.innerHTML = `
-      <h3>새 스나이퍼 추가</h3>
-      <label for="sniper-name">이름</label>
-      <input id="sniper-name" type="text" required />
-      <label for="sniper-desc">설명 (마크다운 지원)</label>
-      <textarea id="sniper-desc" required></textarea>
-      <button type="submit">추가</button>
-    `;
-    form.onsubmit = e => {
-      e.preventDefault();
-      const name = form.querySelector('#sniper-name').value.trim();
-      const desc = form.querySelector('#sniper-desc').value.trim();
-      if(!name || !desc){
-        showMessage('이름과 설명을 모두 입력하세요.', 'error');
-        return;
-      }
-      const newSniper = {id: generateId(), name, description: desc};
-      snipers.push(newSniper);
-      saveSnipers(snipers);
-      showMessage('스나이퍼가 추가되었습니다.', 'success');
-      render();
-    };
-    div.appendChild(form);
-
-    // 이벤트 바인딩: 수정/삭제
-    setTimeout(() => {
-      div.querySelectorAll('.edit-sniper').forEach(btn => {
-        btn.onclick = () => {
-          const id = btn.getAttribute('data-id');
-          const sniper = snipers.find(s => s.id === id);
-          if(!sniper) return;
-          const nameNew = prompt('이름을 수정하세요:', sniper.name);
-          if(nameNew === null) return;
-          const descNew = prompt('설명을 수정하세요:', sniper.description);
-          if(descNew === null) return;
-          sniper.name = nameNew.trim() || sniper.name;
-          sniper.description = descNew.trim() || sniper.description;
-          saveSnipers(snipers);
-          showMessage('스나이퍼가 수정되었습니다.', 'success');
-          render();
-        };
-      });
-      div.querySelectorAll('.delete-sniper').forEach(btn => {
-        btn.onclick = () => {
-          const id = btn.getAttribute('data-id');
-          if(!confirm('정말 삭제하시겠습니까?')) return;
-          const idx = snipers.findIndex(s => s.id === id);
-          if(idx !== -1){
-            snipers.splice(idx,1);
-            saveSnipers(snipers);
-            showMessage('스나이퍼가 삭제되었습니다.', 'success');
-            render();
-          }
-        };
-      });
-    }, 10);
-
-    container.appendChild(div);
+  function syncLocalStorage() {
+    localStorage.setItem(STORAGE_FAQ, JSON.stringify(faqs));
+    localStorage.setItem(STORAGE_EXPOSE, JSON.stringify(exposes));
+    localStorage.setItem(STORAGE_REPORTS, JSON.stringify(reports));
   }
 
-  // --- Bind Sidebar Buttons ---
-  function bindSidebarButtons() {
-    document.querySelectorAll('.sidebar-btn').forEach(btn => {
-      btn.onclick = () => {
-        const page = btn.getAttribute('data-page');
-        if(page) {
-          state.page = page;
-          state.message = { text:'', type:'' };
-          render();
-        }
-      };
-    });
-    const logoutBtn = document.getElement
+  // 추가 버튼
+  addFaqBtn.addEventListener('click', () => {
+    const text = faqText.value.trim();
+    if (!text) return;
+    faqs.push(text);
+    faqText.value = '';
+    syncLocalStorage();
+    renderList(faqs, faqList);
+  });
 
-  // --- Bind Sidebar Buttons ---
-  function bindSidebarButtons() {
-    document.querySelectorAll('.sidebar-btn').forEach(btn => {
-      btn.onclick = () => {
-        const page = btn.getAttribute('data-page');
-        if(page) {
-          state.page = page;
-          state.message = { text:'', type:'' };
-          render();
-        }
-      };
-    });
-    const logoutBtn = document.getElementById('sidebar-logout-btn');
-    if(logoutBtn) {
-      logoutBtn.onclick = () => {
-        logout();
-      };
-    }
-  }
+  addExposeBtn.addEventListener('click', () => {
+    const text = exposeText.value.trim();
+    if (!text) return;
+    exposes.push(text);
+    exposeText.value = '';
+    syncLocalStorage();
+    renderList(exposes, exposeList);
+  });
 
-  // --- Initial Setup ---
-  function init() {
-    // 임시: 관리자 계정 기본 생성 (로컬스토리지에 없으면)
-    let users = loadUsers();
-    let needSave = false;
-    ADMIN_IDS.forEach(adminId => {
-      if(!users[adminId]) {
-        users[adminId] = { password: 'admin123', ip: '관리자계정 기본' };
-        needSave = true;
-      }
-    });
-    if(needSave) {
-      saveUsers(users);
-    }
+  addReportBtn.addEventListener('click', () => {
+    const text = reportText.value.trim();
+    if (!text) return;
+    reports.push(text);
+    reportText.value = '';
+    syncLocalStorage();
+    renderList(reports, reportList);
+  });
 
-    // 첫 렌더링
-    render();
-
-    // 사이드바 버튼 바인딩
-    bindSidebarButtons();
-  }
-
-  // --- Start ---
-  window.onload = init;
-})();
+  // 초기 렌더링
+  renderList(faqs, faqList);
+  renderList(exposes, exposeList);
+  renderList(reports, reportList);
+</script>
+</body>
+</html>
