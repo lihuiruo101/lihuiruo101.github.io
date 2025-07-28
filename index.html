@@ -158,13 +158,14 @@
 <script>
   const adminId = 'lihuiruo101';
 
+  // HTML 이스케이프
   function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
   }
 
-  // 간단한 마크다운 지원 (볼드, 이탤릭, 코드, 링크, 이미지)
+  // 간단한 마크다운 지원
   function simpleMarkdown(text) {
     if (!text) return '';
     return text
@@ -179,7 +180,7 @@
       .replace(/\n/g, '<br>');
   }
 
-  // 로그인 상태 확인
+  // 로그인 상태 확인/저장/삭제
   function getLoginUser() {
     return localStorage.getItem('login');
   }
@@ -199,7 +200,7 @@
     localStorage.setItem('user_' + id, pw);
   }
 
-  // 보고서, FAQ 저장소
+  // 보고서, FAQ 저장소 키
   const REPORTS_KEY = 'ywe_reports';
   const FAQ_KEY = 'ywe_faq';
 
@@ -216,10 +217,10 @@
     localStorage.setItem(FAQ_KEY, JSON.stringify(faqs));
   }
 
-  // 앱 메인 컨테이너
+  // 앱 컨테이너
   const app = document.getElementById('app');
 
-  // 화면 렌더링
+  // 로그인 화면 렌더링
   function renderLogin() {
     app.innerHTML = `
       <div class="login-box">
@@ -263,7 +264,7 @@
     alert('회원가입이 완료되었습니다.');
   }
 
-  // 사이드바 메뉴
+  // 사이드바 렌더링
   function renderSidebar(active) {
     const loginUser = getLoginUser();
     return `
@@ -276,7 +277,7 @@
     `;
   }
 
-  // 메인 콘텐츠 렌더 함수들
+  // 스나이퍼(신고) 목록 렌더링
   function renderSniper() {
     const reports = getReports();
     const loginUser = getLoginUser();
@@ -305,6 +306,7 @@
     return html;
   }
 
+  // 제보 신청 렌더링
   function renderSubmit() {
     return `
       <h2 class="header">스나이퍼 제보 신청</h2>
@@ -317,6 +319,23 @@
       <div id="image-preview" style="margin-top:10px;"></div>
       <button onclick="submitReport()">제보 제출</button>
     `;
+  }
+
+  // FAQ 렌더링 (샘플 데이터)
+  function renderFaq() {
+    const faqs = getFaqs();
+    let html = `<h2 class="header">자주 묻는 질문</h2>`;
+    if (faqs.length === 0) {
+      html += '<p>등록된 FAQ가 없습니다.</p>';
+    } else {
+      faqs.forEach((faq,i) => {
+        html += `<div class="card">
+          <div class="report-title">${escapeHtml(faq.question)}</div>
+          <div>${simpleMarkdown(faq.answer)}</div>
+        </div>`;
+      });
+    }
+    return html;
   }
 
   // 이미지 미리보기용 전역 변수
@@ -340,6 +359,7 @@
     }
   }
 
+  // 제보 제출 함수
   function submitReport() {
     const title = document.getElementById('report-title').value.trim();
     const content = document.getElementById('report-content').value.trim();
@@ -354,3 +374,85 @@
     alert('제보가 등록되었습니다.');
     switchTab('sniper');
   }
+
+  // 보고서 수정용 상태 변수
+  let editIndex = -1;
+
+  // 보고서 수정 화면 렌더링
+  function editReport(index) {
+    const reports = getReports();
+    if (!reports[index]) return;
+    editIndex = index;
+    const r = reports[index];
+    app.innerHTML = renderSidebar('submit') + `
+      <div class="content">
+        <h2 class="header">보고서 수정</h2>
+        <label>제목</label>
+        <input type="text" id="report-title" value="${escapeHtml(r.title)}" />
+        <label>내용 (마크다운 지원)</label>
+        <textarea id="report-content" rows="6">${escapeHtml(r.content)}</textarea>
+        <label>이미지 업로드 (기존 이미지는 수정 불가)</label>
+        <input type="file" id="report-images" multiple accept="image/*" onchange="previewImages(event)" />
+        <div id="image-preview" style="margin-top:10px;"></div>
+        <button onclick="submitEditReport()">수정 완료</button>
+        <button onclick="switchTab('sniper')">취소</button>
+      </div>
+    `;
+    uploadedImages = [];
+  }
+
+  // 수정 완료 함수
+  function submitEditReport() {
+    if (editIndex === -1) return;
+    const title = document.getElementById('report-title').value.trim();
+    const content = document.getElementById('report-content').value.trim();
+    if (!title || !content) {
+      alert('제목과 내용을 입력해주세요.');
+      return;
+    }
+    const reports = getReports();
+    // 기존 이미지 유지 + 새로 올린 이미지 추가
+    if (uploadedImages.length > 0) {
+      reports[editIndex].images = reports[editIndex].images.concat(uploadedImages);
+    }
+    reports[editIndex].title = title;
+    reports[editIndex].content = content;
+    setReports(reports);
+    alert('보고서가 수정되었습니다.');
+    editIndex = -1;
+    switchTab('sniper');
+  }
+
+  // 탭 전환 함수
+  function switchTab(tab) {
+    if (!getLoginUser()) {
+      renderLogin();
+      return;
+    }
+    app.innerHTML = renderSidebar(tab) + `<div class="content">`;
+    if (tab === 'sniper') {
+      app.innerHTML += renderSniper();
+    } else if (tab === 'submit') {
+      editIndex = -1;
+      app.innerHTML += renderSubmit();
+    } else if (tab === 'faq') {
+      app.innerHTML += renderFaq();
+    }
+    app.innerHTML += `</div>`;
+  }
+
+  // 로그인 상태에 따라 초기화
+  function renderMain() {
+    if (!getLoginUser()) {
+      renderLogin();
+    } else {
+      switchTab('sniper');
+    }
+  }
+
+  // 최초 실행
+  renderMain();
+</script>
+
+</body>
+</html>
