@@ -10,49 +10,41 @@
   :root {
     --primary: #1e90ff;
     --accent: #f44336;
-    --dark-bg: #0f2027;
-    --dark-panel: rgba(20, 20, 20, 0.95);
-    --light-text: #eee;
-    --radius: 10px;
+    --bg: #121212;
+    --text-light: #eee;
+    --radius: 8px;
   }
 
   * {
     margin: 0; padding: 0; box-sizing: border-box;
   }
 
-  html, body {
-    height: 100%; width: 100%;
+  body {
     font-family: 'Nanum Gothic', sans-serif;
     background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    color: var(--light-text);
+    color: var(--text-light);
+    display: flex;
+    height: 100vh;
     overflow: hidden;
   }
 
-  body {
-    display: flex;
-    min-height: 100vh;
-  }
-
   nav {
-    width: 280px;
-    background: var(--dark-panel);
+    width: 260px;
+    background: rgba(20, 20, 20, 0.95);
     border-right: 3px solid var(--primary);
     display: flex;
     flex-direction: column;
-    padding-top: 2rem;
-    backdrop-filter: blur(10px);
-    z-index: 100;
-    position: relative;
+    padding: 2rem 1rem;
+    user-select: none;
   }
 
   nav h1 {
     font-family: 'Orbitron', sans-serif;
+    color: var(--primary);
     font-weight: 700;
     font-size: 1.6rem;
-    color: var(--primary);
+    margin-bottom: 1.5rem;
     text-align: center;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--primary);
   }
 
   nav button {
@@ -61,13 +53,16 @@
     color: #bbb;
     font-weight: 600;
     font-size: 1.1rem;
-    padding: 1.3rem 2.2rem;
+    padding: 1rem 1.5rem;
     text-align: left;
     cursor: pointer;
+    margin-bottom: 0.3rem;
+    border-radius: var(--radius);
     transition: background 0.3s ease, color 0.3s ease;
-    user-select: none;
   }
-  nav button:hover, nav button.active {
+
+  nav button:hover,
+  nav button.active {
     background: var(--primary);
     color: #121212;
   }
@@ -85,79 +80,60 @@
 
   main {
     flex: 1;
-    background: rgba(10, 10, 10, 0.9);
+    background: var(--bg);
     overflow-y: auto;
-    padding: 2.5rem 3rem;
-    display: flex;
-    justify-content: center;
-  }
-
-  main::-webkit-scrollbar {
-    width: 12px;
-  }
-  main::-webkit-scrollbar-thumb {
-    background-color: var(--primary);
-    border-radius: 20px;
+    padding: 2rem 3rem;
   }
 
   section {
-    width: 100%;
     max-width: 700px;
+    margin: auto;
     background: rgba(30,30,30,0.85);
     border-radius: var(--radius);
     padding: 2rem 2.5rem;
     box-shadow: 0 0 20px var(--primary);
-    color: var(--light-text);
   }
 
   h2 {
     font-family: 'Orbitron', sans-serif;
-    font-size: 2.1rem;
+    font-size: 2rem;
     margin-bottom: 1.2rem;
-    text-align: center;
     color: var(--primary);
+    text-align: center;
   }
 
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-
-  label {
-    font-weight: 700;
-    margin-bottom: 0.6rem;
-    color: #aaccee;
+  input, textarea, button {
+    font-family: 'Nanum Gothic', sans-serif;
   }
 
   input[type=text], input[type=password], textarea {
+    width: 100%;
     background: #121212;
-    border-radius: 8px;
     border: none;
+    border-radius: var(--radius);
     padding: 1rem;
-    color: var(--light-text);
+    margin-bottom: 1.2rem;
+    color: var(--text-light);
     font-size: 1.05rem;
-    margin-bottom: 1.5rem;
-    font-family: 'Nanum Gothic', sans-serif;
     resize: vertical;
   }
 
-  textarea {
-    min-height: 120px;
+  button.submit-btn {
+    background: var(--primary);
+    border: none;
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #121212;
+    cursor: pointer;
+    transition: background 0.3s ease;
   }
 
-  /* 비밀번호 입력 + 토글 아이콘 */
-  .password-wrapper {
-    position: relative;
-    width: 100%;
+  button.submit-btn:hover {
+    background: #0a7fff;
   }
 
-  .password-wrapper input[type="password"],
-  .password-wrapper input[type="text"] {
-    width: 100%;
-    padding-right: 3.2rem;
-  }
-
-  /* 눈 아이콘 + 삐긋선 */
   .password-toggle {
     position: absolute;
     top: 50%;
@@ -166,48 +142,19 @@
     width: 24px;
     height: 24px;
     cursor: pointer;
-    user-select: none;
-  }
-  .password-toggle path, .password-toggle circle, .password-toggle line {
     stroke: #888;
     fill: none;
     stroke-width: 2;
-    transition: stroke 0.3s ease, fill 0.3s ease;
+    transition: stroke 0.3s ease;
   }
-  .password-toggle:hover, .password-toggle:focus {
-    stroke: var(--primary);
-    outline: none;
-  }
-  .password-toggle.crossed line {
-    stroke: #888;
-  }
-  .password-toggle.crossed:hover line {
+
+  .password-toggle.crossed {
     stroke: var(--primary);
   }
 
-  .submit-btn {
-    background: var(--primary);
-    border: none;
-    border-radius: 10px;
-    padding: 1.2rem 1rem;
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: #121212;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    margin-top: 0.5rem;
-  }
-  .submit-btn:hover {
-    background: #0a7fff;
-  }
-
-  .toggle-auth {
-    margin-top: 1rem;
-    text-align: center;
-    font-size: 1rem;
-    color: #aad4ff;
-    cursor: pointer;
-    user-select: none;
+  .password-wrapper {
+    position: relative;
+    width: 100%;
   }
 
   .hidden {
@@ -222,21 +169,20 @@
     border: 1px solid var(--primary);
     border-radius: var(--radius);
     background: rgba(20,20,20,0.9);
+    color: #ddeeff;
+    font-family: monospace;
+    font-size: 0.9rem;
   }
 
   ul#ip-log-list li {
     padding: 0.6rem 1rem;
     border-bottom: 1px solid var(--primary);
-    font-family: monospace;
-    font-size: 0.9rem;
-    color: #ddeeff;
   }
 
   ul#ip-log-list li:last-child {
     border-bottom: none;
   }
 
-  /* FAQ, 박제, 제보 게시글 리스트 스타일 */
   .post-list {
     max-height: 350px;
     overflow-y: auto;
@@ -244,6 +190,7 @@
     border-radius: var(--radius);
     background: #121212;
     padding: 1rem;
+    color: var(--text-light);
   }
 
   .post-item {
@@ -251,12 +198,15 @@
     padding: 0.7rem 0;
     position: relative;
   }
+
   .post-item:last-child {
     border-bottom: none;
   }
+
   .post-item strong {
     color: var(--primary);
   }
+
   .post-item button.delete-btn {
     position: absolute;
     right: 0;
@@ -269,6 +219,7 @@
     cursor: pointer;
     font-size: 0.85rem;
   }
+
   .post-item button.delete-btn:hover {
     background: #d32f2f;
   }
@@ -283,7 +234,7 @@
       flex-direction: row;
       border-right: none;
       border-bottom: 3px solid var(--primary);
-      padding-top: 0.8rem;
+      padding: 0.8rem 0;
       overflow-x: auto;
     }
     nav h1 {
@@ -295,6 +246,7 @@
       padding: 1rem 0.6rem;
       text-align: center;
       white-space: nowrap;
+      margin-bottom: 0;
     }
     main {
       padding: 1rem 1.5rem;
@@ -308,132 +260,126 @@
 </style>
 </head>
 <body>
-  <nav>
-    <h1>YWE | 스나이핑</h1>
-    <button id="nav-login" class="active">로그인</button>
-    <button id="nav-register">회원가입</button>
-    <button id="nav-faq" class="hidden">FAQ</button>
-    <button id="nav-expose" class="hidden">박제</button>
-    <button id="nav-report" class="hidden">제보</button>
-    <button id="nav-admin" class="hidden">관리자</button>
-    <button id="logout-btn" class="hidden">로그아웃</button>
-  </nav>
-
-  <main>
-    <!-- 로그인 -->
-    <section id="section-login">
-      <h2>로그인</h2>
-      <form id="form-login">
-        <label for="login-id">아이디</label>
-        <input type="text" id="login-id" autocomplete="username" required />
-        <label for="login-pw">비밀번호</label>
-        <div class="password-wrapper">
-          <input type="password" id="login-pw" autocomplete="current-password" required />
-          <svg id="toggle-login-pw" class="password-toggle" tabindex="0" role="button" aria-label="비밀번호 보기 토글" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-            <circle cx="12" cy="12" r="3" />
-            <line x1="4" y1="4" x2="20" y2="20" stroke-width="2" stroke="#888" />
-          </svg>
-        </div>
-        <button type="submit" class="submit-btn">로그인</button>
-      </form>
-      <div class="toggle-auth" id="toggle-to-register">계정이 없으신가요? 회원가입</div>
-    </section>
-
-    <!-- 회원가입 -->
-    <section id="section-register" class="hidden">
-      <h2>회원가입</h2>
-      <form id="form-register">
-        <label for="register-id">아이디</label>
-        <input type="text" id="register-id" autocomplete="username" required />
-        <label for="register-pw">비밀번호</label>
-        <div class="password-wrapper">
-          <input type="password" id="register-pw" autocomplete="new-password" required />
-          <svg id="toggle-register-pw" class="password-toggle" tabindex="0" role="button" aria-label="비밀번호 보기 토글" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-            <circle cx="12" cy="12" r="3" />
-            <line x1="4" y1="4" x2="20" y2="20" stroke-width="2" stroke="#888" />
-          </svg>
-        </div>
-        <button type="submit" class="submit-btn">회원가입</button>
-      </form>
-      <div class="toggle-auth" id="toggle-to-login">이미 계정이 있으신가요? 로그인</div>
-    </section>
-
-    <!-- FAQ -->
-    <section id="section-faq" class="hidden">
-      <h2>자주 묻는 질문 (FAQ)</h2>
-      <div id="faq-list" class="post-list"></div>
-      <form id="form-faq" class="hidden" style="margin-top: 1.5rem;">
-        <label for="faq-title">제목</label>
-        <input type="text" id="faq-title" />
-        <label for="faq-content">내용 (마크다운 가능)</label>
-        <textarea id="faq-content"></textarea>
-        <button type="submit" class="submit-btn">등록</button>
-      </form>
-    </section>
-
-    <!-- 박제 -->
-    <section id="section-expose" class="hidden">
-      <h2>사기꾼 박제</h2>
-      <div id="expose-list" class="post-list"></div>
-      <form id="form-expose" class="hidden" style="margin-top: 1.5rem;">
-        <label for="expose-title">제목</label>
-        <input type="text" id="expose-title" />
-        <label for="expose-content">내용 (마크다운 가능)</label>
-        <textarea id="expose-content"></textarea>
-        <button type="submit" class="submit-btn">등록</button>
-      </form>
-    </section>
-
-    <!-- 제보 -->
-    <section id="section-report" class="hidden">
-      <h2>제보 요청</h2>
-      <form id="form-report" style="margin-top: 1rem;">
-        <label for="report-title">제목</label>
-        <input type="text" id="report-title" required />
-        <label for="report-content">설명</label>
-        <textarea id="report-content" rows="5" required></textarea>
-        <button type="submit" class="submit-btn">제보</button>
-      </form>
-    </section>
-
-    <!-- 관리자 -->
-    <section id="section-admin" class="hidden">
-      <h2>관리자 메뉴</h2>
-      <div id="admin-ip-log" style="margin-top: 1rem;">
-        <h3>접속 사용자 정보 (IP / ID)</h3>
-        <ul id="ip-log-list"></ul>
+<nav>
+  <h1>YWE | 스나이핑</h1>
+  <button id="nav-login" class="active">로그인</button>
+  <button id="nav-register">회원가입</button>
+  <button id="nav-faq" class="hidden">FAQ</button>
+  <button id="nav-expose" class="hidden">박제</button>
+  <button id="nav-report" class="hidden">제보</button>
+  <button id="nav-admin" class="hidden">관리자</button>
+  <button id="logout-btn" class="hidden">로그아웃</button>
+</nav>
+<main>
+  <!-- 로그인 -->
+  <section id="section-login">
+    <h2>로그인</h2>
+    <form id="form-login">
+      <label for="login-id">아이디</label>
+      <input type="text" id="login-id" autocomplete="username" required />
+      <label for="login-pw">비밀번호</label>
+      <div class="password-wrapper">
+        <input type="password" id="login-pw" autocomplete="current-password" required />
+        <svg id="toggle-login-pw" class="password-toggle" tabindex="0" role="button" aria-label="비밀번호 보기 토글" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <circle cx="12" cy="12" r="3" />
+          <line x1="4" y1="4" x2="20" y2="20" stroke-width="2" stroke="#888" />
+        </svg>
       </div>
-      <div style="margin-top: 1.5rem;">
-        <h3>FAQ 관리</h3>
-        <div id="admin-faq-list" class="post-list"></div>
+      <button type="submit" class="submit-btn">로그인</button>
+    </form>
+    <div class="toggle-auth" id="toggle-to-register" style="margin-top: 1rem; text-align:center; cursor:pointer; color:#aad4ff;">계정이 없으신가요? 회원가입</div>
+  </section>
+
+  <!-- 회원가입 -->
+  <section id="section-register" class="hidden">
+    <h2>회원가입</h2>
+    <form id="form-register">
+      <label for="register-id">아이디</label>
+      <input type="text" id="register-id" autocomplete="username" required />
+      <label for="register-pw">비밀번호</label>
+      <div class="password-wrapper">
+        <input type="password" id="register-pw" autocomplete="new-password" required />
+        <svg id="toggle-register-pw" class="password-toggle" tabindex="0" role="button" aria-label="비밀번호 보기 토글" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <circle cx="12" cy="12" r="3" />
+          <line x1="4" y1="4" x2="20" y2="20" stroke-width="2" stroke="#888" />
+        </svg>
       </div>
-      <div style="margin-top: 1.5rem;">
-        <h3>박제 관리</h3>
-        <div id="admin-expose-list" class="post-list"></div>
-      </div>
-      <form id="form-admin-add" style="margin-top: 2rem;">
-        <label for="new-admin-id">관리자 아이디 추가</label>
-        <input type="text" id="new-admin-id" required />
-        <button type="submit" class="submit-btn">추가</button>
-        </form>
-    </section>
-  </main>
+      <button type="submit" class="submit-btn">회원가입</button>
+    </form>
+    <div class="toggle-auth" id="toggle-to-login" style="margin-top: 1rem; text-align:center; cursor:pointer; color:#aad4ff;">이미 계정이 있으신가요? 로그인</div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="section-faq" class="hidden">
+    <h2>자주 묻는 질문 (FAQ)</h2>
+    <div id="faq-list" class="post-list"></div>
+    <form id="form-faq" class="hidden" style="margin-top: 1.5rem;">
+      <label for="faq-title">제목</label>
+      <input type="text" id="faq-title" />
+      <label for="faq-content">내용 (마크다운 가능)</label>
+      <textarea id="faq-content"></textarea>
+      <button type="submit" class="submit-btn">등록</button>
+    </form>
+  </section>
+
+  <!-- 박제 -->
+  <section id="section-expose" class="hidden">
+    <h2>사기꾼 박제</h2>
+    <div id="expose-list" class="post-list"></div>
+    <form id="form-expose" class="hidden" style="margin-top: 1.5rem;">
+      <label for="expose-title">제목</label>
+      <input type="text" id="expose-title" />
+      <label for="expose-content">내용 (마크다운 가능)</label>
+      <textarea id="expose-content"></textarea>
+      <button type="submit" class="submit-btn">등록</button>
+    </form>
+  </section>
+
+  <!-- 제보 -->
+  <section id="section-report" class="hidden">
+    <h2>제보 요청</h2>
+    <form id="form-report" style="margin-top: 1rem;">
+      <label for="report-title">제목</label>
+      <input type="text" id="report-title" required />
+      <label for="report-content">설명</label>
+      <textarea id="report-content" rows="5" required></textarea>
+      <button type="submit" class="submit-btn">제보</button>
+    </form>
+  </section>
+
+  <!-- 관리자 -->
+  <section id="section-admin" class="hidden">
+    <h2>관리자 메뉴</h2>
+    <div id="admin-ip-log" style="margin-top: 1rem;">
+      <h3>접속 사용자 정보 (IP / ID / 시간)</h3>
+      <ul id="ip-log-list"></ul>
+    </div>
+    <div style="margin-top: 1.5rem;">
+      <h3>FAQ 관리</h3>
+      <div id="admin-faq-list" class="post-list"></div>
+    </div>
+    <div style="margin-top: 1.5rem;">
+      <h3>박제 관리</h3>
+      <div id="admin-expose-list" class="post-list"></div>
+    </div>
+    <form id="form-admin-add" style="margin-top: 2rem;">
+      <label for="new-admin-id">관리자 아이디 추가</label>
+      <input type="text" id="new-admin-id" />
+      <button type="submit" class="submit-btn">추가</button>
+    </form>
+  </section>
+</main>
 
 <script>
 (() => {
-  // 데이터 저장소 (클라이언트 내에서만 유지됨)
-  const users = {}; // { id: { pw, isAdmin } }
-  const adminIds = new Set(['admin']); // 초기 관리자 아이디 (admin)
-  const faqPosts = [];  // {id, title, content, author}
-  const exposePosts = []; // {id, title, content, author}
-  const reportPosts = []; // {id, title, content, author}
-
-  // 접속자 IP/ID 누적 기록 [{id, ip, time}]
-  const ipLog = [];
-
-  // 현재 로그인한 사용자 ID
+  const users = {}; // { id: { password } }
+  const adminIds = new Set(['admin']); // 초기 관리자 아이디
+  const faqPosts = []; // { id, title, content }
+  const exposePosts = []; // { id, title, content }
+  const reportPosts = []; // { id, title, content }
+  const ipLog = []; // { ip, id, time }
   let currentUser = null;
 
   // DOM Elements
@@ -452,300 +398,281 @@
   const sectionReport = document.getElementById('section-report');
   const sectionAdmin = document.getElementById('section-admin');
 
-  // Toggle password visibility helper
-  function setupPasswordToggle(inputId, toggleId) {
-    const input = document.getElementById(inputId);
-    const toggle = document.getElementById(toggleId);
-    toggle.addEventListener('click', () => {
+  const formLogin = document.getElementById('form-login');
+  const formRegister = document.getElementById('form-register');
+  const formFaq = document.getElementById('form-faq');
+  const formExpose = document.getElementById('form-expose');
+  const formReport = document.getElementById('form-report');
+  const formAdminAdd = document.getElementById('form-admin-add');
+
+  const faqList = document.getElementById('faq-list');
+  const exposeList = document.getElementById('expose-list');
+  const adminFaqList = document.getElementById('admin-faq-list');
+  const adminExposeList = document.getElementById('admin-expose-list');
+  const ipLogList = document.getElementById('ip-log-list');
+
+  // 비밀번호 보기 토글
+  function togglePasswordVisibility(toggleBtn, input) {
+    toggleBtn.addEventListener('click', () => {
       if (input.type === 'password') {
         input.type = 'text';
-        toggle.classList.add('crossed');
+        toggleBtn.classList.add('crossed');
       } else {
         input.type = 'password';
-        toggle.classList.remove('crossed');
+        toggleBtn.classList.remove('crossed');
       }
     });
   }
 
-  setupPasswordToggle('login-pw', 'toggle-login-pw');
-  setupPasswordToggle('register-pw', 'toggle-register-pw');
+  togglePasswordVisibility(document.getElementById('toggle-login-pw'), document.getElementById('login-pw'));
+  togglePasswordVisibility(document.getElementById('toggle-register-pw'), document.getElementById('register-pw'));
 
-  // 화면 전환
-  function showSection(section) {
-    [sectionLogin, sectionRegister, sectionFaq, sectionExpose, sectionReport, sectionAdmin].forEach(s => {
-      s.classList.add('hidden');
+  // 화면 전환 함수
+  function showSection(targetSection) {
+    [sectionLogin, sectionRegister, sectionFaq, sectionExpose, sectionReport, sectionAdmin].forEach(sec => {
+      sec.classList.add('hidden');
     });
-    section.classList.remove('hidden');
+    targetSection.classList.remove('hidden');
 
-    // nav 버튼 active 설정
+    // 네비게이션 버튼 활성화 토글
     [navLoginBtn, navRegisterBtn, navFaqBtn, navExposeBtn, navReportBtn, navAdminBtn].forEach(btn => {
       btn.classList.remove('active');
     });
-    if (section === sectionLogin) navLoginBtn.classList.add('active');
-    else if (section === sectionRegister) navRegisterBtn.classList.add('active');
-    else if (section === sectionFaq) navFaqBtn.classList.add('active');
-    else if (section === sectionExpose) navExposeBtn.classList.add('active');
-    else if (section === sectionReport) navReportBtn.classList.add('active');
-    else if (section === sectionAdmin) navAdminBtn.classList.add('active');
+
+    if (targetSection === sectionLogin) navLoginBtn.classList.add('active');
+    else if (targetSection === sectionRegister) navRegisterBtn.classList.add('active');
+    else if (targetSection === sectionFaq) navFaqBtn.classList.add('active');
+    else if (targetSection === sectionExpose) navExposeBtn.classList.add('active');
+    else if (targetSection === sectionReport) navReportBtn.classList.add('active');
+    else if (targetSection === sectionAdmin) navAdminBtn.classList.add('active');
   }
 
-  // nav 버튼 클릭 이벤트
-  navLoginBtn.addEventListener('click', () => {
-    if (!currentUser) showSection(sectionLogin);
-    else alert('로그인 상태입니다. 로그아웃 후 이용하세요.');
-  });
-  navRegisterBtn.addEventListener('click', () => {
-    if (!currentUser) showSection(sectionRegister);
-    else alert('로그인 상태입니다. 로그아웃 후 이용하세요.');
-  });
-  navFaqBtn.addEventListener('click', () => {
-    if (!currentUser) return alert('로그인 후 이용하세요.');
-    showSection(sectionFaq);
-  });
-  navExposeBtn.addEventListener('click', () => {
-    if (!currentUser) return alert('로그인 후 이용하세요.');
-    showSection(sectionExpose);
-  });
-  navReportBtn.addEventListener('click', () => {
-    if (!currentUser) return alert('로그인 후 이용하세요.');
-    showSection(sectionReport);
-  });
-  navAdminBtn.addEventListener('click', () => {
-    if (!currentUser) return alert('로그인 후 이용하세요.');
-    if (!adminIds.has(currentUser)) return alert('관리자만 접근 가능합니다.');
-    showSection(sectionAdmin);
-    renderIpLog();
-    renderAdminFaq();
-    renderAdminExpose();
-  });
-  logoutBtn.addEventListener('click', () => {
-    currentUser = null;
-    alert('로그아웃 되었습니다.');
-    logoutBtn.classList.add('hidden');
-    navFaqBtn.classList.add('hidden');
-    navExposeBtn.classList.add('hidden');
-    navReportBtn.classList.add('hidden');
-    navAdminBtn.classList.add('hidden');
-    showSection(sectionLogin);
-  });
+  navLoginBtn.addEventListener('click', () => showSection(sectionLogin));
+  navRegisterBtn.addEventListener('click', () => showSection(sectionRegister));
+  navFaqBtn.addEventListener('click', () => showSection(sectionFaq));
+  navExposeBtn.addEventListener('click', () => showSection(sectionExpose));
+  navReportBtn.addEventListener('click', () => showSection(sectionReport));
+  navAdminBtn.addEventListener('click', () => showSection(sectionAdmin));
 
-  // 회원가입 <-> 로그인 토글
+  // 토글 텍스트 클릭 (로그인 <-> 회원가입)
   document.getElementById('toggle-to-register').addEventListener('click', () => showSection(sectionRegister));
   document.getElementById('toggle-to-login').addEventListener('click', () => showSection(sectionLogin));
 
-  // 유효성 검사: 아이디 중복 확인
-  function isValidId(id) {
-    return /^[a-zA-Z0-9_-]{3,16}$/.test(id);
-  }
-  // 비밀번호 최소 4자 이상
-  function isValidPw(pw) {
-    return pw.length >= 4;
-  }
+  // 로그아웃
+  logoutBtn.addEventListener('click', () => {
+    currentUser = null;
+    updateUI();
+    alert('로그아웃 되었습니다.');
+    showSection(sectionLogin);
+  });
 
-  // 공인 IP 가져오기 (비동기)
-  async function fetchUserIP() {
-    try {
-      const res = await fetch('https://api.ipify.org?format=json');
-      if (!res.ok) throw new Error('IP 요청 실패');
-      const data = await res.json();
-      return data.ip || '알수없음';
-    } catch {
-      return '알수없음';
+  // UI 업데이트 (네비게이션, 버튼 등)
+  function updateUI() {
+    if (currentUser) {
+      navFaqBtn.classList.remove('hidden');
+      navExposeBtn.classList.remove('hidden');
+      navReportBtn.classList.remove('hidden');
+      logoutBtn.classList.remove('hidden');
+      navLoginBtn.classList.add('hidden');
+      navRegisterBtn.classList.add('hidden');
+
+      if (adminIds.has(currentUser)) {
+        navAdminBtn.classList.remove('hidden');
+      } else {
+        navAdminBtn.classList.add('hidden');
+      }
+    } else {
+      navFaqBtn.classList.add('hidden');
+      navExposeBtn.classList.add('hidden');
+      navReportBtn.classList.add('hidden');
+      navAdminBtn.classList.add('hidden');
+      logoutBtn.classList.add('hidden');
+      navLoginBtn.classList.remove('hidden');
+      navRegisterBtn.classList.remove('hidden');
     }
   }
 
-  // 로그인 폼 제출
-  document.getElementById('form-login').addEventListener('submit', async e => {
+  // IP 가져오기 함수 (ipify API 사용)
+  async function getClientIP() {
+    try {
+      const res = await fetch('https://api.ipify.org?format=json');
+      const data = await res.json();
+      return data.ip || '알 수 없음';
+    } catch {
+      return '알 수 없음';
+    }
+  }
+
+  // 로그인 처리
+  formLogin.addEventListener('submit', async (e) => {
     e.preventDefault();
     const id = document.getElementById('login-id').value.trim();
     const pw = document.getElementById('login-pw').value;
 
-    if (!id || !pw) return alert('아이디와 비밀번호를 모두 입력하세요.');
-
-    if (!(id in users)) return alert('존재하지 않는 아이디입니다.');
-    if (users[id].pw !== pw) return alert('비밀번호가 틀렸습니다.');
+    if (!users[id] || users[id].password !== pw) {
+      alert('아이디 또는 비밀번호가 올바르지 않습니다.');
+      return;
+    }
 
     currentUser = id;
 
-    const ip = await fetchUserIP();
-    ipLog.push({id: currentUser, ip, time: new Date().toLocaleString()});
-    updateNavByLogin();
+    // 접속 IP 기록
+    const ip = await getClientIP();
+    const now = new Date().toLocaleString();
+    ipLog.push({ ip, id, time: now });
 
-    alert(`${id}님 로그인 성공!`);
-
+    updateIPLogUI();
+    updateUI();
     showSection(sectionFaq);
   });
 
-  // 회원가입 폼 제출
-  document.getElementById('form-register').addEventListener('submit', e => {
+  // 회원가입 처리
+  formRegister.addEventListener('submit', (e) => {
     e.preventDefault();
     const id = document.getElementById('register-id').value.trim();
     const pw = document.getElementById('register-pw').value;
 
-    if (!isValidId(id)) return alert('아이디는 3~16자의 영문, 숫자, _ 또는 - 만 가능합니다.');
-    if (!isValidPw(pw)) return alert('비밀번호는 최소 4자 이상이어야 합니다.');
-    if (id in users) return alert('이미 존재하는 아이디입니다.');
+    if (users[id]) {
+      alert('이미 존재하는 아이디입니다.');
+      return;
+    }
 
-    users[id] = {pw, isAdmin: false};
+    users[id] = { password: pw };
     alert('회원가입 완료! 로그인 해주세요.');
     showSection(sectionLogin);
   });
 
-  // 로그인 성공 후 네비게이션 활성화
-  function updateNavByLogin() {
-    logoutBtn.classList.remove('hidden');
-    navFaqBtn.classList.remove('hidden');
-    navExposeBtn.classList.remove('hidden');
-    navReportBtn.classList.remove('hidden');
+  // FAQ UI 업데이트
+  function updateFAQUI() {
+    faqList.innerHTML = '';
+    faqPosts.forEach((post, idx) => {
+      const el = document.createElement('div');
+      el.classList.add('post-item');
+      el.innerHTML = `<strong>${post.title}</strong><p>${post.content}</p>`;
+      faqList.appendChild(el);
+    });
+
+    // 관리자용
     if (adminIds.has(currentUser)) {
-      navAdminBtn.classList.remove('hidden');
-    } else {
-      navAdminBtn.classList.add('hidden');
+      adminFaqList.innerHTML = '';
+      faqPosts.forEach((post, idx) => {
+        const el = document.createElement('div');
+        el.classList.add('post-item');
+        el.innerHTML = `<strong>${post.title}</strong>
+          <button class="delete-btn" data-type="faq" data-idx="${idx}">삭제</button>`;
+        adminFaqList.appendChild(el);
+      });
     }
-    navLoginBtn.classList.add('hidden');
-    navRegisterBtn.classList.add('hidden');
   }
 
-  // FAQ 등록 및 삭제 (관리자만 가능)
-  const faqListDiv = document.getElementById('faq-list');
-  const formFaq = document.getElementById('form-faq');
-  // 박제
-  const exposeListDiv = document.getElementById('expose-list');
-  const formExpose = document.getElementById('form-expose');
-
-  // 게시글 렌더 함수
-  function renderPosts(posts, container, isAdminView = false, onDelete) {
-    container.innerHTML = '';
-    if (posts.length === 0) {
-      container.textContent = '게시물이 없습니다.';
-      return;
-    }
-    posts.forEach(post => {
-      const div = document.createElement('div');
-      div.className = 'post-item';
-      div.innerHTML = `<strong>${escapeHtml(post.title)}</strong><br/><pre>${escapeHtml(post.content)}</pre><small>작성자: ${escapeHtml(post.author)}</small>`;
-      if (isAdminView) {
-        const delBtn = document.createElement('button');
-        delBtn.textContent = '삭제';
-        delBtn.className = 'delete-btn';
-        delBtn.addEventListener('click', () => {
-          if (confirm('정말 삭제하시겠습니까?')) {
-            onDelete(post.id);
-          }
-        });
-        div.appendChild(delBtn);
-      }
-      container.appendChild(div);
+  // 박제 UI 업데이트
+  function updateExposeUI() {
+    exposeList.innerHTML = '';
+    exposePosts.forEach((post, idx) => {
+      const el = document.createElement('div');
+      el.classList.add('post-item');
+      el.innerHTML = `<strong>${post.title}</strong><p>${post.content}</p>`;
+      exposeList.appendChild(el);
     });
-  }
 
-  // HTML escape
-  function escapeHtml(text) {
-    return text.replace(/[&<>"']/g, m => {
-      return {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      }[m];
-    });
-  }
-
-  // FAQ 글 등록
-  formFaq.addEventListener('submit', e => {
-    e.preventDefault();
-    if (!currentUser) return alert('로그인 후 이용하세요.');
-    if (!adminIds.has(currentUser)) return alert('관리자만 게시할 수 있습니다.');
-
-    const title = document.getElementById('faq-title').value.trim();
-    const content = document.getElementById('faq-content').value.trim();
-    if (!title || !content) return alert('제목과 내용을 모두 입력하세요.');
-
-    faqPosts.push({id: Date.now(), title, content, author: currentUser});
-    renderAdminFaq();
-    formFaq.reset();
-  });
-
-  // 박제 글 등록
-  formExpose.addEventListener('submit', e => {
-    e.preventDefault();
-    if (!currentUser) return alert('로그인 후 이용하세요.');
-    if (!adminIds.has(currentUser)) return alert('관리자만 게시할 수 있습니다.');
-
-    const title = document.getElementById('expose-title').value.trim();
-    const content = document.getElementById('expose-content').value.trim();
-    if (!title || !content) return alert('제목과 내용을 모두 입력하세요.');
-
-    exposePosts.push({id: Date.now(), title, content, author: currentUser});
-    renderAdminExpose();
-    formExpose.reset();
-  });
-
-  // FAQ 삭제
-  function deleteFaq(id) {
-    const idx = faqPosts.findIndex(p => p.id === id);
-    if (idx !== -1) {
-      faqPosts.splice(idx, 1);
-      renderAdminFaq();
+    if (adminIds.has(currentUser)) {
+      adminExposeList.innerHTML = '';
+      exposePosts.forEach((post, idx) => {
+        const el = document.createElement('div');
+        el.classList.add('post-item');
+        el.innerHTML = `<strong>${post.title}</strong>
+          <button class="delete-btn" data-type="expose" data-idx="${idx}">삭제</button>`;
+        adminExposeList.appendChild(el);
+      });
     }
   }
 
-  // 박제 삭제
-  function deleteExpose(id) {
-    const idx = exposePosts.findIndex(p => p.id === id);
-    if (idx !== -1) {
-      exposePosts.splice(idx, 1);
-      renderAdminExpose();
-    }
-  }
-
-  // 관리자용 FAQ 렌더
-  function renderAdminFaq() {
-    renderPosts(faqPosts, document.getElementById('admin-faq-list'), true, deleteFaq);
-    // 일반 FAQ도 보여줌
-    renderPosts(faqPosts, faqListDiv, false);
-    // FAQ 등록폼은 관리자만 보임
-    formFaq.classList.toggle('hidden', !adminIds.has(currentUser));
-  }
-
-  // 관리자용 박제 렌더
-  function renderAdminExpose() {
-    renderPosts(exposePosts, document.getElementById('admin-expose-list'), true, deleteExpose);
-    // 일반 박제 게시판은 관리자만 접근 가능하므로 따로 렌더하지 않음
-    // 박제 등록폼도 관리자만 보임
-    formExpose.classList.toggle('hidden', !adminIds.has(currentUser));
-  }
-
-  // 접속자 IP/ID 기록 렌더
-  function renderIpLog() {
-    const ipLogList = document.getElementById('ip-log-list');
+  // IP 로그 UI 업데이트
+  function updateIPLogUI() {
     ipLogList.innerHTML = '';
-    if (ipLog.length === 0) {
-      ipLogList.textContent = '접속 기록이 없습니다.';
-      return;
-    }
-    ipLog.forEach(log => {
+    ipLog.slice().reverse().forEach(({ ip, id, time }) => {
       const li = document.createElement('li');
-      li.textContent = `[${log.time}] ID: ${log.id} / IP: ${log.ip}`;
+      li.textContent = `[${time}] IP: ${ip} / ID: ${id}`;
       ipLogList.appendChild(li);
     });
   }
 
-  // 관리자 아이디 추가 폼 처리
-  document.getElementById('form-admin-add').addEventListener('submit', e => {
+  // FAQ 등록 (관리자 전용)
+  formFaq.addEventListener('submit', (e) => {
     e.preventDefault();
-    const newAdminIdInput = document.getElementById('new-admin-id');
-    const newAdminId = newAdminIdInput.value.trim();
-    if (!newAdminId) return alert('관리자 아이디를 입력하세요.');
-    if (!(newAdminId in users)) return alert('존재하지 않는 사용자입니다.');
-    if (adminIds.has(newAdminId)) return alert('이미 관리자입니다.');
+    if (!adminIds.has(currentUser)) return alert('관리자만 작성 가능합니다.');
+    const title = document.getElementById('faq-title').value.trim();
+    const content = document.getElementById('faq-content').value.trim();
+    if (!title || !content) return alert('제목과 내용을 입력하세요.');
 
-    adminIds.add(newAdminId);
-    alert(`${newAdminId}님이 관리자 권한을 부여받았습니다.`);
-    newAdminIdInput.value = '';
+    faqPosts.push({ title, content });
+    document.getElementById('faq-title').value = '';
+    document.getElementById('faq-content').value = '';
+    updateFAQUI();
   });
 
-  // 페이지 초기 표시
+  // 박제 등록 (관리자 전용)
+  formExpose.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!adminIds.has(currentUser)) return alert('관리자만 작성 가능합니다.');
+    const title = document.getElementById('expose-title').value.trim();
+    const content = document.getElementById('expose-content').value.trim();
+    if (!title || !content) return alert('제목과 내용을 입력하세요.');
+
+    exposePosts.push({ title, content });
+    document.getElementById('expose-title').value = '';
+    document.getElementById('expose-content').value = '';
+    updateExposeUI();
+  });
+
+  // 제보 등록 (모든 회원)
+  formReport.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!currentUser) return alert('로그인 후 이용해주세요.');
+    const title = document.getElementById('report-title').value.trim();
+    const content = document.getElementById('report-content').value.trim();
+    if (!title || !content) return alert('제목과 설명을 입력하세요.');
+
+    reportPosts.push({ id: currentUser, title, content });
+    alert('제보가 접수되었습니다.');
+    formReport.reset();
+  });
+
+  // 관리자 아이디 추가
+  formAdminAdd.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!adminIds.has(currentUser)) return alert('관리자만 이용 가능합니다.');
+    const newAdminId = document.getElementById('new-admin-id').value.trim();
+    if (!newAdminId) return alert('아이디를 입력하세요.');
+    if (!users[newAdminId]) return alert('존재하지 않는 사용자입니다.');
+
+    adminIds.add(newAdminId);
+    alert(`${newAdminId} 님이 관리자 권한을 부여받았습니다.`);
+    document.getElementById('new-admin-id').value = '';
+    updateUI();
+  });
+
+  // 삭제 버튼 이벤트 (FAQ, 박제)
+  function handleDeleteClick(e) {
+    if (!e.target.classList.contains('delete-btn')) return;
+    const type = e.target.dataset.type;
+    const idx = Number(e.target.dataset.idx);
+    if (!adminIds.has(currentUser)) return alert('관리자만 삭제할 수 있습니다.');
+
+    if (type === 'faq') {
+      faqPosts.splice(idx, 1);
+      updateFAQUI();
+    } else if (type === 'expose') {
+      exposePosts.splice(idx, 1);
+      updateExposeUI();
+    }
+  }
+
+  adminFaqList.addEventListener('click', handleDeleteClick);
+  adminExposeList.addEventListener('click', handleDeleteClick);
+
+  // 초기 UI 셋업
+  updateUI();
   showSection(sectionLogin);
 })();
+</script>
