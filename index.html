@@ -22,9 +22,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     min-height: 100vh;
-    padding: 30px;
+    padding: 30px 20px;
     overflow-y: auto;
   }
   h1 {
@@ -36,16 +36,23 @@
   }
   .container {
     background: #012233dd;
-    padding: 50px 60px;
+    padding: 40px 50px;
     border-radius: 25px;
     box-shadow: 0 0 40px #00ffffaa;
     width: 100%;
-    max-width: 480px;
+    max-width: 560px;
+    min-height: 520px;
   }
-  input[type=text], input[type=password], input[type=email], input[type=number] {
+  label {
+    display: block;
+    margin-top: 20px;
+    font-weight: 700;
+    user-select: text;
+  }
+  input[type=text], input[type=password], input[type=email], textarea {
     width: 100%;
-    padding: 16px 20px;
-    margin: 18px 0;
+    padding: 14px 18px;
+    margin-top: 8px;
     border-radius: 14px;
     border: 2.5px solid #00ffffcc;
     background: #001122;
@@ -55,8 +62,9 @@
     box-shadow: inset 0 0 15px #00ffff88;
     transition: 0.4s;
     user-select: text;
+    resize: vertical;
   }
-  input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=number]:focus {
+  input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, textarea:focus {
     outline: none;
     border-color: #00ffff;
     box-shadow: 0 0 35px #00ffffcc;
@@ -65,7 +73,7 @@
   button {
     width: 100%;
     padding: 18px 0;
-    margin-top: 20px;
+    margin-top: 30px;
     border-radius: 16px;
     border: none;
     background: #00ffff;
@@ -87,20 +95,24 @@
     box-shadow: none;
   }
   .link-button {
-    margin-top: 12px;
+    margin-top: 15px;
     color: #00ffffcc;
     text-align: center;
     cursor: pointer;
     user-select: none;
+    font-weight: 600;
+    border: none;
+    background: none;
   }
   .link-button:hover {
     color: #00ffff;
     text-decoration: underline;
   }
   .message {
-    margin-top: 10px;
+    margin-top: 15px;
     font-weight: 700;
-    min-height: 1.4em;
+    min-height: 1.5em;
+    user-select: none;
   }
   .error {
     color: #ff5555;
@@ -117,72 +129,131 @@
     margin-top: 20px;
     border: 2px solid #00ffffaa;
     border-radius: 12px;
-    padding: 10px;
+    padding: 15px;
     background: #003344dd;
   }
   #report-list h2 {
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-weight: 900;
     letter-spacing: 0.1em;
+    user-select: none;
   }
   #report-list ul {
     list-style: none;
+    padding-left: 0;
   }
   #report-list li {
-    padding: 8px 12px;
-    margin-bottom: 8px;
+    padding: 12px 15px;
+    margin-bottom: 12px;
     background: #004466cc;
-    border-radius: 8px;
-    font-size: 1rem;
+    border-radius: 12px;
+    font-size: 1.05rem;
     word-break: break-word;
+    user-select: text;
+  }
+  /* 사이드바 */
+  #sidebar {
+    position: fixed;
+    right: 10px;
+    top: 50px;
+    width: 260px;
+    background: #001f3fdd;
+    border: 2px solid #00ffffcc;
+    border-radius: 15px;
+    box-shadow: 0 0 30px #00ffffcc;
+    padding: 20px;
+    color: #00ffff;
+    font-weight: 700;
+    user-select: text;
+    font-size: 1rem;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  #sidebar h3 {
+    margin-bottom: 15px;
+    text-align: center;
+    text-shadow: 0 0 8px #00ffffcc;
+  }
+  #sidebar p {
+    margin: 8px 0;
+    word-break: break-word;
+  }
+  /* 반응형 */
+  @media screen and (max-width: 720px) {
+    #sidebar {
+      position: static;
+      width: 100%;
+      max-height: none;
+      margin-top: 30px;
+      box-shadow: none;
+      border: none;
+      background: transparent;
+      padding: 0;
+    }
+    body {
+      padding: 20px 10px;
+    }
+    .container {
+      max-width: 100%;
+      border-radius: 12px;
+      padding: 30px 25px;
+      min-height: auto;
+    }
   }
 </style>
 </head>
 <body>
 
 <h1>YWE 스나이퍼 공식 사이트</h1>
-
 <div class="container" id="app">
+  <!-- JS 렌더 영역 -->
+</div>
 
-  <!-- 여기에 JS가 UI를 동적으로 그립니다 -->
-
+<div id="sidebar" aria-label="유저 정보 사이드바">
+  <h3>사용자 정보</h3>
+  <p><strong>아이디: </strong><span id="sidebar-userid">-</span></p>
+  <p><strong>IP 주소: </strong><span id="sidebar-ip">로딩 중...</span></p>
+  <p><strong>이메일: </strong><span id="sidebar-email">로딩 중...</span></p>
 </div>
 
 <script>
 'use strict';
 
-// 서버 API 기본 URL (실제 서버 주소로 변경해야 함)
-const API_BASE = 'https://your-server.com/api';
+const USERS_KEY = 'ywe_users';
+const REPORTS_KEY = 'ywe_reports';
 
-// 현재 로그인된 사용자 아이디
-let currentUserId = null;
-
-// 로컬 저장소 키
-const USERS_KEY = 'ywe_users';       // 회원정보 저장 (id => { pw, email, ip, verified })
-const REPORTS_KEY = 'ywe_reports';   // 제보 리스트 저장 [{ id, userId, content, date }]
-const EMAIL_CODES_KEY = 'ywe_email_codes'; // 인증번호 임시 저장 (id => code, purpose)
-
-// 관리자 ID (최고 관리자)
 const ADMIN_ID = 'lihuiruo101';
 
-// Helper: HTML escape
+let currentUserId = null;
+let state = {
+  page: 'login', // login, signup, main, findPw, resetPw, report, adminReports
+  findPwUserId: null,
+  findPwVerified: false,
+  messages: { error: '', success: '' },
+};
+
+// 헬퍼: HTML 이스케이프
 function escapeHtml(text) {
+  if (!text) return '';
   return text.replace(/[&<>"']/g, m => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
   })[m]);
 }
 
-// Helper: 로컬스토리지에서 사용자 리스트 불러오기
+// 유저 데이터 불러오기/저장
 function loadUsers() {
   return JSON.parse(localStorage.getItem(USERS_KEY) || '{}');
 }
-// Helper: 저장하기
 function saveUsers(users) {
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
 }
 
-// Helper: 제보 리스트 불러오기
+// 제보 데이터 불러오기/저장
 function loadReports() {
   return JSON.parse(localStorage.getItem(REPORTS_KEY) || '[]');
 }
@@ -190,19 +261,11 @@ function saveReports(reports) {
   localStorage.setItem(REPORTS_KEY, JSON.stringify(reports));
 }
 
-// Helper: 이메일 인증번호 임시 저장 불러오기
-function loadEmailCodes() {
-  return JSON.parse(localStorage.getItem(EMAIL_CODES_KEY) || '{}');
-}
-function saveEmailCodes(codes) {
-  localStorage.setItem(EMAIL_CODES_KEY, JSON.stringify(codes));
-}
-
-// Helper: IP 자동 수집 (외부 API 호출)
+// IP 자동 수집 (ipify API)
 async function fetchIP() {
   try {
     const res = await fetch('https://api.ipify.org?format=json');
-    if (!res.ok) throw new Error('Failed to fetch IP');
+    if (!res.ok) throw new Error('IP fetch failed');
     const data = await res.json();
     return data.ip || '알 수 없음';
   } catch {
@@ -210,511 +273,381 @@ async function fetchIP() {
   }
 }
 
-// Helper: 이메일 형식 검사
-function isValidEmail(email) {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
+// 랜덤 이메일 생성 (테스트용)
+function generateRandomEmail() {
+  const domains = ['ywe.fake', 'snipermail.com', 'example.com'];
+  const prefix = 'user' + Math.floor(Math.random() * 100000);
+  return prefix + '@' + domains[Math.floor(Math.random() * domains.length)];
 }
 
-// UI 렌더링
-
-const app = document.getElementById('app');
-
-// 현재 표시 중인 화면 상태
-let state = {
-  page: 'login', // login, signup, emailVerify, main, findPw, resetPw, report
-  tempUserId: null, // 임시 사용자 ID (가입중, 인증중 등)
-  tempEmail: null,
-  emailCodePurpose: null, // 'verify' or 'reset'
-  emailVerified: false,
-  findPwUserId: null,
-  findPwVerified: false,
-  messages: { error: '', success: '' },
-};
-
-// 메시지 세팅 함수
+// 메시지 표시
 function setMessage(type, text) {
   state.messages.error = '';
   state.messages.success = '';
-  if (type === 'error') state.messages.error = text;
-  if (type === 'success') state.messages.success = text;
+  if(type === 'error') state.messages.error = text;
+  if(type === 'success') state.messages.success = text;
   render();
 }
 
-// 초기 화면 렌더
-render();
+const app = document.getElementById('app');
+const sidebarUserIdEl = document.getElementById('sidebar-userid');
+const sidebarIpEl = document.getElementById('sidebar-ip');
+const sidebarEmailEl = document.getElementById('sidebar-email');
 
-async function render() {
-  app.innerHTML = ''; // 초기화
-  clearMessages();
-
-  switch (state.page) {
-    case 'login':
-      renderLogin();
-      break;
-    case 'signup':
-      renderSignup();
-      break;
-    case 'emailVerify':
-      renderEmailVerify();
-      break;
-    case 'main':
-      renderMain();
-      break;
-    case 'findPw':
-      renderFindPw();
-      break;
-    case 'resetPw':
-      renderResetPw();
-      break;
-    case 'report':
-      renderReport();
-      break;
-    case 'adminReports':
-      renderAdminReports();
-      break;
+async function updateSidebarInfo() {
+  sidebarUserIdEl.textContent = currentUserId ? escapeHtml(currentUserId) : '-';
+  let ip = localStorage.getItem('ywe_user_ip');
+  let email = localStorage.getItem('ywe_user_email');
+  if(!ip) {
+    ip = await fetchIP();
+    localStorage.setItem('ywe_user_ip', ip);
   }
+  if(!email) {
+    email = generateRandomEmail();
+    localStorage.setItem('ywe_user_email', email);
+  }
+  sidebarIpEl.textContent = escapeHtml(ip);
+  sidebarEmailEl.textContent = escapeHtml(email);
 }
 
-function clearMessages() {
-  state.messages.error = '';
-  state.messages.success = '';
-}
-
-// --- 로그인 화면 ---
+// 로그인 폼 렌더링
 function renderLogin() {
   app.innerHTML = `
-    <label for="login-id">아이디</label>
-    <input type="text" id="login-id" placeholder="아이디 입력" autocomplete="username" />
-    <label for="login-pw">비밀번호</label>
-    <input type="password" id="login-pw" placeholder="비밀번호 입력" autocomplete="current-password" />
+    <h2>로그인</h2>
+    <label for="login-userid">아이디</label>
+    <input type="text" id="login-userid" autocomplete="username" />
+    <label for="login-password">비밀번호</label>
+    <input type="password" id="login-password" autocomplete="current-password" />
     <button id="login-btn">로그인</button>
-    <button id="go-signup-btn" class="link-button">회원가입 하러 가기</button>
-    <button id="go-findpw-btn" class="link-button">비밀번호 찾기</button>
-    <div class="message error" id="login-error"></div>
+    <button class="link-button" id="go-signup">회원가입</button>
+    <button class="link-button" id="go-findpw">비밀번호 찾기</button>
+    <div class="message error">${escapeHtml(state.messages.error)}</div>
+    <div class="message success">${escapeHtml(state.messages.success)}</div>
   `;
+  state.messages.error = '';
+  state.messages.success = '';
 
-  document.getElementById('login-btn').onclick = loginHandler;
-  document.getElementById('go-signup-btn').onclick = () => {
+  document.getElementById('login-btn').addEventListener('click', () => {
+    const userid = document.getElementById('login-userid').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    if (!userid || !password) {
+      setMessage('error', '아이디와 비밀번호를 모두 입력하세요.');
+      return;
+    }
+
+    const users = loadUsers();
+    if (!users[userid]) {
+      setMessage('error', '존재하지 않는 아이디입니다.');
+      return;
+    }
+    if (users[userid].password !== password) {
+      setMessage('error', '비밀번호가 일치하지 않습니다.');
+      return;
+    }
+
+    currentUserId = userid;
+    setMessage('success', '로그인 성공!');
+    state.page = 'main';
+    saveUsers(users);
+    render();
+    updateSidebarInfo();
+  });
+
+  document.getElementById('go-signup').addEventListener('click', () => {
     state.page = 'signup';
-    setMessage('', '');
     render();
-  };
-  document.getElementById('go-findpw-btn').onclick = () => {
+  });
+
+  document.getElementById('go-findpw').addEventListener('click', () => {
     state.page = 'findPw';
-    setMessage('', '');
     render();
-  };
+  });
 }
 
-function loginHandler() {
-  const id = document.getElementById('login-id').value.trim();
-  const pw = document.getElementById('login-pw').value.trim();
-  if (!id || !pw) return setMessage('error', '아이디와 비밀번호를 모두 입력해 주세요.');
-
-  const users = loadUsers();
-  if (!users[id]) return setMessage('error', '등록되지 않은 아이디입니다.');
-  if (users[id].pw !== pw) return setMessage('error', '비밀번호가 틀렸습니다.');
-  if (!users[id].verified) return setMessage('error', '이메일 인증을 완료해야 로그인할 수 있습니다.');
-
-  currentUserId = id;
-  state.page = 'main';
-  setMessage('success', `환영합니다, ${escapeHtml(id)}님!`);
-  render();
-}
-
-// --- 회원가입 화면 ---
+// 회원가입 폼 렌더링
 function renderSignup() {
   app.innerHTML = `
-    <label for="signup-id">사용할 아이디</label>
-    <input type="text" id="signup-id" placeholder="아이디 입력" autocomplete="username" />
-    <label for="signup-pw">비밀번호</label>
-    <input type="password" id="signup-pw" placeholder="비밀번호 입력" autocomplete="new-password" />
-    <label for="signup-pw2">비밀번호 확인</label>
-    <input type="password" id="signup-pw2" placeholder="비밀번호 다시 입력" autocomplete="new-password" />
-    <label for="signup-email">이메일</label>
-    <input type="email" id="signup-email" placeholder="이메일 입력" autocomplete="email" />
+    <h2>회원가입</h2>
+    <label for="signup-userid">아이디</label>
+    <input type="text" id="signup-userid" autocomplete="username" />
+    <label for="signup-password">비밀번호</label>
+    <input type="password" id="signup-password" autocomplete="new-password" />
+    <label for="signup-password-confirm">비밀번호 확인</label>
+    <input type="password" id="signup-password-confirm" autocomplete="new-password" />
     <button id="signup-btn">회원가입</button>
-    <button id="go-login-btn" class="link-button">로그인 하러 가기</button>
-    <div class="message error" id="signup-error"></div>
-    <div class="message success" id="signup-success"></div>
+    <button class="link-button" id="go-login">로그인으로 돌아가기</button>
+    <div class="message error">${escapeHtml(state.messages.error)}</div>
+    <div class="message success">${escapeHtml(state.messages.success)}</div>
   `;
+  state.messages.error = '';
+  state.messages.success = '';
 
-  document.getElementById('signup-btn').onclick = signupHandler;
-  document.getElementById('go-login-btn').onclick = () => {
-    state.page = 'login';
-    setMessage('', '');
-    render();
-  };
-}
+  document.getElementById('signup-btn').addEventListener('click', () => {
+    const userid = document.getElementById('signup-userid').value.trim();
+    const password = document.getElementById('signup-password').value;
+    const passwordConfirm = document.getElementById('signup-password-confirm').value;
 
-async function signupHandler() {
-  const id = document.getElementById('signup-id').value.trim();
-  const pw = document.getElementById('signup-pw').value.trim();
-  const pw2 = document.getElementById('signup-pw2').value.trim();
-  const email = document.getElementById('signup-email').value.trim();
-
-  if (!id || !pw || !pw2 || !email) return setMessage('error', '모든 항목을 입력해 주세요.');
-  if (pw !== pw2) return setMessage('error', '비밀번호가 서로 다릅니다.');
-  if (!isValidEmail(email)) return setMessage('error', '올바른 이메일 주소를 입력해 주세요.');
-
-  let users = loadUsers();
-  if (users[id]) return setMessage('error', '이미 존재하는 아이디입니다.');
-
-  // IP 자동 수집
-  const ip = await fetchIP();
-
-  // 사용자 등록 (verified=false)
-  users[id] = {
-    pw,
-    email,
-    ip,
-    verified: false,
-  };
-  saveUsers(users);
-
-  // 이메일 인증번호 발송
-  try {
-    await sendEmailCode(id, email, 'verify');
-    state.tempUserId = id;
-    state.tempEmail = email;
-    state.emailCodePurpose = 'verify';
-    state.page = 'emailVerify';
-    setMessage('success', '인증번호를 이메일로 발송했습니다. 메일을 확인해주세요.');
-    render();
-  } catch (e) {
-    delete users[id];
-    saveUsers(users);
-    setMessage('error', '이메일 발송에 실패했습니다. 잠시 후 다시 시도하세요.');
-  }
-}
-
-// --- 이메일 인증 화면 ---
-function renderEmailVerify() {
-  app.innerHTML = `
-    <p>${escapeHtml(state.tempUserId)} 님, 이메일 인증이 필요합니다.</p>
-    <p>이메일: <strong>${escapeHtml(state.tempEmail)}</strong></p>
-    <label for="email-code-input">인증번호 입력</label>
-    <input type="text" id="email-code-input" placeholder="6자리 인증번호" maxlength="6" autocomplete="one-time-code" />
-    <button id="verify-code-btn">인증번호 확인</button>
-    <button id="resend-code-btn" style="margin-top:10px;">인증번호 재발송</button>
-    <button id="cancel-verify-btn" class="link-button">취소하고 로그인으로</button>
-    <div class="message error" id="email-verify-error"></div>
-    <div class="message success" id="email-verify-success"></div>
-  `;
-
-  document.getElementById('verify-code-btn').onclick = verifyEmailCodeHandler;
-  document.getElementById('resend-code-btn').onclick = resendEmailCodeHandler;
-  document.getElementById('cancel-verify-btn').onclick = () => {
-    state.page = 'login';
-    state.tempUserId = null;
-    state.tempEmail = null;
-    state.emailCodePurpose = null;
-    setMessage('', '');
-    render();
-  };
-}
-
-async function verifyEmailCodeHandler() {
-  const codeInput = document.getElementById('email-code-input').value.trim();
-  if (!codeInput) return setMessage('error', '인증번호를 입력해 주세요.');
-
-  // 서버에 인증번호 확인 요청
-  try {
-    const res = await fetch(`${API_BASE}/verify-email-code`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: state.tempUserId,
-        code: codeInput,
-        purpose: state.emailCodePurpose
-      }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || '인증 실패');
-
-    // 인증 성공 처리
-    if(state.emailCodePurpose === 'verify') {
-      // 회원 verified 상태 업데이트
-      let users = loadUsers();
-      if(users[state.tempUserId]) {
-        users[state.tempUserId].verified = true;
-        saveUsers(users);
-      }
-      setMessage('success', '이메일 인증 완료! 로그인 화면으로 이동합니다.');
-      state.page = 'login';
-      state.tempUserId = null;
-      state.tempEmail = null;
-      state.emailCodePurpose = null;
-      render();
+    if (!userid || !password || !passwordConfirm) {
+      setMessage('error', '모든 항목을 입력하세요.');
+      return;
     }
-    else if(state.emailCodePurpose === 'reset') {
-      // 비밀번호 재설정 페이지로 이동
-      state.findPwVerified = true;
-      setMessage('success', '인증 성공! 비밀번호 재설정 페이지로 이동합니다.');
-      state.page = 'resetPw';
-      render();
+    if (password !== passwordConfirm) {
+      setMessage('error', '비밀번호가 일치하지 않습니다.');
+      return;
     }
-  } catch(e) {
-    setMessage('error', e.message || '인증번호가 올바르지 않습니다.');
-  }
-}
 
-async function resendEmailCodeHandler() {
-  if(!state.tempUserId || !state.tempEmail) return setMessage('error', '잘못된 상태입니다.');
+    let users = loadUsers();
+    if (users[userid]) {
+      setMessage('error', '이미 존재하는 아이디입니다.');
+      return;
+    }
 
-  try {
-    await sendEmailCode(state.tempUserId, state.tempEmail, state.emailCodePurpose);
-    setMessage('success', '인증번호를 재발송 했습니다. 이메일을 확인해주세요.');
-  } catch {
-    setMessage('error', '인증번호 재발송에 실패했습니다. 잠시 후 다시 시도하세요.');
-  }
-}
-
-// 이메일 인증번호 서버로 요청 보내기 (sendEmailCode API)
-// 실제 서버가 이메일 전송 처리 필요
-async function sendEmailCode(id, email, purpose) {
-  const res = await fetch(`${API_BASE}/send-email`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id, email, purpose }),
-  });
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    throw new Error(data.message || '이메일 발송 실패');
-  }
-}
-
-// --- 메인 화면 (로그인 후) ---
-function renderMain() {
-  const users = loadUsers();
-  if (!currentUserId || !users[currentUserId]) {
-    // 로그인 정보 없으면 로그인으로
-    state.page = 'login';
-    setMessage('', '');
-    render();
-    return;
-  }
-  const user = users[currentUserId];
-  app.innerHTML = `
-    <p>환영합니다, <strong>${escapeHtml(currentUserId)}</strong>님!</p>
-    <p>등록된 이메일: <strong>${escapeHtml(user.email)}</strong></p>
-    <button id="logout-btn">로그아웃</button>
-    <button id="go-report-btn">제보하기</button>
-    ${currentUserId === ADMIN_ID ? '<button id="go-admin-btn" style="margin-top:10px;">관리자 제보 확인</button>' : ''}
-    <div class="message success" id="main-msg"></div>
-  `;
-  document.getElementById('logout-btn').onclick = () => {
-    currentUserId = null;
-    state.page = 'login';
-    setMessage('', '');
-    render();
-  };
-  document.getElementById('go-report-btn').onclick = () => {
-    state.page = 'report';
-    setMessage('', '');
-    render();
-  };
-  if (currentUserId === ADMIN_ID) {
-    document.getElementById('go-admin-btn').onclick = () => {
-      state.page = 'adminReports';
-      render();
+    users[userid] = {
+      password: password,
+      email: generateRandomEmail(),
+      reports: []
     };
-  }
+    saveUsers(users);
+    setMessage('success', '회원가입 완료! 로그인하세요.');
+    state.page = 'login';
+    render();
+  });
+
+  document.getElementById('go-login').addEventListener('click', () => {
+    state.page = 'login';
+    render();
+  });
 }
 
-// --- 비밀번호 찾기 페이지 ---
+// 비밀번호 찾기 폼 렌더링
 function renderFindPw() {
   app.innerHTML = `
-    <label for="findpw-id">아이디</label>
-    <input type="text" id="findpw-id" placeholder="아이디 입력" autocomplete="username" />
-    <label for="findpw-email">가입 시 등록한 이메일</label>
-    <input type="email" id="findpw-email" placeholder="이메일 입력" autocomplete="email" />
-    <button id="findpw-send-code-btn">인증번호 발송</button>
-    <button id="findpw-back-btn" class="link-button">로그인 화면으로</button>
-    <div class="message error" id="findpw-error"></div>
-    <div class="message success" id="findpw-success"></div>
+    <h2>비밀번호 찾기</h2>
+    <label for="findpw-userid">아이디</label>
+    <input type="text" id="findpw-userid" autocomplete="username" />
+    <button id="findpw-send-btn">확인</button>
+    <button class="link-button" id="go-login">로그인으로 돌아가기</button>
+    <div class="message error">${escapeHtml(state.messages.error)}</div>
+    <div class="message success">${escapeHtml(state.messages.success)}</div>
   `;
+  state.messages.error = '';
+  state.messages.success = '';
 
-  document.getElementById('findpw-send-code-btn').onclick = findPwSendCodeHandler;
-  document.getElementById('findpw-back-btn').onclick = () => {
-    state.page = 'login';
-    setMessage('', '');
+  document.getElementById('findpw-send-btn').addEventListener('click', () => {
+    const userid = document.getElementById('findpw-userid').value.trim();
+    if (!userid) {
+      setMessage('error', '아이디를 입력하세요.');
+      return;
+    }
+    const users = loadUsers();
+    if (!users[userid]) {
+      setMessage('error', '존재하지 않는 아이디입니다.');
+      return;
+    }
+
+    state.findPwUserId = userid;
+    // 간단 인증 절차 대신 바로 인증 성공 처리
+    state.findPwVerified = true;
+    state.page = 'resetPw';
+    setMessage('success', '아이디 확인 완료. 새로운 비밀번호를 입력하세요.');
     render();
-  };
-}
-
-async function findPwSendCodeHandler() {
-  const id = document.getElementById('findpw-id').value.trim();
-  const email = document.getElementById('findpw-email').value.trim();
-  if (!id || !email) return setMessage('error', '아이디와 이메일을 모두 입력해 주세요.');
-
-  const users = loadUsers();
-  if (!users[id]) return setMessage('error', '존재하지 않는 아이디입니다.');
-  if (users[id].email !== email) return setMessage('error', '등록된 이메일과 일치하지 않습니다.');
-
-  try {
-    await sendEmailCode(id, email, 'reset');
-    state.findPwUserId = id;
-    state.tempEmail = email;
-    state.emailCodePurpose = 'reset';
-    state.page = 'emailVerify';
-    setMessage('success', '인증번호를 이메일로 발송했습니다. 이메일을 확인해주세요.');
-    render();
-  } catch {
-    setMessage('error', '인증번호 발송 실패. 잠시 후 다시 시도하세요.');
-  }
-}
-
-// --- 비밀번호 재설정 페이지 ---
-function renderResetPw() {
-  if (!state.findPwVerified) {
-    state.page = 'login';
-    setMessage('error', '비밀번호 재설정을 위해 먼저 이메일 인증을 완료하세요.');
-    render();
-    return;
-  }
-  app.innerHTML = `
-    <p>${escapeHtml(state.findPwUserId)} 님, 비밀번호 재설정</p>
-    <label for="reset-pw">새 비밀번호</label>
-    <input type="password" id="reset-pw" placeholder="새 비밀번호 입력" autocomplete="new-password" />
-    <label for="reset-pw2">새 비밀번호 확인</label>
-    <input type="password" id="reset-pw2" placeholder="비밀번호 다시 입력" autocomplete="new-password" />
-    <button id="reset-pw-btn">비밀번호 변경</button>
-    <button id="reset-pw-cancel-btn" class="link-button">로그인 화면으로</button>
-    <div class="message error" id="reset-pw-error"></div>
-    <div class="message success" id="reset-pw-success"></div>
-  `;
-  document.getElementById('reset-pw-btn').onclick = resetPwHandler;
-  document.getElementById('reset-pw-cancel-btn').onclick = () => {
-    state.page = 'login';
-    state.findPwVerified = false;
-    state.findPwUserId = null;
-    state.tempEmail = null;
-    setMessage('', '');
-    render();
-  };
-}
-
-function resetPwHandler() {
-  const pw = document.getElementById('reset-pw').value.trim();
-  const pw2 = document.getElementById('reset-pw2').value.trim();
-  if (!pw || !pw2) return setMessage('error', '새 비밀번호를 모두 입력해 주세요.');
-  if (pw !== pw2) return setMessage('error', '비밀번호가 서로 다릅니다.');
-
-  let users = loadUsers();
-  if (!users[state.findPwUserId]) {
-    setMessage('error', '사용자 정보를 찾을 수 없습니다.');
-    return;
-  }
-  users[state.findPwUserId].pw = pw;
-  saveUsers(users);
-
-  setMessage('success', '비밀번호가 변경되었습니다. 로그인 화면으로 이동합니다.');
-  state.page = 'login';
-  state.findPwVerified = false;
-  state.findPwUserId = null;
-  state.tempEmail = null;
-  render();
-}
-
-// --- 제보 신청 페이지 ---
-function renderReport() {
-  if (!currentUserId) {
-    state.page = 'login';
-    setMessage('error', '로그인 후 제보 가능합니다.');
-    render();
-    return;
-  }
-  app.innerHTML = `
-    <p>제보 신청 (익명 불가)</p>
-    <textarea id="report-content" rows="6" placeholder="제보 내용을 상세히 작성해 주세요."></textarea>
-    <button id="submit-report-btn">제보 제출</button>
-    <button id="report-cancel-btn" class="link-button">메인 화면으로</button>
-    <div class="message error" id="report-error"></div>
-    <div class="message success" id="report-success"></div>
-  `;
-  document.getElementById('submit-report-btn').onclick = submitReportHandler;
-  document.getElementById('report-cancel-btn').onclick = () => {
-    state.page = 'main';
-    setMessage('', '');
-    render();
-  };
-}
-
-async function submitReportHandler() {
-  const content = document.getElementById('report-content').value.trim();
-  if (!content) return setMessage('error', '제보 내용을 입력해 주세요.');
-
-  const reports = loadReports();
-  reports.push({
-    id: Date.now(),
-    userId: currentUserId,
-    content,
-    date: new Date().toISOString()
   });
-  saveReports(reports);
 
-  setMessage('success', '제보가 정상적으로 접수되었습니다.');
-  document.getElementById('report-content').value = '';
+  document.getElementById('go-login').addEventListener('click', () => {
+    state.page = 'login';
+    render();
+  });
+}
 
-  // 관리자에게 이메일로도 전송 가능
-  try {
-    await fetch(`${API_BASE}/send-admin-report`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId: currentUserId,
-        content,
-        date: new Date().toISOString()
-      }),
+// 비밀번호 재설정 폼 렌더링
+function renderResetPw() {
+  app.innerHTML = `
+    <h2>비밀번호 재설정</h2>
+    <label for="resetpw-password">새 비밀번호</label>
+    <input type="password" id="resetpw-password" />
+    <label for="resetpw-password-confirm">새 비밀번호 확인</label>
+    <input type="password" id="resetpw-password-confirm" />
+    <button id="resetpw-btn">비밀번호 변경</button>
+    <button class="link-button" id="go-login">로그인으로 돌아가기</button>
+    <div class="message error">${escapeHtml(state.messages.error)}</div>
+    <div class="message success">${escapeHtml(state.messages.success)}</div>
+  `;
+  state.messages.error = '';
+  state.messages.success = '';
+
+  document.getElementById('resetpw-btn').addEventListener('click', () => {
+    const pw = document.getElementById('resetpw-password').value;
+    const pwConfirm = document.getElementById('resetpw-password-confirm').value;
+    if (!pw || !pwConfirm) {
+      setMessage('error', '새 비밀번호를 모두 입력하세요.');
+      return;
+    }
+    if (pw !== pwConfirm) {
+      setMessage('error', '비밀번호가 일치하지 않습니다.');
+      return;
+    }
+
+    let users = loadUsers();
+    if (!state.findPwUserId || !users[state.findPwUserId]) {
+      setMessage('error', '사용자 정보가 올바르지 않습니다.');
+      return;
+    }
+
+    users[state.findPwUserId].password = pw;
+    saveUsers(users);
+    setMessage('success', '비밀번호가 변경되었습니다. 로그인하세요.');
+    state.page = 'login';
+    render();
+  });
+
+  document.getElementById('go-login').addEventListener('click', () => {
+    state.page = 'login';
+    render();
+  });
+}
+
+// 메인 페이지 (로그인 후)
+function renderMain() {
+  app.innerHTML = `
+    <h2>환영합니다, ${escapeHtml(currentUserId)}님!</h2>
+    <button id="logout-btn">로그아웃</button>
+    <button id="go-report">문제 제보하기</button>
+    ${currentUserId === ADMIN_ID ? `<button id="go-adminReports">제보 확인 (관리자)</button>` : ''}
+    <div id="user-reports"></div>
+    <div class="message error">${escapeHtml(state.messages.error)}</div>
+    <div class="message success">${escapeHtml(state.messages.success)}</div>
+  `;
+  state.messages.error = '';
+  state.messages.success = '';
+
+  // 유저가 작성한 제보 보여주기
+  const users = loadUsers();
+  const reports = loadReports();
+  const userReports = reports.filter(r => r.userid === currentUserId);
+  const reportDiv = document.getElementById('user-reports');
+  if (userReports.length === 0) {
+    reportDiv.innerHTML = '<p>작성한 제보가 없습니다.</p>';
+  } else {
+    reportDiv.innerHTML = '<h3>내 제보 목록</h3><ul>' +
+      userReports.map(r => `<li>${escapeHtml(r.content)} <small>(${new Date(r.timestamp).toLocaleString()})</small></li>`).join('') +
+      '</ul>';
+  }
+
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    currentUserId = null;
+    setMessage('success', '로그아웃 되었습니다.');
+    state.page = 'login';
+    render();
+    updateSidebarInfo();
+  });
+
+  document.getElementById('go-report').addEventListener('click', () => {
+    state.page = 'report';
+    render();
+  });
+
+  if(currentUserId === ADMIN_ID) {
+    document.getElementById('go-adminReports').addEventListener('click', () => {
+      state.page = 'adminReports';
+      render();
     });
-  } catch (e) {
-    // 실패해도 사용자에는 영향 없음
-    console.warn('관리자 이메일 전송 실패:', e);
   }
 }
 
-// --- 관리자 제보 확인 페이지 ---
-function renderAdminReports() {
-  if (currentUserId !== ADMIN_ID) {
-    state.page = 'login';
-    setMessage('error', '관리자만 접근할 수 있습니다.');
-    render();
-    return;
-  }
+// 제보하기 폼 렌더링
+function renderReport() {
+  app.innerHTML = `
+    <h2>문제 제보하기</h2>
+    <label for="report-content">제보 내용</label>
+    <textarea id="report-content" rows="6" placeholder="문제나 개선 사항을 자세히 작성해주세요."></textarea>
+    <button id="submit-report-btn">제보 제출</button>
+    <button class="link-button" id="go-main">메인으로 돌아가기</button>
+    <div class="message error">${escapeHtml(state.messages.error)}</div>
+    <div class="message success">${escapeHtml(state.messages.success)}</div>
+  `;
+  state.messages.error = '';
+  state.messages.success = '';
 
+  document.getElementById('submit-report-btn').addEventListener('click', () => {
+    const content = document.getElementById('report-content').value.trim();
+    if (!content) {
+      setMessage('error', '제보 내용을 입력하세요.');
+      return;
+    }
+
+    const reports = loadReports();
+    reports.push({
+      userid: currentUserId,
+      content,
+      timestamp: Date.now()
+    });
+    saveReports(reports);
+
+    setMessage('success', '제보가 제출되었습니다. 감사합니다!');
+    render();
+  });
+
+  document.getElementById('go-main').addEventListener('click', () => {
+    state.page = 'main';
+    render();
+  });
+}
+
+// 관리자용 제보 리스트 렌더링
+function renderAdminReports() {
   const reports = loadReports();
+
   app.innerHTML = `
     <h2>관리자 제보 확인</h2>
-    <button id="admin-logout-btn">로그아웃</button>
-    <button id="admin-main-btn" style="margin-left:10px;">메인으로</button>
     <div id="report-list">
+      <h2>제보 목록</h2>
       <ul>
-        ${reports.length ? reports.map(r => `
-          <li>
-            <strong>제보 ID:</strong> ${r.id} <br />
-            <strong>작성자:</strong> ${escapeHtml(r.userId)} <br />
-            <strong>내용:</strong> ${escapeHtml(r.content)} <br />
-            <small>${new Date(r.date).toLocaleString()}</small>
-          </li>
-        `).join('') : '<li>제보 내역이 없습니다.</li>'}
+        ${reports.length === 0 ? '<li>제보가 없습니다.</li>' :
+          reports.map((r, i) => `<li><strong>${escapeHtml(r.userid)}</strong>: ${escapeHtml(r.content)} <small>(${new Date(r.timestamp).toLocaleString()})</small> <button data-index="${i}" class="delete-report-btn">삭제</button></li>`).join('')}
       </ul>
     </div>
+    <button class="link-button" id="go-main">메인으로 돌아가기</button>
   `;
 
-  document.getElementById('admin-logout-btn').onclick = () => {
-    currentUserId = null;
-    state.page = 'login';
-    setMessage('', '');
-    render();
-  };
-  document.getElementById('admin-main-btn').onclick = () => {
+  document.querySelectorAll('.delete-report-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const idx = parseInt(e.target.dataset.index);
+      if (isNaN(idx)) return;
+      reports.splice(idx, 1);
+      saveReports(reports);
+      setMessage('success', '제보가 삭제되었습니다.');
+      render();
+    });
+  });
+
+  document.getElementById('go-main').addEventListener('click', () => {
     state.page = 'main';
-    setMessage('', '');
     render();
-  };
+  });
 }
 
-// 초기 렌더
-render();
+// 렌더 함수
+function render() {
+  switch(state.page) {
+    case 'login': renderLogin(); break;
+    case 'signup': renderSignup(); break;
+    case 'findPw': renderFindPw(); break;
+    case 'resetPw': renderResetPw(); break;
+    case 'main': renderMain(); break;
+    case 'report': renderReport(); break;
+    case 'adminReports': renderAdminReports(); break;
+    default: renderLogin();
+  }
+}
+
+// 초기 실행
+(async () => {
+  currentUserId = null;
+  await updateSidebarInfo();
+  render();
+})();
+</script>
+
+</body>
+</html>
