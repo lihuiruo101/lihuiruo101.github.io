@@ -1,657 +1,582 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <title>YWE 스나이퍼 공식 사이트</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
-  <style>
-    /* Reset & 기본 */
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
-    html, body {
-      height: 100%;
-      background: linear-gradient(135deg, #001f3f, #005f99);
-      color: #00f0ff;
-      font-family: 'Orbitron', monospace, monospace;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      overflow: hidden;
-    }
-
-    body {
-      display: flex;
-      flex-direction: row;
-      min-height: 100vh;
-    }
-
-    /* 사이드바 */
-    nav.sidebar {
-      background: #021a35;
-      width: 220px;
-      box-shadow: 4px 0 12px #00f0ff88;
-      display: flex;
-      flex-direction: column;
-      padding-top: 2rem;
-      position: fixed;
-      top: 0; bottom: 0; left: 0;
-      z-index: 1000;
-    }
-
-    nav.sidebar a {
-      padding: 1rem 1.5rem;
-      color: #00f0ff;
-      text-decoration: none;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background 0.3s ease;
-      user-select: none;
-      font-size: 1.1rem;
-      letter-spacing: 0.05em;
-    }
-    nav.sidebar a:hover,
-    nav.sidebar a.active {
-      background: #003c6f;
-      color: #00ffff;
-      text-shadow: 0 0 6px #00ffffaa;
-    }
-
-    button.logout-btn {
-      margin-top: auto;
-      margin-bottom: 2rem;
-      padding: 0.8rem 1.2rem;
-      background: #ff4444;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 6px;
-      font-weight: bold;
-      user-select: none;
-      font-size: 1rem;
-      box-shadow: 0 0 8px #ff4444cc;
-      transition: background 0.3s ease;
-    }
-    button.logout-btn:hover {
-      background: #ff0000;
-      box-shadow: 0 0 12px #ff0000dd;
-    }
-
-    /* 메인 콘텐츠 */
-    .content {
-      margin-left: 220px;
-      padding: 2rem 3rem;
-      flex: 1;
-      overflow-y: auto;
-      height: 100vh;
-      background: linear-gradient(180deg, #011f4b 0%, #03396c 100%);
-      box-shadow: inset 0 0 30px #00f0ff33;
-    }
-
-    .header {
-      font-size: 2.2rem;
-      margin-bottom: 1rem;
-      text-shadow: 0 0 8px #00ffffcc;
-      letter-spacing: 0.1em;
-    }
-
-    .card {
-      background: #022f5f;
-      border: 1px solid #00ffffaa;
-      border-radius: 10px;
-      padding: 1rem 1.5rem;
-      margin-bottom: 1.5rem;
-      position: relative;
-      box-shadow: 0 0 15px #00ffff55;
-      color: #c0f8ff;
-      font-size: 1.1rem;
-      line-height: 1.4;
-      word-break: break-word;
-    }
-
-    .report-title {
-      font-weight: 900;
-      font-size: 1.3rem;
-      margin-bottom: 0.8rem;
-      text-shadow: 0 0 5px #00ffffbb;
-    }
-
-    .edit-pencil {
-      position: absolute;
-      right: 15px;
-      top: 15px;
-      cursor: pointer;
-      width: 20px;
-      height: 20px;
-      fill: #00ffffcc;
-      transition: fill 0.3s ease;
-    }
-    .edit-pencil:hover {
-      fill: #00ffff;
-      filter: drop-shadow(0 0 3px #00ffffcc);
-    }
-
-    textarea, input[type=text] {
-      width: 100%;
-      background: #011f4b;
-      color: #00ffff;
-      border: 1.5px solid #00ffffcc;
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-family: 'Orbitron', monospace;
-      font-size: 1rem;
-      margin-bottom: 1rem;
-      transition: border-color 0.3s ease;
-      resize: vertical;
-    }
-    textarea:focus, input[type=text]:focus {
-      outline: none;
-      border-color: #00ffff;
-      box-shadow: 0 0 10px #00ffffaa;
-      background: #03396c;
-    }
-
-    button {
-      background: #00ffff;
-      border: none;
-      padding: 12px 20px;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 8px;
-      color: #003344;
-      font-size: 1.1rem;
-      box-shadow: 0 0 10px #00ffffaa;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
-      user-select: none;
-      margin-right: 1rem;
-      margin-top: 0.5rem;
-    }
-    button:hover:not(:disabled) {
-      background: #00e6cc;
-      box-shadow: 0 0 20px #00e6ccff;
-    }
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    img.preview {
-      max-width: 100%;
-      margin-top: 1rem;
-      border-radius: 10px;
-      border: 2px solid #00ffffbb;
-      box-shadow: 0 0 12px #00ffff88;
-    }
-
-    /* 로그인 박스 */
-    .login-box {
-      background: #011f4b;
-      padding: 40px 35px;
-      border-radius: 15px;
-      box-shadow: 0 0 25px #00ffffaa;
-      max-width: 380px;
-      width: 90vw;
-      margin: auto;
-      margin-top: 10vh;
-      color: #00ffff;
-      text-align: center;
-      user-select: none;
-    }
-    .login-box h2 {
-      font-size: 2.2rem;
-      margin-bottom: 2rem;
-      text-shadow: 0 0 8px #00ffffcc;
-      letter-spacing: 0.1em;
-    }
-
-    input.login-input {
-      width: 100%;
-      padding: 14px 16px;
-      margin: 12px 0;
-      font-size: 1.1rem;
-      border-radius: 8px;
-      border: 1.5px solid #00ffffaa;
-      background: #001933;
-      color: #00ffff;
-      font-family: 'Orbitron', monospace;
-      transition: border-color 0.3s ease;
-      outline: none;
-    }
-    input.login-input::placeholder {
-      color: #00ffff88;
-    }
-    input.login-input:focus {
-      border-color: #00ffff;
-      background: #003366;
-      box-shadow: 0 0 12px #00ffffaa;
-    }
-
-    button.login-button {
-      background: #00ffff;
-      color: #003344;
-      font-weight: bold;
-      cursor: pointer;
-      border: 1.5px solid #00ffff;
-      padding: 14px 0;
-      font-size: 1.1rem;
-      border-radius: 10px;
-      margin-top: 15px;
-      width: 100%;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
-      user-select: none;
-      box-shadow: 0 0 15px #00ffffaa;
-    }
-    button.login-button:hover {
-      background: #00e6cc;
-      box-shadow: 0 0 25px #00e6ccff;
-    }
-
-    /* 로그인 실패 메시지 */
-    #login-error {
-      color: #ff4444;
-      font-weight: 700;
-      margin-top: 10px;
-      font-size: 1rem;
-      text-shadow: 0 0 6px #ff4444cc;
-      user-select: none;
-      min-height: 1.2em;
-    }
-
-    /* 반응형 */
-    @media (max-width: 720px) {
-      body {
-        flex-direction: column;
-        overflow: auto;
-      }
-      nav.sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        flex-direction: row;
-        padding: 0;
-        box-shadow: none;
-      }
-      nav.sidebar a {
-        flex: 1;
-        padding: 1rem 0;
-        font-size: 1rem;
-        text-align: center;
-        border-right: 1px solid #005f99;
-      }
-      nav.sidebar a:last-child {
-        border-right: none;
-      }
-      button.logout-btn {
-        margin: 0 10px 10px 10px;
-        padding: 0.6rem;
-        font-size: 0.9rem;
-        box-shadow: none;
-      }
-      .content {
-        margin-left: 0;
-        padding: 1rem 1.5rem;
-        height: auto;
-      }
-      .login-box {
-        margin-top: 5vh;
-        width: 95vw;
-        padding: 30px 20px;
-      }
-    }
-  </style>
-</head>
-<body>
-
-<div id="app"></div>
-
-<script>
-  const adminId = 'lihuiruo101';
-
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  function simpleMarkdown(text) {
-    if (!text) return '';
-    return text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
-      .replace(/\*(.+?)\*/g, '<i>$1</i>')
-      .replace(/`(.+?)`/g, '<code>$1</code>')
-      .replace(/!(.*?)(.*?)/g, '<img src="$2" alt="$1" style="max-width:100%;margin:5px 0;border-radius:6px;"/>')
-      .replace(/(.*?)(.*?)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
-      .replace(/\n/g, '<br>');
-  }
-
-  function getLoginUser() {
-    return localStorage.getItem('login');
-  }
-  function setLoginUser(id) {
-    localStorage.setItem('login', id);
-  }
-  function logout() {
-    localStorage.removeItem('login');
-    renderLogin();
-  }
-
-  function getUserPw(id) {
-    return localStorage.getItem('user_' + id);
-  }
-  function setUserPw(id, pw) {
-    localStorage.setItem('user_' + id, pw);
-  }
-
-  const REPORTS_KEY = 'ywe_reports';
-  const FAQ_KEY = 'ywe_faq';
-
-  function getReports() {
-    return JSON.parse(localStorage.getItem(REPORTS_KEY) || '[]');
-  }
-  function setReports(reports) {
-    localStorage.setItem(REPORTS_KEY, JSON.stringify(reports));
-  }
-  function getFaqs() {
-    return JSON.parse(localStorage.getItem(FAQ_KEY) || '[]');
-  }
-  function setFaqs(faqs) {
-    localStorage.setItem(FAQ_KEY, JSON.stringify(faqs));
-  }
-
-  const app = document.getElementById('app');
-  let currentTab = 'sniper';
-
-  function renderLogin(errorMsg = '') {
-    app.innerHTML = `
-      <div class="login-box" role="main" aria-label="로그인 박스">
-        <h2>YWE 로그인</h2>
-        <input id="id" class="login-input" placeholder="아이디" aria-label="아이디 입력란" />
-        <input id="pw" class="login-input" placeholder="비밀번호" type="password" aria-label="비밀번호 입력란" />
-        <button class="login-button" onclick="handleLogin()">로그인</button>
-        <button class="login-button" onclick="handleSignup()">회원가입</button>
-        <div id="login-error" role="alert" aria-live="assertive">${escapeHtml(errorMsg)}</div>
-      </div>
+<!DOCTYPE html>  <html lang="ko">  
+<head>  
+  <meta charset="UTF-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />  
+  <title>YWE 스나이퍼 공식 사이트</title>  
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />  
+  <style>  
+    /* 기본 초기화 및 스타일 */  
+    * {  
+      margin: 0; padding: 0; box-sizing: border-box;  
+    }  
+    html, body {  
+      height: 100%;  
+      background: linear-gradient(135deg, #001f3f, #005f99);  
+      color: #00f0ff;  
+      font-family: 'Orbitron', monospace, monospace;  
+      -webkit-font-smoothing: antialiased;  
+      -moz-osx-font-smoothing: grayscale;  
+      overflow: hidden;  
+    }  
+    body {  
+      display: flex;  
+      flex-direction: row;  
+      min-height: 100vh;  
+    }  
+    /* 사이드바 */  
+    nav.sidebar {  
+      background: #021a35;  
+      width: 220px;  
+      box-shadow: 4px 0 12px #00f0ff88;  
+      display: flex;  
+      flex-direction: column;  
+      padding-top: 2rem;  
+      position: fixed;  
+      top: 0; bottom: 0; left: 0;  
+      z-index: 1000;  
+    }  
+    nav.sidebar a {  
+      padding: 1rem 1.5rem;  
+      color: #00f0ff;  
+      text-decoration: none;  
+      cursor: pointer;  
+      font-weight: 600;  
+      transition: background 0.3s ease;  
+      user-select: none;  
+      font-size: 1.1rem;  
+      letter-spacing: 0.05em;  
+    }  
+    nav.sidebar a:hover,  
+    nav.sidebar a.active {  
+      background: #003c6f;  
+      color: #00ffff;  
+      text-shadow: 0 0 6px #00ffffaa;  
+    }  
+    /* 로그아웃 버튼 스타일 */  
+    button.logout-btn {  
+      margin-top: auto;  
+      margin-bottom: 2rem;  
+      padding: 0.8rem 1.2rem;  
+      background: #ff4444;  
+      color: white;  
+      border: none;  
+      cursor: pointer;  
+      border-radius: 6px;  
+      font-weight: bold;  
+      user-select: none;  
+      font-size: 1rem;  
+      box-shadow: 0 0 8px #ff4444cc;  
+      transition: background 0.3s ease;  
+    }  
+    button.logout-btn:hover {  
+      background: #ff0000;  
+      box-shadow: 0 0 12px #ff0000dd;  
+    }  
+    /* 메인 콘텐츠 */  
+    .content {  
+      margin-left: 220px;  
+      padding: 2rem 3rem;  
+      flex: 1;  
+      overflow-y: auto;  
+      height: 100vh;  
+      background: linear-gradient(180deg, #011f4b 0%, #03396c 100%);  
+      box-shadow: inset 0 0 30px #00f0ff33;  
+    }  
+    .header {  
+      font-size: 2.2rem;  
+      margin-bottom: 1rem;  
+      text-shadow: 0 0 8px #00ffffcc;  
+      letter-spacing: 0.1em;  
+    }  
+    .card {  
+      background: #022f5f;  
+      border: 1px solid #00ffffaa;  
+      border-radius: 10px;  
+      padding: 1rem 1.5rem;  
+      margin-bottom: 1.5rem;  
+      position: relative;  
+      box-shadow: 0 0 15px #00ffff55;  
+      color: #c0f8ff;  
+      font-size: 1.1rem;  
+      line-height: 1.4;  
+      word-break: break-word;  
+    }  
+    .report-title {  
+      font-weight: 900;  
+      font-size: 1.3rem;  
+      margin-bottom: 0.8rem;  
+      text-shadow: 0 0 5px #00ffffbb;  
+    }  
+    .edit-pencil {  
+      position: absolute;  
+      right: 15px;  
+      top: 15px;  
+      cursor: pointer;  
+      width: 20px;  
+      height: 20px;  
+      fill: #00ffffcc;  
+      transition: fill 0.3s ease;  
+    }  
+    .edit-pencil:hover {  
+      fill: #00ffff;  
+      filter: drop-shadow(0 0 3px #00ffffcc);  
+    }  
+    textarea, input[type=text] {  
+      width: 100%;  
+      background: #011f4b;  
+      color: #00ffff;  
+      border: 1.5px solid #00ffffcc;  
+      border-radius: 8px;  
+      padding: 10px 14px;  
+      font-family: 'Orbitron', monospace;  
+      font-size: 1rem;  
+      margin-bottom: 1rem;  
+      transition: border-color 0.3s ease;  
+      resize: vertical;  
+    }  
+    textarea:focus, input[type=text]:focus {  
+      outline: none;  
+      border-color: #00ffff;  
+      box-shadow: 0 0 10px #00ffffaa;  
+      background: #03396c;  
+    }  
+    button {  
+      background: #00ffff;  
+      border: none;  
+      padding: 12px 20px;  
+      font-weight: bold;  
+      cursor: pointer;  
+      border-radius: 8px;  
+      color: #003344;  
+      font-size: 1.1rem;  
+      box-shadow: 0 0 10px #00ffffaa;  
+      transition: background 0.3s ease, box-shadow 0.3s ease;  
+      user-select: none;  
+      margin-right: 1rem;  
+      margin-top: 0.5rem;  
+    }  
+    button:hover:not(:disabled) {  
+      background: #00e6cc;  
+      box-shadow: 0 0 20px #00e6ccff;  
+    }  
+    button:disabled {  
+      opacity: 0.5;  
+      cursor: not-allowed;  
+      box-shadow: none;  
+    }  
+    img.preview {  
+      max-width: 100%;  
+      margin-top: 1rem;  
+      border-radius: 10px;  
+      border: 2px solid #00ffffbb;  
+      box-shadow: 0 0 12px #00ffff88;  
+    }  
+    /* 로그인 박스 */  
+    .login-box {  
+      background: #011f4b;  
+      padding: 40px 35px;  
+      border-radius: 15px;  
+      box-shadow: 0 0 25px #00ffffaa;  
+      max-width: 380px;  
+      width: 90vw;  
+      margin: auto;  
+      margin-top: 10vh;  
+      color: #00ffff;  
+      text-align: center;  
+      user-select: none;  
+    }  
+    .login-box h2 {  
+      font-size: 2.2rem;  
+      margin-bottom: 2rem;  
+      text-shadow: 0 0 8px #00ffffcc;  
+      letter-spacing: 0.1em;  
+    }  
+    input.login-input {  
+      width: 100%;  
+      padding: 14px 16px;  
+      margin: 12px 0;  
+      font-size: 1.1rem;  
+      border-radius: 8px;  
+      border: 1.5px solid #00ffffaa;  
+      background: #001933;  
+      color: #00ffff;  
+      font-family: 'Orbitron', monospace;  
+      transition: border-color 0.3s ease;  
+      outline: none;  
+    }  
+    input.login-input::placeholder {  
+      color: #00ffff88;  
+    }  
+    input.login-input:focus {  
+      border-color: #00ffff;  
+      background: #003366;  
+      box-shadow: 0 0 12px #00ffffaa;  
+    }  
+    button.login-button {  
+      background: #00ffff;  
+      color: #003344;  
+      font-weight: bold;  
+      cursor: pointer;  
+      border: 1.5px solid #00ffff;  
+      padding: 14px 0;  
+      font-size: 1.1rem;  
+      border-radius: 10px;  
+      margin-top: 15px;  
+      width: 100%;  
+      transition: background 0.3s ease, box-shadow 0.3s ease;  
+      user-select: none;  
+      box-shadow: 0 0 15px #00ffffaa;  
+    }  
+    button.login-button:hover {  
+      background: #00e6cc;  
+      box-shadow: 0 0 25px #00e6ccff;  
+    }  
+    /* 로그인 실패 메시지 */  
+    #login-error {  
+      color: #ff4444;  
+      font-weight: 700;  
+      margin-top: 10px;  
+      font-size: 1rem;  
+      text-shadow: 0 0 6px #ff4444cc;  
+      user-select: none;  
+      min-height: 1.2em;  
+    }  
+    /* 반응형 */  
+    @media (max-width: 720px) {  
+      body {  
+        flex-direction: column;  
+        overflow: auto;  
+      }  
+      nav.sidebar {  
+        width: 100%;  
+        height: auto;  
+        position: relative;  
+        flex-direction: row;  
+        padding: 0;  
+        box-shadow: none;  
+      }  
+      nav.sidebar a {  
+        flex: 1;  
+        padding: 1rem 0;  
+        font-size: 1rem;  
+        text-align: center;  
+        border-right: 1px solid #005f99;  
+      }  
+      nav.sidebar a:last-child {  
+        border-right: none;  
+      }  
+      button.logout-btn {  
+        margin: 0 10px 10px 10px;  
+        padding: 0.6rem;  
+        font-size: 0.9rem;  
+        box-shadow: none;  
+      }  
+      .content {  
+        margin-left: 0;  
+        padding: 1rem 1.5rem;  
+        height: auto;  
+      }  
+      .login-box {  
+        margin-top: 5vh;  
+        width: 95vw;  
+        padding: 30px 20px;  
+      }  
+    }  
+  </style>  
+</head>  
+<body>  <div id="app"></div>  <script>  
+  const adminId = 'lihuiruo101';  
+  
+  // HTML 이스케이프  
+  function escapeHtml(text) {  
+    const div = document.createElement('div');  
+    div.textContent = text;  
+    return div.innerHTML;  
+  }  
+  
+  // 간단한 마크다운 지원 (볼드, 이탤릭, 코드, 링크, 이미지)  
+  function simpleMarkdown(text) {  
+    if (!text) return '';  
+    return text  
+      .replace(/&/g, "&amp;")  
+      .replace(/</g, "&lt;")  
+      .replace(/>/g, "&gt;")  
+      .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')  
+      .replace(/\*(.+?)\*/g, '<i>$1</i>')  
+      .replace(/`(.+?)`/g, '<code>$1</code>')  
+      .replace(/!(.*?)(.*?)/g, '<img src="$2" alt="$1" style="max-width:100%;margin:5px 0;border-radius:6px;"/>')  
+      .replace(/(.*?)(.*?)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')  
+      .replace(/\n/g, '<br>');  
+  }  
+  
+  // 로그인 정보 저장/조회  
+  function getLoginUser() {  
+    return localStorage.getItem('login');  
+  }  
+  function setLoginUser(id) {  
+    localStorage.setItem('login', id);  
+  }  
+  function logout() {  
+    localStorage.removeItem('login');  
+    currentTab = 'login';  
+    renderApp();  
+  }  
+  
+  // 회원 정보 저장/불러오기  
+  function getUserPw(id) {  
+    return localStorage.getItem('user_' + id);  
+  }  
+  function setUserPw(id, pw) {  
+    localStorage.setItem('user_' + id, pw);  
+  }  
+  
+  // 데이터 저장키  
+  const REPORTS_KEY = 'ywe_reports';  
+  const FAQ_KEY = 'ywe_faq';  
+  
+  function getReports() {  
+    return JSON.parse(localStorage.getItem(REPORTS_KEY) || '[]');  
+  }  
+  function setReports(reports) {  
+    localStorage.setItem(REPORTS_KEY, JSON.stringify(reports));  
+  }  
+  function getFaqs() {  
+    return JSON.parse(localStorage.getItem(FAQ_KEY) || '[]');  
+  }  
+  function setFaqs(faqs) {  
+    localStorage.setItem(FAQ_KEY, JSON.stringify(faqs));  
+  }  
+  
+  const app = document.getElementById('app');  
+  let currentTab = getLoginUser() ? 'sniper' : 'login';  
+  let uploadedImages = [];  
+  
+  // 로그인 화면 렌더  
+  function renderLogin(errorMsg = '') {  
+    app.innerHTML = `  
+      <div class="login-box" role="main" aria-label="로그인 박스">  
+        <h2>YWE 로그인</h2>  
+        <input id="id" class="login-input" placeholder="아이디" aria-label="아이디 입력란" autocomplete="username" />  
+        <input id="pw" class="login-input" placeholder="비밀번호" type="password" aria-label="비밀번호 입력란" autocomplete="current-password" />  
+        <button class="login-button" onclick="handleLogin()">로그인</button>  
+        <button class="login-button" onclick="handleSignup()">회원가입</button>  
+        <div id="login-error" role="alert" aria-live="assertive">${escapeHtml(errorMsg)}</div>  
+      </div>  
+    `;  
+  }  
+  
+  // 로그인 처리  
+  function handleLogin() {  
+    const id = document.getElementById('id').value.trim();  
+    const pw = document.getElementById('pw').value.trim();  
+    if (!id || !pw) {  
+      renderLogin('아이디와 비밀번호를 모두 입력하세요.');  
+      return;  
+    }  
+    const savedPw = getUserPw(id);  
+    if (savedPw === pw) {  
+      setLoginUser(id);  
+      currentTab = 'sniper';  
+      renderApp();  
+    } else {  
+      renderLogin('아이디 또는 비밀번호가 올바르지 않습니다.');  
+    }  
+  }  
+  
+  // 회원가입 처리  
+  function handleSignup() {  
+    const id = document.getElementById('id').value.trim();  
+    const pw = document.getElementById('pw').value.trim();  
+    if (!id || !pw) {  
+      alert('아이디와 비밀번호를 모두 입력하세요.');  
+      return;  
+    }  
+    if (getUserPw(id)) {  
+      alert('이미 존재하는 아이디입니다.');  
+      return;  
+    }  
+    setUserPw(id, pw);  
+    alert('회원가입이 완료되었습니다. 로그인 해주세요.');  
+    renderLogin();  
+  }  
+  
+  // 사이드바 렌더링  
+  function renderSidebar(active) {  
+    const loginUser = getLoginUser();  
+    return `  
+      <nav class="sidebar" role="navigation" aria-label="메인 메뉴">  
+        <a href="#" id="nav-sniper" class="${active==='sniper'?'active':''}" onclick="switchTab('sniper')" aria-current="${active==='sniper'?'page':undefined}">스나이퍼</a>  
+        <a href="#" id="nav-submit" class="${active==='submit'?'active':''}" onclick="switchTab('submit')" aria-current="${active==='submit'?'page':undefined}">제보 신청</a>  
+        <a href="#" id="nav-faq" class="${active==='faq'?'active':''}" onclick="switchTab('faq')" aria-current="${active==='faq'?'page':undefined}">자주 묻는 질문</a>  
+        <button class="logout-btn" onclick="logout()" aria-label="로그아웃">${escapeHtml(loginUser)} 님 로그아웃</button>  
+      </nav>  
+    `;  
+  }  
+  
+  // 메인 콘텐츠 렌더 함수들  
+  function renderSniper() {  
+    const reports = getReports();  
+    const loginUser = getLoginUser();  
+    let html = `<h2 class="header">스나이퍼 - 사기꾼 목록</h2>`;  
+    if (reports.length === 0) {  
+      html += '<p>등록된 사기꾼이 없습니다.</p>';  
+    } else {  
+      reports.forEach((r,i) => {  
+        html += `<div class="card" tabindex="0" aria-label="사기꾼 제보">  
+          <div class="report-title">${escapeHtml(r.title)}</div>  
+          <div>작성자: ${escapeHtml(r.author)}</div>  
+          <div>${simpleMarkdown(r.content)}</div>`;  
+        if (r.images && r.images.length > 0) {  
+          r.images.forEach(src => {  
+            html += `<img class="preview" src="${src}" alt="이미지 증거" />`;  
+          });  
+        }  
+        if (loginUser === adminId && r.author === adminId) {  
+          html += `<svg class="edit-pencil" onclick="editReport(${i})" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" title="수정" role="button" tabindex="0" aria-label="제보 수정">  
+            <path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zM21.41 6.34a1.25 1.25 0 000-1.77l-2.98-2.98a1.25 1.25 0 00-1.77 0l-1.83 1.83 4.75 4.75 1.83-1.83z"/>  
+          </svg>`;  
+        }  
+        html += `</div>`;  
+      });  
+    }  
+    return html;  
+  }  
+  
+  function renderSubmit() {  
+    return `  
+      <h2 class="header">스나이퍼 제보 신청</h2>  
+      <label for="report-title">제목</label>  
+      <input type="text" id="report-title" placeholder="제목을 입력하세요" aria-label="제보 제목 입력" />  
+      <label for="report-content">내용 (마크다운 지원)</label>  
+      <textarea id="report-content" rows="6" placeholder="내용을 입력하세요..." aria-label="제보 내용 입력"></textarea>  <label for="report-images">이미지 업로드</label>  
+  <input type="file" id="report-images" multiple accept="image/*" onchange="previewImages(event)" aria-label ="이미지 파일 선택" />
+      <div id="image-preview-container" aria-live="polite" aria-atomic="true"></div>
+      <button onclick="submitReport()" aria-label="제보 제출 버튼">제보 제출</button>
     `;
   }
 
-  function handleLogin() {
-    const id = document.getElementById('id').value.trim();
-    const pw = document.getElementById('pw').value.trim();
-    if (!id || !pw) {
-      renderLogin('아이디와 비밀번호를 모두 입력하세요.');
-      return;
-    }
-    const savedPw = getUserPw(id);
-    if (savedPw === pw) {
-      setLoginUser(id);
-      renderMain();
-    } else {
-      renderLogin('아이디 또는 비밀번호가 올바르지 않습니다.');
-    }
+  // 이미지 미리보기 함수
+  function previewImages(event) {
+    const files = event.target.files;
+    const previewContainer = document.getElementById('image-preview-container');
+    previewContainer.innerHTML = '';
+    uploadedImages = [];
+
+    if (files.length === 0) return;
+
+    Array.from(files).forEach(file => {
+      if (!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.alt = '선택된 이미지 미리보기';
+        img.className = 'preview';
+        previewContainer.appendChild(img);
+        uploadedImages.push(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    });
   }
 
-  function handleSignup() {
-    const id = document.getElementById('id').value.trim();
-    const pw = document.getElementById('pw').value.trim();
-    if (!id || !pw) {
-      alert('아이디와 비밀번호를 모두 입력하세요.');
-      return;
-    }
-    if (getUserPw(id)) {
-      alert('이미 존재하는 아이디입니다.');
-      return;
-    }
-    setUserPw(id, pw);
-    alert('회원가입이 완료되었습니다.');
-    renderLogin();
-  }
-
-  function renderSidebar(active) {
-    const loginUser = getLoginUser();
-    return `
-      <nav class="sidebar" role="navigation" aria-label="메인 메뉴">
-        <a href="#" id="nav-sniper" class="${active==='sniper'?'active':''}" onclick="switchTab('sniper')" aria-current="${active==='sniper'?'page':undefined}">스나이퍼</a>
-        <a href="#" id="nav-submit" class="${active==='submit'?'active':''}" onclick="switchTab('submit')" aria-current="${active==='submit'?'page':undefined}">제보하기</a>
-        <a href="#" id="nav-faq" class="${active==='faq'?'active':''}" onclick="switchTab('faq')" aria-current="${active==='faq'?'page':undefined}">FAQ</a>
-        <a href="#" id="nav-admin" style="display:${loginUser === adminId ? 'block' : 'none'}" class="${active==='admin'?'active':''}" onclick="switchTab('admin')" aria-current="${active==='admin'?'page':undefined}">관리자</a>
-        <button class="logout-btn" onclick="logout()">로그아웃</button>
-      </nav>
-    `;
-  }
-
-  function switchTab(tab) {
-    currentTab = tab;
-    renderMain();
-  }
-
-  // 스나이퍼 탭 렌더링
-  function renderSniper() {
-    const reports = getReports();
-    let content = `<h1 class="header">YWE 스나이퍼 - 최신 제보</h1>`;
-    if (reports.length === 0) {
-      content += `<div class="card">아직 제보된 내용이 없습니다.</div>`;
-    } else {
-      reports.slice().reverse().forEach((report, idx) => {
-        content += `
-          <div class="card" tabindex="0" aria-label="제보 ${idx+1}">
-            <div class="report-title">${escapeHtml(report.title)}</div>
-            <div>${simpleMarkdown(report.content)}</div>
-            <small>작성자: ${escapeHtml(report.author)}</small>
-          </div>
-        `;
-      });
-    }
-    return content;
-  }
-
-  // 제보하기 탭 렌더링
-  function renderSubmit() {
-    return `
-      <h1 class="header">YWE 스나이퍼 - 제보하기</h1>
-      <div class="card">
-        <label for="report-title">제목</label>
-        <input type="text" id="report-title" placeholder="제목을 입력하세요" aria-label="제보 제목 입력란" />
-        <label for="report-content">내용</label>
-        <textarea id="report-content" rows="8" placeholder="내용을 입력하세요" aria-label="제보 내용 입력란"></textarea>
-        <button onclick="submitReport()">제보 등록</button>
-        <div id="submit-msg" role="alert" aria-live="polite" style="margin-top:10px;"></div>
-      </div>
-    `;
-  }
-
+  // 제보 제출 함수
   function submitReport() {
     const titleInput = document.getElementById('report-title');
     const contentInput = document.getElementById('report-content');
-    const msgBox = document.getElementById('submit-msg');
-    const author = getLoginUser();
-
     const title = titleInput.value.trim();
     const content = contentInput.value.trim();
+    const author = getLoginUser();
 
-    if (!title || !content) {
-      msgBox.style.color = '#ff4444';
-      msgBox.textContent = '제목과 내용을 모두 입력하세요.';
+    if (!title) {
+      alert('제목을 입력해주세요.');
+      titleInput.focus();
       return;
     }
-
-    let reports = getReports();
-    reports.push({ title, content, author, timestamp: Date.now() });
-    setReports(reports);
-
-    msgBox.style.color = '#00ffff';
-    msgBox.textContent = '제보가 성공적으로 등록되었습니다.';
-    titleInput.value = '';
-    contentInput.value = '';
-
-    // 자동으로 스나이퍼 탭으로 이동
-    setTimeout(() => {
-      switchTab('sniper');
-    }, 1500);
-  }
-
-  // FAQ 탭 렌더링
-  function renderFaq() {
-    const faqs = getFaqs();
-    let content = `<h1 class="header">YWE 스나이퍼 - 자주 묻는 질문 (FAQ)</h1>`;
-    if (faqs.length === 0) {
-      content += `<div class="card">등록된 FAQ가 없습니다.</div>`;
-    } else {
-      faqs.forEach((faq, idx) => {
-        content += `
-          <div class="card" tabindex="0" aria-label="FAQ ${idx+1}">
-            <div class="report-title">${escapeHtml(faq.question)}</div>
-            <div>${simpleMarkdown(faq.answer)}</div>
-          </div>
-        `;
-      });
-    }
-    return content;
-  }
-
-  // 관리자 탭 렌더링
-  function renderAdmin() {
-    const loginUser = getLoginUser();
-    if (loginUser !== adminId) {
-      return `<div class="card">관리자 권한이 없습니다.</div>`;
+    if (!content) {
+      alert('내용을 입력해주세요.');
+      contentInput.focus();
+      return;
     }
 
     const reports = getReports();
+    reports.push({
+      title,
+      content,
+      author,
+      images: uploadedImages,
+      createdAt: new Date().toISOString()
+    });
+    setReports(reports);
+
+    // 초기화
+    titleInput.value = '';
+    contentInput.value = '';
+    document.getElementById('report-images').value = '';
+    document.getElementById('image-preview-container').innerHTML = '';
+    uploadedImages = [];
+
+    alert('제보가 정상적으로 제출되었습니다.');
+    currentTab = 'sniper';
+    renderApp();
+  }
+
+  function renderFaq() {
     const faqs = getFaqs();
-
-    let content = `
-      <h1 class="header">관리자 페이지</h1>
-      <section aria-label="제보 관리">
-        <h2>제보 목록</h2>
-        <div style="max-height:300px; overflow-y:auto; margin-bottom: 1rem; border: 1px solid #00ffffaa; border-radius:8px;">
-    `;
-
-    if (reports.length === 0) {
-      content += `<div class="card">등록된 제보가 없습니다.</div>`;
-    } else {
-      reports.slice().reverse().forEach((report, idx) => {
-        content += `
-          <div class="card" style="position:relative;">
-            <div class="report-title">${escapeHtml(report.title)}</div>
-            <div>${simpleMarkdown(report.content)}</div>
-            <small>작성자: ${escapeHtml(report.author)}</small>
-            <button style="position:absolute; top:10px; right:10px; background:#ff5555; color:#fff; border-radius:6px; font-size:0.9rem; padding:4px 8px;"
-              aria-label="제보 삭제 버튼" onclick="deleteReport(${reports.length - 1 - idx})">삭제</button>
-          </div>
-        `;
-      });
-    }
-
-    content += `
-        </div>
-      </section>
-      <section aria-label="FAQ 관리">
-        <h2>FAQ 관리</h2>
-        <div id="faq-list" style="max-height:300px; overflow-y:auto; border: 1px solid #00ffffaa; border-radius:8px; margin-bottom:1rem;">
-    `;
-
+    let html = `<h2 class="header">자주 묻는 질문 (FAQ)</h2>`;
     if (faqs.length === 0) {
-      content += `<div class="card">등록된 FAQ가 없습니다.</div>`;
+      html += '<p>등록된 FAQ가 없습니다.</p>';
     } else {
-      faqs.forEach((faq, idx) => {
-        content += `
-          <div class="card" style="position:relative;">
-            <div><b>Q.</b> ${escapeHtml(faq.question)}</div>
-            <div><b>A.</b> ${simpleMarkdown(faq.answer)}</div>
-            <button style="position:absolute; top:10px; right:10px; background:#ff5555; color:#fff; border-radius:6px; font-size:0.9rem; padding:4px 8px;"
-              aria-label="FAQ 삭제 버튼" onclick="deleteFaq(${idx})">삭제</button>
-          </div>
-        `;
+      faqs.forEach(faq => {
+        html += `<div class="card" tabindex="0" aria-label="자주 묻는 질문">  
+          <div class="report-title">${escapeHtml(faq.question)}</div>
+          <div>${simpleMarkdown(faq.answer)}</div>
+        </div>`;
       });
     }
-
-    content += `
-        </div>
-        <h3>FAQ 추가</h3>
-        <input type="text" id="faq-question" placeholder="질문 입력" aria-label="FAQ 질문 입력란" />
-        <textarea id="faq-answer" rows="5" placeholder="답변 입력" aria-label="FAQ 답변 입력란"></textarea>
-        <button onclick="addFaq()">FAQ 추가</button>
-        <div id="faq-msg" role="alert" aria-live="polite" style="margin-top:10px;"></div>
-      </section>
-    `;
-
-    return content;
+    return html;
   }
 
-  function deleteReport(idx) {
-    let reports = getReports();
-    if (idx >= 0 && idx < reports.length) {
-      if (confirm('정말 이 제보를 삭제하시겠습니까?')) {
-        reports.splice(idx, 1);
-        setReports(reports);
-        renderMain();
-      }
-    }
+  // 탭 전환 함수
+  function switchTab(tab) {
+    if (tab === currentTab) return;
+    currentTab = tab;
+    renderApp();
   }
 
-  function deleteFaq(idx) {
-    let faqs = getFaqs();
-    if (idx >= 0 && idx < faqs.length) {
-      if (confirm('정말 이 FAQ를 삭제하시겠습니까?')) {
-        faqs.splice(idx, 1);
-        setFaqs(faqs);
-        renderMain();
-      }
-    }
+  // 제보 수정 함수 (관리자 전용)
+  function editReport(index) {
+    const reports = getReports();
+    const report = reports[index];
+    if (!report) return alert('존재하지 않는 제보입니다.');
+
+    const newTitle = prompt('제목을 수정하세요:', report.title);
+    if (newTitle === null) return;
+    const newContent = prompt('내용을 수정하세요 (마크다운 지원):', report.content);
+    if (newContent === null) return;
+
+    reports[index].title = newTitle.trim() || report.title;
+    reports[index].content = newContent.trim() || report.content;
+    setReports(reports);
+    renderApp();
   }
 
-  function addFaq() {
-    const question = document.getElementById('faq-question').value.trim();
-    const answer = document.getElementById('faq-answer').value.trim();
-    const msgBox = document.getElementById('faq-msg');
-
-    if (!question || !answer) {
-      msgBox.style.color = '#ff4444';
-      msgBox.textContent = '질문과 답변을 모두 입력하세요.';
-      return;
-    }
-
-    let faqs = getFaqs();
-    faqs.push({ question, answer });
-    setFaqs(faqs);
-
-    msgBox.style.color = '#00ffff';
-    msgBox.textContent = 'FAQ가 성공적으로 추가되었습니다.';
-
-    document.getElementById('faq-question').value = '';
-    document.getElementById('faq-answer').value = '';
-
-    setTimeout(() => {
-      msgBox.textContent = '';
-      renderMain();
-    }, 1500);
-  }
-
-  // 메인 렌더링
-  function renderMain() {
-    const loginUser = getLoginUser();
-    if (!loginUser) {
+  // 앱 전체 렌더링 함수
+  function renderApp() {
+    if (!getLoginUser()) {
+      currentTab = 'login';
       renderLogin();
       return;
     }
+
     app.innerHTML = renderSidebar(currentTab) + `<main class="content" role="main">` +
       (currentTab === 'sniper' ? renderSniper() :
        currentTab === 'submit' ? renderSubmit() :
-       currentTab === 'faq' ? renderFaq() :
-       currentTab === 'admin' ? renderAdmin() : '') +
+       currentTab === 'faq' ? renderFaq() : '') +
       `</main>`;
   }
 
   // 초기 렌더링
-  if (getLoginUser()) {
-    renderMain();
-  } else {
-    renderLogin();
-  }
+  renderApp();
 </script>
-
 </body>
 </html>
