@@ -1,119 +1,157 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>24 NonTerror - Premium Server Bot</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>24 NonTerror - 프리미엄 디스코드 관리봇</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;700&display=swap');
 
-  body {
-    background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
-    color: #f5f5f7;
-    font-family: 'Montserrat', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    padding: 20px;
-  }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  .container {
-    background: #121212;
-    border-radius: 20px;
-    width: 360px;
-    box-shadow:
-      0 0 20px 5px rgba(255, 255, 255, 0.07),
-      inset 0 0 30px 5px #e4caa1,
-      0 0 40px 10px #bfa066;
-    padding: 40px 30px 50px;
-    text-align: center;
-    position: relative;
-  }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: radial-gradient(ellipse at top, #101010 0%, #000000 100%);
+      color: #eee;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
 
-  .title {
-    font-family: 'Playfair Display', serif;
-    font-weight: 700;
-    font-size: 2.8rem;
-    color: #e4caa1;
-    text-shadow:
-      0 0 5px #e4caa1,
-      0 0 10px #e4caa1,
-      0 0 20px #e4caa1;
-    margin-bottom: 25px;
-  }
+    header {
+      text-align: center;
+      padding: 100px 20px;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+      animation: glowIn 3s ease-out forwards;
+    }
 
-  .btn-enter {
-    display: inline-block;
-    background: linear-gradient(145deg, #bfa066, #e4caa1);
-    color: #121212;
-    font-weight: 700;
-    font-size: 1.3rem;
-    padding: 14px 48px;
-    border-radius: 40px;
-    box-shadow:
-      0 0 10px 3px #e4caa1,
-      inset 0 0 10px #bfa066;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 36px;
-    user-select: none;
-  }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4em;
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(255,255,255,0.6), 0 0 60px rgba(255,255,255,0.2);
+    }
 
-  .btn-enter:hover {
-    background: linear-gradient(145deg, #e4caa1, #bfa066);
-    box-shadow:
-      0 0 20px 6px #e4caa1,
-      inset 0 0 15px #bfa066;
-    transform: scale(1.05);
-  }
+    header p {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #cccccc;
+    }
 
-  .desc-box {
-    background: rgba(255, 255, 255, 0.07);
-    border-radius: 15px;
-    padding: 16px 22px;
-    box-shadow:
-      0 0 10px 2px rgba(255, 202, 146, 0.5);
-    font-size: 0.95rem;
-    color: #e9dcbf;
-    line-height: 1.4;
-  }
+    .button {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 15px 40px;
+      font-size: 1em;
+      font-weight: bold;
+      color: #000;
+      background: linear-gradient(to right, #ffd700, #ffffff);
+      border-radius: 50px;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+      transition: all 0.3s ease-in-out;
+      text-decoration: none;
+    }
 
-  .desc-box p {
-    margin-bottom: 14px;
-  }
+    .button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+    }
 
-  /* 섬광 느낌 반짝임 애니메이션 */
-  .title::after {
-    content: '';
-    position: absolute;
-    top: 20px; left: 50%;
-    width: 140px; height: 5px;
-    background: linear-gradient(90deg, transparent, #e4caa1, transparent);
-    filter: drop-shadow(0 0 5px #e4caa1);
-    transform: translateX(-50%) skewX(-20deg);
-    animation: shine 3.2s linear infinite;
-    border-radius: 2px;
-    pointer-events: none;
-  }
+    section {
+      padding: 100px 30px;
+      max-width: 800px;
+      margin: auto;
+    }
 
-  @keyframes shine {
-    0% { left: -40%; opacity: 0; }
-    50% { left: 50%; opacity: 1; }
-    100% { left: 140%; opacity: 0; }
-  }
-</style>
+    section h2 {
+      font-size: 2.5em;
+      margin-bottom: 30px;
+      text-align: center;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    section p {
+      font-size: 1.1em;
+      line-height: 1.9;
+      margin-bottom: 30px;
+      color: #ccc;
+    }
+
+    @keyframes glowIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.98);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #1a1a1a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(#ffd700, #ffffff);
+      border-radius: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 50px 20px;
+      font-size: 0.9em;
+      color: #888;
+    }
+
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1 class="title">24 NonTerror</h1>
-    <button class="btn-enter">서버 입장하기</button>
-    <div class="desc-box">
-      <p><strong>테러방지:</strong> 악성 사용자와 공격을 실시간으로 감지하고 즉각 대응합니다.</p>
-      <p><strong>서버관리:</strong> 권한 관리, 자동 신고 처리, 안전한 백업으로 안정적인 운영을 지원합니다.</p>
-      <p><strong>신고:</strong> 간편한 신고 시스템으로 문제 상황을 빠르게 해결합니다.</p>
-    </div>
-  </div>
+
+  <header>
+    <h1>24 NonTerror</h1>
+    <p>완전 자동화된 디스코드 서버 보안 및 관리 솔루션</p>
+    <a href="#" class="button">서버에 추가하기</a>
+  </header>
+
+  <section>
+    <h2>테러방지</h2>
+    <p>
+      대량 초대, 역할 삭제, 채널 제거, 권한 남용 등 테러 시도를 실시간으로 감지하여 즉시 중단합니다.
+      예측 알고리즘을 통해 수상한 행동 패턴을 사전에 분석하고, 공격을 미연에 차단합니다.
+      관리자에게 즉시 경고를 발송하고 자동 차단 조치로부터 서버를 보호합니다.
+    </p>
+  </section>
+
+  <section>
+    <h2>서버관리</h2>
+    <p>
+      역할별 맞춤 설정, 자동 권한 복원, 권한 요청 로그, 접속자 통계 등 다양한 기능이 통합된 관리자 패널을 제공합니다.
+      서버 내 활동량 분석, 사용자 행동 패턴 추적, 커스텀 알림 등 고급 분석 도구도 포함되어 있습니다.
+      불필요한 개입 없이도 효율적으로 서버를 운영할 수 있는 환경을 구축합니다.
+    </p>
+  </section>
+
+  <section>
+    <h2>신고 시스템</h2>
+    <p>
+      유저는 간편하게 신고를 제출할 수 있으며, 자동으로 관리자에게 전달되고, 처리 대기열이 생성됩니다.
+      신고 내역은 카테고리별로 분류되어 효율적으로 정리되고, 처리 로그도 유지되어 투명한 운영이 가능합니다.
+      악의적 신고 필터링 기능도 탑재되어 불필요한 노이즈를 차단합니다.
+    </p>
+  </section>
+
+  <footer>
+    &copy; 2025 24 NonTerror. All rights reserved.
+  </footer>
+
 </body>
 </html>
