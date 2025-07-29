@@ -2,10 +2,10 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>24 NonTerror - 프리미엄 디스코드 관리봇</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>24 NonTerror | 관리 시스템</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;700&display=swap');
 
     * {
       margin: 0;
@@ -14,144 +14,136 @@
     }
 
     body {
-      font-family: 'Montserrat', sans-serif;
-      background: radial-gradient(ellipse at top, #101010 0%, #000000 100%);
-      color: #eee;
+      background: linear-gradient(145deg, #f2ece4, #e0d5c0);
+      font-family: 'DM Sans', sans-serif;
+      color: #1d1d1f;
       overflow-x: hidden;
-      scroll-behavior: smooth;
     }
 
-    header {
-      text-align: center;
-      padding: 100px 20px;
-      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
-      animation: glowIn 3s ease-out forwards;
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border-radius: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 0 80px rgba(255, 255, 255, 0.15), 0 0 10px #fff;
+      animation: fadeIn 1.5s ease-in-out both;
     }
 
-    header h1 {
+    h1 {
       font-family: 'Playfair Display', serif;
-      font-size: 4em;
-      color: #ffffff;
-      text-shadow: 0 0 20px rgba(255,255,255,0.6), 0 0 60px rgba(255,255,255,0.2);
-    }
-
-    header p {
-      margin-top: 20px;
-      font-size: 1.2em;
-      color: #cccccc;
-    }
-
-    .button {
-      display: inline-block;
-      margin-top: 40px;
-      padding: 15px 40px;
-      font-size: 1em;
-      font-weight: bold;
-      color: #000;
-      background: linear-gradient(to right, #ffd700, #ffffff);
-      border-radius: 50px;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-      transition: all 0.3s ease-in-out;
-      text-decoration: none;
-    }
-
-    .button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
-    }
-
-    section {
-      padding: 100px 30px;
-      max-width: 800px;
-      margin: auto;
-    }
-
-    section h2 {
-      font-size: 2.5em;
-      margin-bottom: 30px;
+      font-size: 3rem;
       text-align: center;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.05em;
+      color: #2c2c2e;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .description {
+      max-width: 600px;
+      text-align: center;
+      font-size: 1.15rem;
+      line-height: 1.8;
+      color: #333;
+      margin-bottom: 3rem;
+    }
+
+    .cta {
+      padding: 0.85rem 2rem;
+      font-size: 1.1rem;
+      background: linear-gradient(to right, #e3c7a0, #dbc2aa);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
       color: #fff;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+      font-weight: bold;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
 
-    section p {
-      font-size: 1.1em;
-      line-height: 1.9;
-      margin-bottom: 30px;
-      color: #ccc;
+    .cta:hover {
+      background: linear-gradient(to right, #d3a369, #b99369);
+      box-shadow: 0 0 30px rgba(220, 195, 150, 0.5);
+      transform: translateY(-3px);
     }
 
-    @keyframes glowIn {
+    .features {
+      margin-top: 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      max-width: 800px;
+    }
+
+    .feature {
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(255,255,255,0.3);
+      box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+      transition: all 0.3s ease;
+    }
+
+    .feature:hover {
+      box-shadow: 0 0 40px rgba(240, 200, 150, 0.3);
+    }
+
+    .feature h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #2f2f2f;
+    }
+
+    .feature p {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #444;
+    }
+
+    @keyframes fadeIn {
       0% {
         opacity: 0;
-        transform: scale(0.98);
+        transform: translateY(40px);
       }
       100% {
         opacity: 1;
-        transform: scale(1);
+        transform: translateY(0);
       }
     }
-
-    ::-webkit-scrollbar {
-      width: 12px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: #1a1a1a;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(#ffd700, #ffffff);
-      border-radius: 10px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 50px 20px;
-      font-size: 0.9em;
-      color: #888;
-    }
-
   </style>
 </head>
 <body>
-
-  <header>
+  <div class="container">
     <h1>24 NonTerror</h1>
-    <p>완전 자동화된 디스코드 서버 보안 및 관리 솔루션</p>
-    <a href="#" class="button">서버에 추가하기</a>
-  </header>
+    <div class="description">
+      서버 내 무결점을 지향하는<br />
+      강력하고 정교한 방어 시스템
+    </div>
+    <button class="cta">입장하기</button>
 
-  <section>
-    <h2>테러방지</h2>
-    <p>
-      대량 초대, 역할 삭제, 채널 제거, 권한 남용 등 테러 시도를 실시간으로 감지하여 즉시 중단합니다.
-      예측 알고리즘을 통해 수상한 행동 패턴을 사전에 분석하고, 공격을 미연에 차단합니다.
-      관리자에게 즉시 경고를 발송하고 자동 차단 조치로부터 서버를 보호합니다.
-    </p>
-  </section>
+    <div class="features">
+      <div class="feature">
+        <h2>테러 방지</h2>
+        <p>자동 감시 시스템을 통해 권한 남용, 역할 삭제, 채널 삭제 등을 즉시 차단합니다.<br>기계처럼 즉각적으로 판단하고 조치합니다.</p>
+      </div>
 
-  <section>
-    <h2>서버관리</h2>
-    <p>
-      역할별 맞춤 설정, 자동 권한 복원, 권한 요청 로그, 접속자 통계 등 다양한 기능이 통합된 관리자 패널을 제공합니다.
-      서버 내 활동량 분석, 사용자 행동 패턴 추적, 커스텀 알림 등 고급 분석 도구도 포함되어 있습니다.
-      불필요한 개입 없이도 효율적으로 서버를 운영할 수 있는 환경을 구축합니다.
-    </p>
-  </section>
+      <div class="feature">
+        <h2>서버 관리</h2>
+        <p>정교한 권한 제어와 서버 상태 모니터링으로<br>운영자는 걱정 없이 서버를 운용할 수 있습니다.</p>
+      </div>
 
-  <section>
-    <h2>신고 시스템</h2>
-    <p>
-      유저는 간편하게 신고를 제출할 수 있으며, 자동으로 관리자에게 전달되고, 처리 대기열이 생성됩니다.
-      신고 내역은 카테고리별로 분류되어 효율적으로 정리되고, 처리 로그도 유지되어 투명한 운영이 가능합니다.
-      악의적 신고 필터링 기능도 탑재되어 불필요한 노이즈를 차단합니다.
-    </p>
-  </section>
-
-  <footer>
-    &copy; 2025 24 NonTerror. All rights reserved.
-  </footer>
-
+      <div class="feature">
+        <h2>신고 시스템</h2>
+        <p>자동화된 신고 처리와 추적 시스템.<br>관리자 없이도 질서를 유지할 수 있도록 설계되었습니다.</p>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
