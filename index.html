@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>24 NonTerror | 관리봇</title>
   <style>
     * {
@@ -11,117 +11,132 @@
       box-sizing: border-box;
     }
 
-    html, body {
-      height: 100%;
-      background: linear-gradient(145deg, #0c0c16, #1e1e2e);
-      color: #eaeaea;
+    body {
+      background: radial-gradient(circle, #0f0f0f, #000);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow-x: hidden;
-      scroll-behavior: smooth;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+      animation: bgflash 20s infinite alternate;
     }
 
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle, rgba(0, 255, 255, 0.06), transparent 70%);
-      animation: pulse 6s infinite;
-      z-index: -1;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); opacity: 0.2; }
-      50% { transform: scale(1.1); opacity: 0.05; }
-      100% { transform: scale(1); opacity: 0.2; }
+    @keyframes bgflash {
+      0% { background: radial-gradient(circle, #0f0f0f, #000); }
+      50% { background: radial-gradient(circle, #1a0033, #000); }
+      100% { background: radial-gradient(circle, #0f0f0f, #000); }
     }
 
     .container {
-      max-width: 640px;
-      margin: 100px auto;
-      padding: 60px 40px;
-      background: rgba(20, 20, 40, 0.85);
-      border: 2px solid #00e6ff;
-      border-radius: 20px;
-      box-shadow:
-        0 0 15px #00e6ff,
-        0 0 30px #00bfff,
-        inset 0 0 10px rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      padding: 40px;
+    }
+
+    .card {
+      background: rgba(30, 30, 30, 0.95);
+      border-radius: 24px;
+      padding: 50px 30px;
       text-align: center;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow:
+        0 0 20px rgba(255, 255, 255, 0.15),
+        0 0 80px rgba(200, 100, 255, 0.25),
+        inset 0 0 40px rgba(255, 255, 255, 0.03);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(255,255,255,0.1),
+        rgba(200,100,255,0.2),
+        rgba(255,255,255,0.1),
+        transparent
+      );
+      animation: spin 10s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .card > * {
+      position: relative;
+      z-index: 1;
     }
 
     h1 {
-      font-size: 2.6rem;
-      color: #00eaff;
-      margin-bottom: 30px;
-      text-shadow:
-        0 0 5px #00eaff,
-        0 0 15px #00baff,
-        0 0 25px #0077ff;
+      font-size: 2.7rem;
+      margin-bottom: 25px;
+      color: #fff0f5;
+      text-shadow: 0 0 20px #ffccff, 0 0 40px #cc99ff;
+      animation: pulse 2s infinite;
     }
 
-    .btn {
-      display: inline-block;
-      padding: 14px 40px;
-      margin-top: 20px;
-      font-size: 1rem;
-      color: #0a0a1f;
-      background: #00ffe6;
-      border-radius: 8px;
-      text-decoration: none;
+    @keyframes pulse {
+      0%, 100% { text-shadow: 0 0 10px #ffccff, 0 0 20px #cc99ff; }
+      50% { text-shadow: 0 0 30px #ff99ff, 0 0 60px #dd99ff; }
+    }
+
+    .button {
+      padding: 16px 34px;
+      font-size: 1.2rem;
       font-weight: bold;
-      box-shadow: 0 0 10px #00ffe6, 0 0 30px #00ccff;
-      transition: all 0.2s ease-in-out;
+      background: linear-gradient(135deg, #d633ff, #6f00ff);
+      border: none;
+      border-radius: 999px;
+      color: white;
+      cursor: pointer;
+      margin: 25px 0;
+      box-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .btn:hover {
-      background: #00ccff;
-      color: white;
-      box-shadow: 0 0 20px #00ccff, 0 0 40px #0099ff;
+    .button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(255, 0, 255, 0.7);
     }
 
     .features {
-      margin-top: 40px;
-      font-size: 1.1rem;
-      line-height: 1.8;
-      color: #bdeaff;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 1.05rem;
+      color: #ddd;
+      margin-top: 10px;
     }
 
-    .features p {
-      margin-bottom: 12px;
-      text-shadow: 0 0 3px #0077ff;
-    }
-
-    /* 사이버 스타일 스크롤바 */
-    ::-webkit-scrollbar {
-      width: 12px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: #1a1a2e;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, #00ffe6, #0099ff);
-      border-radius: 10px;
-      box-shadow: inset 0 0 6px #000;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(180deg, #00ccff, #0066ff);
+    .feature-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 12px;
+      backdrop-filter: blur(2px);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>24 NonTerror | 관리봇</h1>
-    <a href="#" class="btn">입장하기</a>
-    <div class="features">
-      <p>테러방지 시스템</p>
-      <p>고급 서버 관리 기능</p>
-      <p>신속한 신고 처리</p>
+    <div class="card">
+      <h1>24 NonTerror</h1>
+      <button class="button">입장하기</button>
+      <div class="features">
+        <div class="feature-item">테러 방지</div>
+        <div class="feature-item">서버 관리</div>
+        <div class="feature-item">자동 신고 처리</div>
+      </div>
     </div>
   </div>
 </body>
