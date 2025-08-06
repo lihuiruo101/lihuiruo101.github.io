@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>메모장 - 바카라 예측기</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Noto Sans KR', sans-serif;
+      background: #fffafc url('https://i.imgur.com/YRjlXx7.png') no-repeat center top;
+      background-size: cover;
+      display: flex;
+    }
+    .sidebar {
+      width: 220px;
+      height: 100vh;
+      background: #fbb1c1;
+      padding-top: 30px;
+      position: fixed;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    .sidebar h2 {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+      font-weight: bold;
+      font-size: 20px;
+    }
+    .sidebar a {
+      display: block;
+      padding: 14px 20px;
+      text-decoration: none;
+      color: white;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      transition: background 0.3s;
+    }
+    .sidebar a:hover {
+      background: #e986a7;
+    }
+    .content {
+      margin-left: 220px;
+      padding: 40px;
+      width: 100%;
+      color: #333;
+      box-sizing: border-box;
+    }
+    h1 {
+      font-size: 28px;
+      color: #b73c78;
+      margin-bottom: 20px;
+    }
+    #addMemoBtn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px;
+      margin-bottom: 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #b73c78;
+      font-weight: 700;
+      font-size: 16px;
+      user-select: none;
+      transition: color 0.3s;
+    }
+    #addMemoBtn:hover {
+      color: #e34d7f;
+    }
+    #addMemoBtn svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+    #memoList {
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .memo-item {
+      background: rgba(255,255,255,0.9);
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(183,60,120,0.15);
+      position: relative;
+      font-family: 'Noto Sans KR', monospace;
+      white-space: pre-wrap;
+    }
+    .memo-item textarea {
+      width: 100%;
+      border: none;
+      resize: vertical;
+      font-family: inherit;
+      font-size: 14px;
+      background: transparent;
+      outline: none;
+      min-height: 80px;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #e34d7f;
+      border: none;
+      color: white;
+      border-radius: 4px;
+      padding: 2px 8px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.3s;
+    }
+    .delete-btn:hover {
+      background: #c5305b;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>예측 시스템</h2>
+    <a href="main.html">대시보드</a>
+    <a href="AI.html">AI 분석</a>
+    <a href="Pro.html">확률 분석</a>
+    <a href="my_memo.html">메모장</a>
+  </div>
+  <div class="content">
+    <h1>메모장</h1>
+    <button id="addMemoBtn" title="새 메모 추가">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"/>
+      </svg>
+      새 메모 추가
+    </button>
+    <div id="memoList"></div>
+  </div>
+
+  <script>
+    const addMemoBtn = document.getElementById('addMemoBtn');
+    const memoList = document.getElementById('memoList');
+
+    // 로컬 스토리지 키
+    const STORAGE_KEY = 'my_memo_list';
+
+    // 메모 불러오기
+    function loadMemos() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    }
+
+    // 메모 저장하기
+    function saveMemos(memos) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(memos));
+    }
+
+    // 메모 아이템 생성
+    function createMemoItem(id, content) {
+      const div = document.createElement('div');
+      div.className = 'memo-item';
+      div.dataset.id = id;
+
+      const textarea = document.createElement('textarea');
+      textarea.value = content;
+      textarea.placeholder = '여기에 메모를 작성하세요...';
+      textarea.addEventListener('input', () => {
+        const memos = loadMemos();
+        const index = memos.findIndex(m => m.id === id);
+        if (index !== -1) {
+          memos[index].content = textarea.value;
+          saveMemos(memos);
+        }
+      });
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'delete-btn';
+      delBtn.textContent = '삭제';
+      delBtn.addEventListener('click', () => {
+        let memos = loadMemos();
+        memos = memos.filter(m => m.id !== id);
+        saveMemos(memos);
+        renderMemos();
+      });
+
+      div.appendChild(textarea);
+      div.appendChild(delBtn);
+
+      return div;
+    }
+
+    // 메모 리스트 렌더링
+    function renderMemos() {
+      memoList.innerHTML = '';
+      const memos = loadMemos();
+      if (memos.length === 0) {
+        memoList.textContent = '메모가 없습니다. 새 메모를 추가하세요.';
+        return;
+      }
+      memos.forEach(memo => {
+        memoList.appendChild(createMemoItem(memo.id, memo.content));
+      });
+    }
+
+    // 새 메모 추가
+    addMemoBtn.addEventListener('click', () => {
+      const memos = loadMemos();
+      const newMemo = {
+        id: Date.now().toString(),
+        content: ''
+      };
+      memos.unshift(newMemo);
+      saveMemos(memos);
+      renderMemos();
+    });
+
+    // 초기 렌더링
+    renderMemos();
+  </script>
+</body>
+</html>
