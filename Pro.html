@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>확률 분석 - 바카라 예측기</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Noto Sans KR', sans-serif;
+      background: #fffafc url('https://i.imgur.com/YRjlXx7.png') no-repeat center top;
+      background-size: cover;
+      display: flex;
+    }
+    .sidebar {
+      width: 220px;
+      height: 100vh;
+      background: #fbb1c1;
+      padding-top: 30px;
+      position: fixed;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    .sidebar h2 {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+      font-weight: bold;
+      font-size: 20px;
+    }
+    .sidebar a {
+      display: block;
+      padding: 14px 20px;
+      text-decoration: none;
+      color: white;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      transition: background 0.3s;
+    }
+    .sidebar a:hover {
+      background: #e986a7;
+    }
+    .content {
+      margin-left: 220px;
+      padding: 40px;
+      width: 100%;
+      color: #333;
+    }
+    h1 {
+      font-size: 28px;
+      color: #b73c78;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    input[type="number"] {
+      width: 120px;
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 12px 25px;
+      font-weight: 700;
+      font-size: 16px;
+      color: white;
+      background: #f0729b;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-bottom: 20px;
+    }
+    button:hover {
+      background: #e34d7f;
+    }
+    #result {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      min-height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>예측 시스템</h2>
+    <a href="main.html">대시보드</a>
+    <a href="AI.html">AI 분석</a>
+    <a href="Pro.html">확률 분석</a>
+    <a href="my_memo.html">메모장</a>
+  </div>
+  <div class="content">
+    <h1>확률 분석</h1>
+    <label for="gameCount">게임 횟수 입력 (1 ~ 10000):</label>
+    <input type="number" id="gameCount" value="1000" min="1" max="10000" />
+    <button id="runCalc">결과 보기</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const runCalcBtn = document.getElementById('runCalc');
+    const gameCountInput = document.getElementById('gameCount');
+    const resultDiv = document.getElementById('result');
+
+    runCalcBtn.addEventListener('click', () => {
+      const n = parseInt(gameCountInput.value);
+      if (isNaN(n) || n < 1 || n > 10000) {
+        alert('게임 횟수는 1부터 10000 사이여야 합니다.');
+        return;
+      }
+
+      const playerRate = 44.62;
+      const bankerRate = 45.85;
+      const tieRate = 9.53;
+
+      const playerWins = Math.round((playerRate / 100) * n);
+      const bankerWins = Math.round((bankerRate / 100) * n);
+      const ties = n - playerWins - bankerWins;
+
+      const playerPct = ((playerWins / n) * 100).toFixed(2);
+      const bankerPct = ((bankerWins / n) * 100).toFixed(2);
+      const tiesPct = ((ties / n) * 100).toFixed(2);
+
+      const output =
+`총 게임 횟수: ${n}회
+
+플레이어 승리 예상: ${playerWins}회 (${playerPct}%)
+뱅커 승리 예상: ${bankerWins}회 (${bankerPct}%)
+무승부 예상: ${ties}회 (${tiesPct}%)
+
+※ 이는 확률 기반으로 계산된 예상 결과입니다.`;
+
+      resultDiv.textContent = output;
+    });
+  </script>
+</body>
+</html>
