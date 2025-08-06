@@ -2,217 +2,335 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>바카라 데이터 분석 대시보드</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>바카라 데이터 분석 대시보드 - 황금 에디션</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
 
+  /* 기본 및 그리드 레이아웃 */
   body {
-    margin: 0; padding: 0;
-    font-family: 'Nanum Gothic', sans-serif;
-    background: linear-gradient(135deg, #fef9f4, #f0e4d7);
-    color: #3b322d;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #fffaf0, #f9f4e6);
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #4a3b2b;
     display: flex;
     justify-content: center;
     min-height: 100vh;
+    overflow-x: hidden;
   }
-
   .container {
-    width: 1000px;
-    background: #fffaf0;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(59,50,45,0.3);
-    padding: 40px 50px;
+    width: 95%;
+    max-width: 1200px;
+    background: linear-gradient(145deg, #fdf6e3, #fffbe6);
+    border-radius: 24px;
+    box-shadow:
+      0 8px 25px rgba(212, 175, 55, 0.4),
+      inset 0 0 12px #f6e27a;
+    padding: 40px 48px;
     box-sizing: border-box;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto 1fr;
-    grid-gap: 40px;
+    gap: 48px;
+    animation: fadeIn 1.8s ease forwards;
   }
 
   h1 {
     grid-column: 1 / -1;
-    margin-bottom: 30px;
-    font-weight: 800;
-    font-size: 2.8rem;
-    color: #5a432a;
-    border-left: 8px solid #d4b483;
-    padding-left: 20px;
+    font-weight: 900;
+    font-size: 3.4rem;
+    margin: 0 0 36px 0;
+    padding-left: 24px;
+    border-left: 12px solid #d4af37;
+    color: #b68e26;
+    text-shadow: 0 0 8px rgba(212,175,55,0.6);
     user-select: none;
+    letter-spacing: 0.06em;
+    animation: slideInLeft 1.5s ease forwards;
   }
 
-  /* 입력 폼 */
+  /* 입력 폼 영역 */
   .input-section {
-    grid-column: 1 / 2;
-    background: #f7ede0;
-    border-radius: 14px;
-    padding: 30px 25px;
-    box-shadow: inset 0 0 10px #d4b483aa;
+    background: #fff9dc;
+    border-radius: 20px;
+    box-shadow:
+      inset 0 0 15px #d4af3755,
+      0 6px 20px rgba(212, 175, 55, 0.2);
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    animation: fadeSlideUp 1.2s ease forwards;
   }
-
   .input-section h2 {
-    margin-bottom: 25px;
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: #a06e28;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #a87e00;
+    text-shadow: 0 0 6px #d4af37aa;
+    margin-bottom: 12px;
   }
-
   .form-row {
     display: flex;
     align-items: center;
-    margin-bottom: 18px;
+    gap: 16px;
   }
   .form-row label {
-    width: 120px;
+    flex-basis: 140px;
     font-weight: 700;
     font-size: 1.1rem;
-    color: #7f5c17;
+    color: #7a651c;
     user-select: none;
   }
-  .form-row select {
-    flex: 1;
-    padding: 10px 14px;
-    border: 2px solid #d4b483;
-    border-radius: 10px;
+  select {
+    flex-grow: 1;
+    padding: 12px 16px;
     font-size: 1rem;
-    font-weight: 600;
-    color: #5a432a;
-    background: #fff;
-    transition: border-color 0.3s;
+    font-weight: 700;
+    border-radius: 14px;
+    border: 2.5px solid #d4af37;
+    background: #fff8cc;
+    color: #5a4400;
+    box-shadow:
+      inset 1px 1px 4px #fbe88c,
+      1px 1px 4px #aa8f00;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
   }
-  .form-row select:hover, .form-row select:focus {
-    border-color: #a06e28;
+  select:hover, select:focus {
+    border-color: #b28b00;
+    box-shadow:
+      inset 2px 2px 8px #fced62,
+      2px 2px 8px #c2a404;
     outline: none;
   }
 
   button#addGameBtn {
-    width: 100%;
-    padding: 14px 0;
-    margin-top: 10px;
-    background: #d4b483;
+    margin-top: 12px;
+    padding: 16px 0;
+    font-weight: 900;
+    font-size: 1.3rem;
+    color: #442d00;
+    background: linear-gradient(90deg, #e6c849, #d4af37);
     border: none;
-    border-radius: 12px;
-    color: #5a432a;
-    font-weight: 800;
-    font-size: 1.1rem;
+    border-radius: 20px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    box-shadow:
+      0 0 12px #d4af37,
+      inset 0 -2px 6px #aa8500;
+    transition: background 0.4s ease, box-shadow 0.4s ease;
     user-select: none;
   }
   button#addGameBtn:hover {
-    background: #a77e2f;
+    background: linear-gradient(90deg, #f0d95c, #cfa72d);
+    box-shadow:
+      0 0 20px #f9e564,
+      inset 0 -3px 8px #b88f00;
   }
 
-  /* 결과 테이블 */
+  /* 결과 테이블 영역 */
   .table-section {
-    grid-column: 1 / 2;
-    background: #f7ede0;
-    border-radius: 14px;
-    padding: 30px 25px;
-    box-shadow: inset 0 0 10px #d4b483aa;
-    max-height: 460px;
+    background: #fff9dc;
+    border-radius: 20px;
+    box-shadow:
+      inset 0 0 18px #d4af3755,
+      0 6px 20px rgba(212, 175, 55, 0.2);
+    padding: 32px 28px;
+    max-height: 520px;
     overflow-y: auto;
+    animation: fadeSlideUp 1.5s ease forwards;
   }
-
   .table-section h2 {
-    margin-bottom: 25px;
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: #a06e28;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #a87e00;
+    margin-bottom: 20px;
+    text-shadow: 0 0 6px #d4af37aa;
   }
-
   table {
     width: 100%;
     border-collapse: collapse;
     font-size: 1rem;
+    color: #5a432a;
   }
   th, td {
-    padding: 12px 14px;
-    border: 1.5px solid #d4b483;
+    padding: 14px 18px;
+    border: 2px solid #d4af37;
     text-align: center;
-    color: #5a432a;
+    font-weight: 700;
     user-select: none;
   }
   th {
-    background: #d4b483cc;
-    font-weight: 800;
+    background: #f7e68d;
+    color: #735f0e;
+    text-shadow: 0 0 3px #d4af37bb;
   }
   tbody tr:nth-child(even) {
-    background: #fff7e0;
+    background: #fff8b1;
+  }
+  tbody tr:hover {
+    background: #f9e76b;
+    font-weight: 900;
+    color: #6e5600;
+    transition: background 0.3s ease;
   }
 
-  /* 통계 & 그래프 영역 */
+  /* 통계 + 그래프 영역 */
   .stats-section {
-    grid-column: 2 / 3;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 36px;
   }
-
   .stats-cards {
     display: flex;
-    gap: 24px;
+    gap: 28px;
     justify-content: space-between;
   }
   .card {
-    background: #f7ede0;
+    background: #fff9dc;
     flex: 1;
-    padding: 22px 18px;
-    border-radius: 12px;
-    box-shadow: inset 0 0 10px #d4b483aa;
+    border-radius: 18px;
+    padding: 26px 20px;
+    box-shadow:
+      inset 0 0 12px #d4af3755,
+      0 6px 22px rgba(212, 175, 55, 0.2);
     text-align: center;
+    color: #7b6214;
     user-select: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-10px);
+    box-shadow:
+      0 10px 35px rgba(212, 175, 55, 0.6),
+      inset 0 0 18px #d4af3755;
   }
   .card h3 {
-    font-size: 1.2rem;
-    margin-bottom: 8px;
-    color: #a06e28;
+    font-weight: 900;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    text-shadow: 0 0 6px #d4af37cc;
   }
   .card p {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 900;
-    color: #5a432a;
+    letter-spacing: 0.1em;
+    color: #6f5a0e;
+    text-shadow: 0 0 10px #c9ab2baa;
   }
 
   /* 차트 캔버스 */
   canvas {
-    background: #fffaf0;
-    border-radius: 16px;
-    box-shadow: 0 6px 20px rgba(59,50,45,0.2);
+    background: #fff9dc;
+    border-radius: 20px;
+    box-shadow:
+      0 8px 26px rgba(212, 175, 55, 0.3),
+      inset 0 0 15px #f8e57caa;
     width: 100% !important;
-    max-height: 300px;
+    max-height: 320px;
+    user-select: none;
   }
 
   /* 버튼 그룹 */
   .btn-group {
-    margin-top: 25px;
     display: flex;
-    gap: 15px;
+    gap: 20px;
+    margin-top: 28px;
   }
   .btn-group button {
     flex: 1;
-    padding: 14px 0;
-    border-radius: 12px;
+    padding: 16px 0;
+    font-weight: 900;
+    font-size: 1.2rem;
+    border-radius: 20px;
     border: none;
-    font-weight: 700;
-    font-size: 1.1rem;
-    user-select: none;
     cursor: pointer;
-    transition: background 0.3s ease;
+    user-select: none;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
     color: #fff;
+    box-shadow:
+      0 0 18px rgba(212, 175, 55, 0.7);
   }
   #resetBtn {
-    background: #c44;
+    background: #a32e2e;
+    box-shadow: 0 0 20px #bb4444;
   }
   #resetBtn:hover {
-    background: #922;
+    background: #7a2323;
+    box-shadow: 0 0 28px #dd5555;
   }
   #refreshBtn {
-    background: #666;
+    background: #555555;
+    box-shadow: 0 0 18px #888888;
   }
   #refreshBtn:hover {
-    background: #444;
+    background: #333333;
+    box-shadow: 0 0 26px #aaaaaa;
+  }
+
+  /* 애니메이션 */
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+  @keyframes slideInLeft {
+    from {opacity: 0; transform: translateX(-40px);}
+    to {opacity: 1; transform: translateX(0);}
+  }
+  @keyframes fadeSlideUp {
+    from {opacity: 0; transform: translateY(30px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+
+  /* 반응형 */
+  @media (max-width: 960px) {
+    .container {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto auto;
+      padding: 32px 24px;
+      gap: 32px;
+    }
+    h1 {
+      font-size: 2.6rem;
+      padding-left: 16px;
+      border-left-width: 8px;
+    }
+    .input-section, .table-section, .stats-section {
+      padding: 24px 20px;
+    }
+    .stats-cards {
+      flex-direction: column;
+      gap: 16px;
+    }
+    .btn-group {
+      flex-direction: column;
+      gap: 16px;
+    }
+  }
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 2rem;
+      padding-left: 12px;
+    }
+    button#addGameBtn {
+      font-size: 1.1rem;
+      padding: 14px 0;
+    }
+    .form-row label {
+      flex-basis: 110px;
+      font-size: 1rem;
+    }
+    select {
+      font-size: 0.9rem;
+      padding: 10px 14px;
+    }
+    .card h3 {
+      font-size: 1.1rem;
+    }
+    .card p {
+      font-size: 1.5rem;
+    }
   }
 </style>
 </head>
@@ -326,9 +444,7 @@
 
   function updateStats() {
     const counts = { Player: 0, Banker: 0, Tie: 0 };
-    gameData.forEach(g => {
-      counts[g.role]++;
-    });
+    gameData.forEach(g => counts[g.role]++);
 
     totalGamesEl.textContent = `${gameData.length}회`;
     playerCountEl.textContent = `${counts.Player}회`;
@@ -352,16 +468,19 @@
         datasets: [{
           label: '선택 횟수',
           data,
-          backgroundColor: ['#008080', '#d64545', '#d4af37'],
-          borderRadius: 8,
-          borderWidth: 1
+          backgroundColor: ['#b4972a', '#d4af37', '#c9b037'],
+          borderRadius: 10,
+          borderWidth: 1,
+          borderColor: '#a57c17',
+          hoverBackgroundColor: ['#e1c864', '#f5d866', '#e4cd6a']
         }]
       },
       options: {
         responsive: true,
+        animation: { duration: 800 },
         plugins: { legend: { display: false } },
         scales: {
-          y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#eee' } },
+          y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0e6b5' } },
           x: { grid: { display: false } }
         }
       }
@@ -373,19 +492,22 @@
         labels,
         datasets: [{
           data,
-          backgroundColor: ['#008080', '#d64545', '#d4af37'],
-          hoverOffset: 30,
-          borderWidth: 0
+          backgroundColor: ['#b4972a', '#d4af37', '#c9b037'],
+          hoverOffset: 28,
+          borderWidth: 3,
+          borderColor: '#fff'
         }]
       },
       options: {
         responsive: true,
+        animation: { duration: 900 },
+        cutout: '65%',
         plugins: {
           legend: {
             position: 'bottom',
             labels: {
-              font: { size: 14 },
-              color: '#5a432a'
+              color: '#6a590e',
+              font: { weight: 'bold', size: 14 }
             }
           }
         }
@@ -396,30 +518,21 @@
   addGameBtn.addEventListener('click', () => {
     const role = roleSelect.value;
     const result = resultSelect.value;
-
-    // 데이터 추가
     gameData.push({ role, result });
-
-    // UI 업데이트
     updateTable();
     updateStats();
   });
 
   resetBtn.addEventListener('click', () => {
-    if (confirm('데이터를 초기화하시겠습니까?')) {
-      gameData.length = 0;
-      updateTable();
-      updateStats();
-    }
-  });
-
-  refreshBtn.addEventListener('click', () => {
-    location.reload();
-  });
-
-  // 초기화 시 차트 렌더
+  gameData.length = 0;  // 배열 초기화
   updateTable();
   updateStats();
-</script>
-</body>
-</html>
+});
+
+refreshBtn.addEventListener('click', () => {
+  location.reload();
+});
+
+// 초기 차트 및 통계 세팅
+updateTable();
+updateStats();
