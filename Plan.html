@@ -3,102 +3,229 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>바카라 실시간 데이터 분석 대시보드</title>
+<title>바카라 데이터 분석 대시보드</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+
   body {
-    font-family: 'Nanum Gothic', sans-serif, sans-serif;
+    margin: 0; padding: 0;
+    font-family: 'Nanum Gothic', sans-serif;
     background: linear-gradient(135deg, #fef9f4, #f0e4d7);
     color: #3b322d;
-    margin: 0; padding: 0;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
   }
+
   .container {
-    max-width: 1000px;
-    margin: 30px auto;
+    width: 1000px;
     background: #fffaf0;
-    border-radius: 15px;
-    box-shadow: 0 6px 18px rgba(59,50,45,0.25);
-    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(59,50,45,0.3);
+    padding: 40px 50px;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto 1fr;
+    grid-gap: 40px;
   }
-  h1, h2 {
-    font-weight: 700;
-    margin-bottom: 20px;
-    border-left: 6px solid #d4b483;
-    padding-left: 12px;
+
+  h1 {
+    grid-column: 1 / -1;
+    margin-bottom: 30px;
+    font-weight: 800;
+    font-size: 2.8rem;
     color: #5a432a;
+    border-left: 8px solid #d4b483;
+    padding-left: 20px;
+    user-select: none;
   }
+
+  /* 입력 폼 */
+  .input-section {
+    grid-column: 1 / 2;
+    background: #f7ede0;
+    border-radius: 14px;
+    padding: 30px 25px;
+    box-shadow: inset 0 0 10px #d4b483aa;
+  }
+
+  .input-section h2 {
+    margin-bottom: 25px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #a06e28;
+  }
+
+  .form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .form-row label {
+    width: 120px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #7f5c17;
+    user-select: none;
+  }
+  .form-row select {
+    flex: 1;
+    padding: 10px 14px;
+    border: 2px solid #d4b483;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #5a432a;
+    background: #fff;
+    transition: border-color 0.3s;
+  }
+  .form-row select:hover, .form-row select:focus {
+    border-color: #a06e28;
+    outline: none;
+  }
+
+  button#addGameBtn {
+    width: 100%;
+    padding: 14px 0;
+    margin-top: 10px;
+    background: #d4b483;
+    border: none;
+    border-radius: 12px;
+    color: #5a432a;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    user-select: none;
+  }
+  button#addGameBtn:hover {
+    background: #a77e2f;
+  }
+
+  /* 결과 테이블 */
+  .table-section {
+    grid-column: 1 / 2;
+    background: #f7ede0;
+    border-radius: 14px;
+    padding: 30px 25px;
+    box-shadow: inset 0 0 10px #d4b483aa;
+    max-height: 460px;
+    overflow-y: auto;
+  }
+
+  .table-section h2 {
+    margin-bottom: 25px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #a06e28;
+  }
+
   table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 30px;
-    font-size: 14px;
-    user-select: none;
+    font-size: 1rem;
   }
   th, td {
-    border: 1px solid #d9cbbd;
-    padding: 8px 12px;
+    padding: 12px 14px;
+    border: 1.5px solid #d4b483;
     text-align: center;
+    color: #5a432a;
+    user-select: none;
   }
   th {
-    background: #e5d8c8;
-    color: #5a432a;
+    background: #d4b483cc;
+    font-weight: 800;
   }
-  .form-row {
-    margin-bottom: 15px;
+  tbody tr:nth-child(even) {
+    background: #fff7e0;
+  }
+
+  /* 통계 & 그래프 영역 */
+  .stats-section {
+    grid-column: 2 / 3;
     display: flex;
-    align-items: center;
-    gap: 15px;
+    flex-direction: column;
+    gap: 30px;
   }
-  label {
-    font-weight: 600;
-    min-width: 100px;
+
+  .stats-cards {
+    display: flex;
+    gap: 24px;
+    justify-content: space-between;
   }
-  select {
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #bfa67b;
-    font-size: 14px;
-  }
-  button {
-    background: #d4b483;
-    color: #5a432a;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  button:hover {
-    background: #c2a26a;
-  }
-  #stats p {
-    font-size: 16px;
-    margin: 6px 0;
-  }
-  canvas {
-    background: #fff;
+  .card {
+    background: #f7ede0;
+    flex: 1;
+    padding: 22px 18px;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    max-height: 350px;
+    box-shadow: inset 0 0 10px #d4b483aa;
+    text-align: center;
+    user-select: none;
   }
+  .card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: #a06e28;
+  }
+  .card p {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #5a432a;
+  }
+
+  /* 차트 캔버스 */
+  canvas {
+    background: #fffaf0;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(59,50,45,0.2);
+    width: 100% !important;
+    max-height: 300px;
+  }
+
+  /* 버튼 그룹 */
   .btn-group {
-    margin-bottom: 30px;
+    margin-top: 25px;
     display: flex;
     gap: 15px;
+  }
+  .btn-group button {
+    flex: 1;
+    padding: 14px 0;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    user-select: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    color: #fff;
+  }
+  #resetBtn {
+    background: #c44;
+  }
+  #resetBtn:hover {
+    background: #922;
+  }
+  #refreshBtn {
+    background: #666;
+  }
+  #refreshBtn:hover {
+    background: #444;
   }
 </style>
 </head>
 <body>
-<div class="container">
+<div class="container" role="main" aria-label="바카라 실시간 데이터 분석 대시보드">
+
   <h1>바카라 실시간 데이터 분석 대시보드</h1>
 
-  <section>
-    <h2>게임 결과 추가하기</h2>
+  <section class="input-section" aria-labelledby="inputSectionTitle">
+    <h2 id="inputSectionTitle">게임 결과 추가하기</h2>
     <div class="form-row">
       <label for="roleSelect">선택한 역할:</label>
-      <select id="roleSelect" aria-label="선택한 역할">
+      <select id="roleSelect" aria-describedby="roleDesc">
         <option value="Player">플레이어</option>
         <option value="Banker">뱅커</option>
         <option value="Tie">타이</option>
@@ -106,18 +233,18 @@
     </div>
     <div class="form-row">
       <label for="resultSelect">게임 결과:</label>
-      <select id="resultSelect" aria-label="게임 결과">
+      <select id="resultSelect" aria-describedby="resultDesc">
         <option value="Win">승리</option>
         <option value="Lose">패배</option>
         <option value="Tie">무승부</option>
       </select>
     </div>
-    <button id="addGameBtn" aria-label="게임 결과 추가 버튼">게임 결과 추가</button>
+    <button id="addGameBtn" aria-live="polite" aria-atomic="true">게임 결과 추가</button>
   </section>
 
-  <section>
-    <h2>게임 결과 데이터</h2>
-    <table id="gameTable" aria-label="게임 결과 데이터 테이블">
+  <section class="table-section" aria-labelledby="tableSectionTitle" tabindex="0">
+    <h2 id="tableSectionTitle">게임 결과 데이터</h2>
+    <table aria-describedby="tableDesc">
       <thead>
         <tr>
           <th>게임 번호</th>
@@ -129,31 +256,45 @@
     </table>
   </section>
 
-  <section id="stats">
-    <h2>통계 요약</h2>
-    <p id="totalGames">총 게임 수: 0회</p>
-    <p id="playerCount">플레이어 선택 횟수: 0회</p>
-    <p id="bankerCount">뱅커 선택 횟수: 0회</p>
-    <p id="tieCount">타이 선택 횟수: 0회</p>
-  </section>
+  <section class="stats-section" aria-labelledby="statsSectionTitle">
+    <h2 id="statsSectionTitle">통계 및 분석</h2>
 
-  <section>
-    <h2>역할별 선택 횟수 (막대 그래프)</h2>
-    <canvas id="barChart" aria-label="역할별 선택 횟수 그래프" role="img"></canvas>
-  </section>
+    <div class="stats-cards" aria-live="polite" aria-atomic="true">
+      <div class="card" id="totalGamesCard">
+        <h3>총 게임 수</h3>
+        <p id="totalGames">0회</p>
+      </div>
+      <div class="card" id="playerCountCard">
+        <h3>플레이어 선택 횟수</h3>
+        <p id="playerCount">0회</p>
+      </div>
+      <div class="card" id="bankerCountCard">
+        <h3>뱅커 선택 횟수</h3>
+        <p id="bankerCount">0회</p>
+      </div>
+      <div class="card" id="tieCountCard">
+        <h3>타이 선택 횟수</h3>
+        <p id="tieCount">0회</p>
+      </div>
+    </div>
 
-  <section>
-    <h2>역할별 선택 비율 (도넛 그래프)</h2>
-    <canvas id="pieChart" aria-label="역할별 선택 비율 그래프" role="img"></canvas>
-  </section>
+    <div>
+      <h3>역할별 선택 횟수 (막대 그래프)</h3>
+      <canvas id="barChart" role="img" aria-label="역할별 선택 횟수 막대 그래프"></canvas>
+    </div>
 
-  <div class="btn-group">
-    <button id="resetBtn" aria-label="데이터 초기화 버튼" style="background:#c44;">데이터 초기화</button>
-    <button id="refreshBtn" aria-label="페이지 새로고침 버튼" style="background:#666;">페이지 새로고침</button>
-  </div>
+    <div style="margin-top:30px;">
+      <h3>역할별 선택 비율 (도넛 그래프)</h3>
+      <canvas id="pieChart" role="img" aria-label="역할별 선택 비율 도넛 그래프"></canvas>
+    </div>
+
+    <div class="btn-group">
+      <button id="resetBtn" aria-label="데이터 초기화 버튼">데이터 초기화</button>
+      <button id="refreshBtn" aria-label="페이지 새로고침 버튼">페이지 새로고침</button>
+    </div>
+  </section>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   const gameData = [];
 
@@ -178,19 +319,21 @@
     tbody.innerHTML = '';
     gameData.forEach((game, idx) => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${idx+1}</td><td>${game.role}</td><td>${game.result}</td>`;
+      tr.innerHTML = `<td>${idx + 1}</td><td>${game.role}</td><td>${game.result}</td>`;
       tbody.appendChild(tr);
     });
   }
 
   function updateStats() {
     const counts = { Player: 0, Banker: 0, Tie: 0 };
-    gameData.forEach(g => { counts[g.role]++; });
+    gameData.forEach(g => {
+      counts[g.role]++;
+    });
 
-    totalGamesEl.textContent = `총 게임 수: ${gameData.length}회`;
-    playerCountEl.textContent = `플레이어 선택 횟수: ${counts.Player}회`;
-    bankerCountEl.textContent = `뱅커 선택 횟수: ${counts.Banker}회`;
-    tieCountEl.textContent = `타이 선택 횟수: ${counts.Tie}회`;
+    totalGamesEl.textContent = `${gameData.length}회`;
+    playerCountEl.textContent = `${counts.Player}회`;
+    bankerCountEl.textContent = `${counts.Banker}회`;
+    tieCountEl.textContent = `${counts.Tie}회`;
 
     updateCharts(counts);
   }
@@ -198,8 +341,9 @@
   function updateCharts(counts) {
     const labels = ['Player', 'Banker', 'Tie'];
     const data = [counts.Player, counts.Banker, counts.Tie];
-    if(barChart) barChart.destroy();
-    if(pieChart) pieChart.destroy();
+
+    if (barChart) barChart.destroy();
+    if (pieChart) pieChart.destroy();
 
     barChart = new Chart(barCtx, {
       type: 'bar',
@@ -241,51 +385,39 @@
             position: 'bottom',
             labels: {
               font: { size: 14 },
-              color: '#5a432a',
-              padding: 20,
-              boxWidth: 20,
-              boxHeight: 20,
-              usePointStyle: true,
-              pointStyle: 'circle'
+              color: '#5a432a'
             }
-          },
-          tooltip: {
-            enabled: true,
-            backgroundColor: '#5a432a',
-            titleFont: { size: 16, weight: '700' },
-            bodyFont: { size: 14 }
           }
         }
       }
     });
   }
 
-  function addGameResult() {
+  addGameBtn.addEventListener('click', () => {
     const role = roleSelect.value;
     const result = resultSelect.value;
 
+    // 데이터 추가
     gameData.push({ role, result });
+
+    // UI 업데이트
     updateTable();
     updateStats();
-  }
+  });
 
-  function resetData() {
-    if(confirm('정말 모든 데이터를 초기화하시겠습니까?')) {
+  resetBtn.addEventListener('click', () => {
+    if (confirm('데이터를 초기화하시겠습니까?')) {
       gameData.length = 0;
       updateTable();
       updateStats();
     }
-  }
+  });
 
-  function refreshPage() {
+  refreshBtn.addEventListener('click', () => {
     location.reload();
-  }
+  });
 
-  addGameBtn.addEventListener('click', addGameResult);
-  resetBtn.addEventListener('click', resetData);
-  refreshBtn.addEventListener('click', refreshPage);
-
-  // 초기 화면 업데이트
+  // 초기화 시 차트 렌더
   updateTable();
   updateStats();
 </script>
