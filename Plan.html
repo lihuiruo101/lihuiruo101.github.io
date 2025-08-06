@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>바카라 실시간 데이터 분석 대시보드</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+    font-family: 'Nanum Gothic', sans-serif, sans-serif;
+    background: linear-gradient(135deg, #fef9f4, #f0e4d7);
+    color: #3b322d;
+    margin: 0; padding: 0;
+  }
+  .container {
+    max-width: 1000px;
+    margin: 30px auto;
+    background: #fffaf0;
+    border-radius: 15px;
+    box-shadow: 0 6px 18px rgba(59,50,45,0.25);
+    padding: 30px 40px;
+  }
+  h1, h2 {
+    font-weight: 700;
+    margin-bottom: 20px;
+    border-left: 6px solid #d4b483;
+    padding-left: 12px;
+    color: #5a432a;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    font-size: 14px;
+    user-select: none;
+  }
+  th, td {
+    border: 1px solid #d9cbbd;
+    padding: 8px 12px;
+    text-align: center;
+  }
+  th {
+    background: #e5d8c8;
+    color: #5a432a;
+  }
+  .form-row {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  label {
+    font-weight: 600;
+    min-width: 100px;
+  }
+  select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #bfa67b;
+    font-size: 14px;
+  }
+  button {
+    background: #d4b483;
+    color: #5a432a;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  button:hover {
+    background: #c2a26a;
+  }
+  #stats p {
+    font-size: 16px;
+    margin: 6px 0;
+  }
+  canvas {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-height: 350px;
+  }
+  .btn-group {
+    margin-bottom: 30px;
+    display: flex;
+    gap: 15px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>바카라 실시간 데이터 분석 대시보드</h1>
+
+  <section>
+    <h2>게임 결과 추가하기</h2>
+    <div class="form-row">
+      <label for="roleSelect">선택한 역할:</label>
+      <select id="roleSelect" aria-label="선택한 역할">
+        <option value="Player">플레이어</option>
+        <option value="Banker">뱅커</option>
+        <option value="Tie">타이</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label for="resultSelect">게임 결과:</label>
+      <select id="resultSelect" aria-label="게임 결과">
+        <option value="Win">승리</option>
+        <option value="Lose">패배</option>
+        <option value="Tie">무승부</option>
+      </select>
+    </div>
+    <button id="addGameBtn" aria-label="게임 결과 추가 버튼">게임 결과 추가</button>
+  </section>
+
+  <section>
+    <h2>게임 결과 데이터</h2>
+    <table id="gameTable" aria-label="게임 결과 데이터 테이블">
+      <thead>
+        <tr>
+          <th>게임 번호</th>
+          <th>선택한 역할</th>
+          <th>결과</th>
+        </tr>
+      </thead>
+      <tbody id="gameDataBody"></tbody>
+    </table>
+  </section>
+
+  <section id="stats">
+    <h2>통계 요약</h2>
+    <p id="totalGames">총 게임 수: 0회</p>
+    <p id="playerCount">플레이어 선택 횟수: 0회</p>
+    <p id="bankerCount">뱅커 선택 횟수: 0회</p>
+    <p id="tieCount">타이 선택 횟수: 0회</p>
+  </section>
+
+  <section>
+    <h2>역할별 선택 횟수 (막대 그래프)</h2>
+    <canvas id="barChart" aria-label="역할별 선택 횟수 그래프" role="img"></canvas>
+  </section>
+
+  <section>
+    <h2>역할별 선택 비율 (도넛 그래프)</h2>
+    <canvas id="pieChart" aria-label="역할별 선택 비율 그래프" role="img"></canvas>
+  </section>
+
+  <div class="btn-group">
+    <button id="resetBtn" aria-label="데이터 초기화 버튼" style="background:#c44;">데이터 초기화</button>
+    <button id="refreshBtn" aria-label="페이지 새로고침 버튼" style="background:#666;">페이지 새로고침</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const gameData = [];
+
+  const tbody = document.getElementById('gameDataBody');
+  const totalGamesEl = document.getElementById('totalGames');
+  const playerCountEl = document.getElementById('playerCount');
+  const bankerCountEl = document.getElementById('bankerCount');
+  const tieCountEl = document.getElementById('tieCount');
+
+  const roleSelect = document.getElementById('roleSelect');
+  const resultSelect = document.getElementById('resultSelect');
+  const addGameBtn = document.getElementById('addGameBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const refreshBtn = document.getElementById('refreshBtn');
+
+  const barCtx = document.getElementById('barChart').getContext('2d');
+  const pieCtx = document.getElementById('pieChart').getContext('2d');
+
+  let barChart, pieChart;
+
+  function updateTable() {
+    tbody.innerHTML = '';
+    gameData.forEach((game, idx) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${idx+1}</td><td>${game.role}</td><td>${game.result}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function updateStats() {
+    const counts = { Player: 0, Banker: 0, Tie: 0 };
+    gameData.forEach(g => { counts[g.role]++; });
+
+    totalGamesEl.textContent = `총 게임 수: ${gameData.length}회`;
+    playerCountEl.textContent = `플레이어 선택 횟수: ${counts.Player}회`;
+    bankerCountEl.textContent = `뱅커 선택 횟수: ${counts.Banker}회`;
+    tieCountEl.textContent = `타이 선택 횟수: ${counts.Tie}회`;
+
+    updateCharts(counts);
+  }
+
+  function updateCharts(counts) {
+    const labels = ['Player', 'Banker', 'Tie'];
+    const data = [counts.Player, counts.Banker, counts.Tie];
+    if(barChart) barChart.destroy();
+    if(pieChart) pieChart.destroy();
+
+    barChart = new Chart(barCtx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: '선택 횟수',
+          data,
+          backgroundColor: ['#008080', '#d64545', '#d4af37'],
+          borderRadius: 8,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#eee' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+
+    pieChart = new Chart(pieCtx, {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [{
+          data,
+          backgroundColor: ['#008080', '#d64545', '#d4af37'],
+          hoverOffset: 30,
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              font: { size: 14 },
+              color: '#5a432a',
+              padding: 20,
+              boxWidth: 20,
+              boxHeight: 20,
+              usePointStyle: true,
+              pointStyle: 'circle'
+            }
+          },
+          tooltip: {
+            enabled: true,
+            backgroundColor: '#5a432a',
+            titleFont: { size: 16, weight: '700' },
+            bodyFont: { size: 14 }
+          }
+        }
+      }
+    });
+  }
+
+  function addGameResult() {
+    const role = roleSelect.value;
+    const result = resultSelect.value;
+
+    gameData.push({ role, result });
+    updateTable();
+    updateStats();
+  }
+
+  function resetData() {
+    if(confirm('정말 모든 데이터를 초기화하시겠습니까?')) {
+      gameData.length = 0;
+      updateTable();
+      updateStats();
+    }
+  }
+
+  function refreshPage() {
+    location.reload();
+  }
+
+  addGameBtn.addEventListener('click', addGameResult);
+  resetBtn.addEventListener('click', resetData);
+  refreshBtn.addEventListener('click', refreshPage);
+
+  // 초기 화면 업데이트
+  updateTable();
+  updateStats();
+</script>
+</body>
+</html>
