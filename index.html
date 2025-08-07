@@ -1,149 +1,265 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>24 NonTerror | 관리 시스템</title>
+  <meta charset="UTF-8">
+  <title>로그인 & 회원가입</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
 
     * {
-      margin: 0;
-      padding: 0;
       box-sizing: border-box;
+      transition: all 0.3s ease;
     }
 
     body {
-      background: linear-gradient(145deg, #f2ece4, #e0d5c0);
-      font-family: 'DM Sans', sans-serif;
-      color: #1d1d1f;
-      overflow-x: hidden;
-    }
-
-    .container {
-      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #e5f2ff, #cce0f5);
+      font-family: 'Nanum Gothic', sans-serif;
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
-      padding: 4rem 2rem;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(15px);
-      border-radius: 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      box-shadow: 0 0 80px rgba(255, 255, 255, 0.15), 0 0 10px #fff;
-      animation: fadeIn 1.5s ease-in-out both;
+      align-items: center;
+      height: 100vh;
     }
 
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 3rem;
+    .card {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+      width: 400px;
+    }
+
+    h2 {
+      color: #005bac;
       text-align: center;
-      margin-bottom: 1.5rem;
-      letter-spacing: 0.05em;
-      color: #2c2c2e;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 25px;
     }
 
-    .description {
-      max-width: 600px;
-      text-align: center;
-      font-size: 1.15rem;
-      line-height: 1.8;
-      color: #333;
-      margin-bottom: 3rem;
+    .input-group {
+      position: relative;
+      margin-bottom: 16px;
     }
 
-    .cta {
-      padding: 0.85rem 2rem;
-      font-size: 1.1rem;
-      background: linear-gradient(to right, #e3c7a0, #dbc2aa);
-      border: none;
-      border-radius: 50px;
+    input {
+      width: 100%;
+      padding: 12px;
+      padding-right: 40px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      background-color: #f9f9f9;
+    }
+
+    .eye-toggle {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 14px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      color: #fff;
+    }
+
+    .eye {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border: 2px solid #555;
+      border-radius: 50% / 60%;
+    }
+
+    .eye::before {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 6px;
+      width: 8px;
+      height: 8px;
+      background: #555;
+      border-radius: 50%;
+    }
+
+    .eye.closed {
+      border-color: transparent;
+    }
+
+    .eye.closed::before {
+      background: transparent;
+    }
+
+    .eye.closed::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-bottom: 2px solid #555;
+      transform: rotate(30deg);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #005bac;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
       font-weight: bold;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      cursor: pointer;
+      margin-top: 10px;
     }
 
-    .cta:hover {
-      background: linear-gradient(to right, #d3a369, #b99369);
-      box-shadow: 0 0 30px rgba(220, 195, 150, 0.5);
-      transform: translateY(-3px);
+    button:hover {
+      background: #003f7f;
     }
 
-    .features {
-      margin-top: 4rem;
-      display: flex;
-      flex-direction: column;
-      gap: 3rem;
-      max-width: 800px;
+    .toggle-form {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 14px;
+      color: #333;
+      text-decoration: underline;
+      cursor: pointer;
     }
 
-    .feature {
-      background: rgba(255,255,255,0.2);
-      backdrop-filter: blur(10px);
-      padding: 2rem;
-      border-radius: 1rem;
-      border: 1px solid rgba(255,255,255,0.3);
-      box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
-      transition: all 0.3s ease;
+    .message {
+      text-align: center;
+      margin-top: 12px;
+      color: #c10000;
+      font-size: 14px;
     }
 
-    .feature:hover {
-      box-shadow: 0 0 40px rgba(240, 200, 150, 0.3);
-    }
-
-    .feature h2 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: #2f2f2f;
-    }
-
-    .feature p {
-      font-size: 1rem;
-      line-height: 1.7;
-      color: #444;
-    }
-
-    @keyframes fadeIn {
-      0% {
-        opacity: 0;
-        transform: translateY(40px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>24 NonTerror</h1>
-    <div class="description">
-      서버 내 무결점을 지향하는<br />
-      강력하고 정교한 방어 시스템
+
+  <div class="card">
+    <!-- 로그인 폼 -->
+    <div id="loginForm">
+      <h2>로그인</h2>
+      <div class="input-group">
+        <input type="text" id="loginId" placeholder="아이디를 입력해 주세요">
+      </div>
+      <div class="input-group">
+        <input type="password" id="loginPw" placeholder="비밀번호를 입력해 주세요">
+        <div class="eye-toggle" onclick="togglePassword('loginPw', this)">
+          <div class="eye"></div>
+        </div>
+      </div>
+      <div class="input-group">
+        <input type="text" id="loginKey" placeholder="라이센스 키를 입력해 주세요">
+      </div>
+      <button onclick="login()">로그인하기</button>
+      <div class="toggle-form" onclick="switchForm()">계정이 없으신가요? 회원가입하기</div>
+      <div class="message" id="loginMsg"></div>
     </div>
-    <button class="cta">서포트서버 가입</button>
 
-    <div class="features">
-      <div class="feature">
-        <h2>테러 방지</h2>
-        <p>자동 감시 시스템을 통해 권한 남용, 역할 삭제, 채널 삭제 등을 즉시 차단합니다.<br>기계처럼 즉각적으로 판단하고 조치합니다.</p>
+    <!-- 회원가입 폼 -->
+    <div id="registerForm" class="hidden">
+      <h2>회원가입</h2>
+      <div class="input-group">
+        <input type="text" id="discordId" placeholder="디스코드 ID를 입력해 주세요">
       </div>
-
-      <div class="feature">
-        <h2>서버 관리</h2>
-        <p>정교한 권한 제어와 서버 상태 모니터링으로<br>운영자는 걱정 없이 서버를 운용할 수 있습니다.</p>
+      <div class="input-group">
+        <input type="text" id="newId" placeholder="아이디를 입력해 주세요">
       </div>
-
-      <div class="feature">
-        <h2>신고 시스템</h2>
-        <p>자동화된 신고 처리와 추적 시스템.<br>관리자 없이도 질서를 유지할 수 있도록 설계되었습니다.</p>
+      <div class="input-group">
+        <input type="password" id="newPw" placeholder="비밀번호를 입력해 주세요">
+        <div class="eye-toggle" onclick="togglePassword('newPw', this)">
+          <div class="eye"></div>
+        </div>
       </div>
+      <button onclick="register()">회원가입하기</button>
+      <div class="toggle-form" onclick="switchForm()">이미 계정이 있으신가요? 로그인하기</div>
+      <div class="message" id="registerMsg"></div>
     </div>
   </div>
+
+  <script>
+    const 생성자목록 = ['1262720382683578444', '987654321098765432'];
+    const 라이센스키목록 = ['ABC-123-DEF', 'XYZ-789-GHI'];
+
+    function switchForm() {
+      const login = document.getElementById('loginForm');
+      const register = document.getElementById('registerForm');
+      login.classList.toggle('hidden');
+      register.classList.toggle('hidden');
+      document.getElementById('loginMsg').innerText = '';
+      document.getElementById('registerMsg').innerText = '';
+    }
+
+    function togglePassword(inputId, toggleDiv) {
+      const input = document.getElementById(inputId);
+      const eye = toggleDiv.querySelector('.eye');
+      if (input.type === 'password') {
+        input.type = 'text';
+        eye.classList.add('closed');
+      } else {
+        input.type = 'password';
+        eye.classList.remove('closed');
+      }
+    }
+
+    function containsSpecialChar(str) {
+      return /[!@#$%^&*(),.?":{}|<>]/.test(str);
+    }
+
+    function register() {
+      const discordId = document.getElementById('discordId').value.trim();
+      const newId = document.getElementById('newId').value.trim();
+      const newPw = document.getElementById('newPw').value;
+      const msg = document.getElementById('registerMsg');
+
+      if (!생성자목록.includes(discordId)) {
+        msg.innerText = '죄송합니다. 생성자 또는 관리자만 가입하실 수 있습니다.';
+        return;
+      }
+
+      if (newPw.length < 7 || !containsSpecialChar(newPw)) {
+        msg.innerText = '비밀번호는 7자 이상이어야 하며 특수문자를 포함해야 합니다.';
+        return;
+      }
+
+      const user = { id: newId, pw: newPw };
+      localStorage.setItem('user_' + newId, JSON.stringify(user));
+      msg.style.color = '#005bac';
+      msg.innerText = '회원가입이 완료되었습니다. 로그인해 주세요.';
+    }
+
+    function login() {
+      const loginId = document.getElementById('loginId').value.trim();
+      const loginPw = document.getElementById('loginPw').value;
+      const loginKey = document.getElementById('loginKey').value.trim();
+      const msg = document.getElementById('loginMsg');
+
+      const stored = localStorage.getItem('user_' + loginId);
+      if (!stored) {
+        msg.innerText = '해당 아이디로 등록된 계정이 없습니다.';
+        return;
+      }
+
+      const user = JSON.parse(stored);
+      if (user.pw !== loginPw) {
+        msg.innerText = '비밀번호가 올바르지 않습니다.';
+        return;
+      }
+
+      if (!라이센스키목록.includes(loginKey)) {
+        msg.innerText = '라이센스 키가 유효하지 않습니다.';
+        return;
+      }
+
+      localStorage.setItem('isLoggedIn', 'true');
+      msg.style.color = '#005bac';
+      msg.innerText = '로그인에 성공하였습니다.';
+    }
+  </script>
+
 </body>
 </html>
