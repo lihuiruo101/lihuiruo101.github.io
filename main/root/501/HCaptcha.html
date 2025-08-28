@@ -12,54 +12,29 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #0d0d0d;
+    background: #1a1a1a;
     font-family: 'Arial', sans-serif;
   }
 
   .captcha-container {
-    position: relative;
     text-align: center;
-    background: linear-gradient(145deg, #111, #222);
+    background: linear-gradient(145deg, #222, #333);
     padding: 50px 40px;
     border-radius: 25px;
-    box-shadow: 0 0 20px #0ff, 0 0 40px #0ff, 0 0 60px #0ff inset;
+    box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700, 0 0 60px #ffd700 inset;
     width: 450px;
     max-width: 90%;
   }
 
   h2 {
     font-size: 28px;
-    color: #0ff;
-    text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd700, 0 0 20px #ffea00, 0 0 30px #fff176;
     margin-bottom: 20px;
-    position: relative;
   }
-
-  /* 글리치 애니메이션 */
-  @keyframes glitch {
-    0% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(2px, -2px); }
-    60% { transform: translate(-1px, 1px); }
-    80% { transform: translate(1px, -1px); }
-    100% { transform: translate(0); }
-  }
-
-  h2::before, h2::after {
-    content: 'HCaptcha 검증테스트 ▪︎ YWE';
-    position: absolute;
-    left: 0;
-    width: 100%;
-    overflow: hidden;
-    color: #0ff;
-    text-shadow: 2px 0 #f0f, -2px 0 #0ff;
-  }
-
-  h2::before { animation: glitch 2s infinite linear alternate-reverse; top: -2px; }
-  h2::after { animation: glitch 1.5s infinite linear alternate; top: 2px; }
 
   p {
-    color: #aaa;
+    color: #ccc;
     margin-bottom: 25px;
   }
 
@@ -74,30 +49,44 @@
     width: 30px;
     height: 30px;
     fill: none;
-    stroke: #0ff;
+    stroke: #ffd700;
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
-    filter: drop-shadow(0 0 4px #0ff);
+    filter: drop-shadow(0 0 6px #ffd700);
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+
+  .icon-wrapper svg:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 12px #ffd700);
   }
 
   .h-captcha {
     margin-top: 20px;
   }
 </style>
+<script>
+  function onCaptchaSuccess(token) {
+    // 완료되면 login.html로 이동
+    window.location.href = 'login.html';
+  }
+</script>
 </head>
 <body>
-  <div class="captcha-container">
-    <h2>HCaptcha 검증테스트 ▪︎ YWE</h2>
-    <p>로봇이 아님을 확인해주세요.</p>
+<div class="captcha-container">
+  <h2>HCaptcha 검증테스트 ▪︎ YWE</h2>
+  <p>로봇이 아님을 확인해주세요.</p>
 
-    <div class="icon-wrapper">
-      <svg viewBox="0 0 24 24"><path d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/><path d="M12 2C8.13 2 5 5.13 5 9v4h14V9c0-3.87-3.13-7-7-7z"/></svg>
-      <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2c0-2 4-3 6-3s6 1 6 3v2"/></svg>
-    </div>
-
-    <div class="h-captcha" data-sitekey="e3986d6c-f2f8-4e7e-932e-578476de8606"></div>
+  <div class="icon-wrapper">
+    <svg viewBox="0 0 24 24"><path d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/><path d="M12 2C8.13 2 5 5.13 5 9v4h14V9c0-3.87-3.13-7-7-7z"/></svg>
+<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2c0-2 4-3 6-3s6 1 6 3v2"/></svg>
   </div>
+
+ <div class="h-captcha"
+     data-sitekey="e3986d6c-f2f8-4e7e-932e-578476de8606"
+     data-callback="onCaptchaSuccess"> 
+ </div>
 </body>
 </html>
