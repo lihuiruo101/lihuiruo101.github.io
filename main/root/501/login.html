@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로그인 & 회원가입</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+    /* 기본 바디 스타일 */
+    body {
+        margin: 0;
+        font-family: 'Roboto', sans-serif;
+        background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #fff;
+    }
+
+    /* 컨테이너 */
+    .container {
+        background: #2b2b2b;
+        padding: 5vw;
+        border-radius: 2vw;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        position: relative;
+        overflow: hidden;
+        transition: 0.3s;
+    }
+
+    h2 {
+        margin-bottom: 3vw;
+        color: gold;
+        text-shadow: 0 0 10px rgba(255,215,0,0.7);
+    }
+
+    input {
+        width: 80%;
+        padding: 2vw;
+        margin: 2vw 0;
+        border-radius: 1vw;
+        border: none;
+        outline: none;
+        font-size: 1em;
+        background: #3a3a3a;
+        color: gold;
+        text-align: center;
+    }
+
+    button {
+        width: 84%;
+        padding: 2vw;
+        margin-top: 2vw;
+        border: none;
+        border-radius: 1vw;
+        background: gold;
+        color: #000;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 1em;
+        transition: 0.3s;
+        box-shadow: 0 0 10px rgba(255,215,0,0.5);
+    }
+
+    button:hover {
+        background: #ffd700;
+        box-shadow: 0 0 20px rgba(255,215,0,0.8);
+    }
+
+    .toggle-text {
+        margin-top: 3vw;
+        font-size: 0.9em;
+        color: #ccc;
+        cursor: pointer;
+    }
+
+    /* SVG 눈 */
+    .eye-svg {
+        width: 25vw;
+        max-width: 80px;
+        height: auto;
+        margin: 0 auto 3vw;
+        display: block;
+    }
+
+    @media (max-width: 500px) {
+        input, button {
+            font-size: 4vw;
+            padding: 3vw;
+        }
+        h2 {
+            font-size: 6vw;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <!-- SVG 눈 애니메이션 -->
+    <svg class="eye-svg" viewBox="0 0 100 50">
+        <ellipse cx="50" cy="25" rx="45" ry="20" fill="gold"/>
+        <circle id="pupil" cx="50" cy="25" r="10" fill="#000"/>
+    </svg>
+
+    <h2 id="form-title">로그인</h2>
+    <input type="text" id="username" placeholder="아이디">
+    <input type="password" id="password" placeholder="비밀번호">
+    <button id="submit-btn">로그인</button>
+    <div class="toggle-text" id="toggle-form">계정이 없나요? 회원가입</div>
+</div>
+
+<script>
+    const formTitle = document.getElementById('form-title');
+    const submitBtn = document.getElementById('submit-btn');
+    const toggleForm = document.getElementById('toggle-form');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    let isLogin = true;
+
+    toggleForm.addEventListener('click', () => {
+        isLogin = !isLogin;
+        formTitle.textContent = isLogin ? '로그인' : '회원가입';
+        submitBtn.textContent = isLogin ? '로그인' : '회원가입';
+        toggleForm.textContent = isLogin ? '계정이 없나요? 회원가입' : '이미 계정이 있나요? 로그인';
+        usernameInput.value = '';
+        passwordInput.value = '';
+    });
+
+    submitBtn.addEventListener('click', () => {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        if (!username || !password) {
+            alert('아이디와 비밀번호를 입력하세요!');
+            return;
+        }
+
+        if (isLogin) {
+            const storedPass = localStorage.getItem(`user_${username}`);
+            if (storedPass && storedPass === password) {
+                blinkEye(() => { window.location.href = 'dashboard.html'; });
+            } else {
+                alert('아이디 또는 비밀번호가 틀렸습니다.');
+            }
+        } else {
+            if (localStorage.getItem(`user_${username}`)) {
+                alert('이미 존재하는 계정입니다.');
+            } else {
+                localStorage.setItem(`user_${username}`, password);
+                blinkEye(() => { window.location.href = 'dashboard.html'; });
+            }
+        }
+    });
+
+    const pupil = document.getElementById('pupil');
+    function blinkEye(callback) {
+        let ry = 20;
+        let interval = setInterval(() => {
+            ry -= 2;
+            if (ry <= 2) ry = 2;
+            pupil.setAttribute('r', ry / 2);
+            if (ry <= 2) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    let openInterval = setInterval(() => {
+                        ry += 2;
+                        if (ry >= 20) ry = 20;
+                        pupil.setAttribute('r', ry / 2);
+                        if (ry >= 20) {
+                            clearInterval(openInterval);
+                            if (callback) callback();
+                        }
+                    }, 30);
+                }, 200);
+            }
+        }, 30);
+    }
+</script>
+</body>
+  </html>
