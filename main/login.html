@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyberpunk Auth</title>
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&display=swap');
+
+html, body {
+  margin:0; padding:0;
+  width:100%; height:100%;
+  font-family:'Share Tech Mono', monospace;
+  display:flex; justify-content:center; align-items:center;
+  overflow:hidden; background:#000; color:#0ff;
+  position:relative; transition: background 0.5s, color 0.5s;
+}
+body::before {
+  content:""; position:absolute; width:200%; height:200%; top:-50%; left:-50%;
+  background: repeating-linear-gradient(45deg, rgba(0,255,255,0.03), rgba(0,255,255,0.03) 2px, transparent 2px, transparent 6px);
+  animation:laserMove 12s linear infinite; z-index:0;
+}
+@keyframes laserMove {0%{transform:translate(0,0);}100%{transform:translate(60px,60px);}}
+
+/* 테마 버튼 */
+.theme-switcher {
+  position:absolute; top:20px; right:20px; display:flex; gap:12px; z-index:10;
+}
+.theme-switcher button {
+  padding:0.6rem 1rem; border:none; border-radius:12px; cursor:pointer;
+  font-family:'Share Tech Mono', monospace; font-weight:bold; letter-spacing:1px;
+  background:rgba(255,255,255,0.1); color:inherit;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  transition: all 0.4s;
+}
+.theme-switcher button svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; }
+.theme-switcher button:hover { background: rgba(255,255,255,0.25); transform:scale(1.1); }
+
+.container { width:100%; max-width:520px; display:flex; justify-content:center; align-items:center; z-index:1; }
+.card {
+  width:100%; background: rgba(0,0,0,0.85); padding:3rem 2rem; border-radius:40px;
+  box-shadow:0 0 60px #0ff,0 0 120px #f0f inset;
+  backdrop-filter: blur(12px); text-align:center; display:flex; flex-direction:column; align-items:center;
+  position:relative; overflow:hidden; transition: all 0.7s;
+}
+.card h2 {
+  margin-bottom:2rem; font-family:'Orbitron', monospace; font-size:2.6rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:2px;
+  color:inherit; text-shadow:0 0 15px currentColor,0 0 35px currentColor;
+  display:flex; align-items:center; justify-content:center; gap:15px;
+}
+.card h2 svg.icon { width:28px; height:28px; stroke:currentColor; stroke-width:2; animation:blink 1.2s infinite alternate; }
+@keyframes blink {0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+.card input {
+  width:92%; padding:1rem; margin:0.7rem 0; border-radius:25px; border:none; outline:none;
+  font-family:'Share Tech Mono', monospace; font-size:1rem;
+  background: rgba(255,255,255,0.03); color:inherit;
+  box-shadow: inset 0 0 18px currentColor,0 0 10px currentColor;
+  text-align:center; transition:all 0.3s, box-shadow 0.3s;
+}
+.card input:focus {
+  background: rgba(255,255,255,0.15);
+  box-shadow:0 0 25px currentColor,0 0 55px currentColor inset;
+  transform:scale(1.04);
+}
+
+.card button.submit {
+  width:95%; padding:1rem; margin-top:1.5rem; border:none; border-radius:25px;
+  background:currentColor; color:#000; font-weight:bold; font-size:1.15rem;
+  cursor:pointer; text-transform:uppercase; letter-spacing:1px;
+  display:flex; align-items:center; justify-content:center; gap:12px;
+  box-shadow:0 0 35px currentColor,0 0 70px currentColor inset;
+  transition:all 0.3s; position:relative; overflow:hidden;
+}
+.card button.submit svg.icon { width:22px; height:22px; stroke:#000; stroke-width:2; }
+.card button.submit::after {
+  content:""; position:absolute; width:0%; height:100%; top:0; left:0;
+  background: rgba(255,255,255,0.5); pointer-events:none; transition: width 0.3s;
+}
+.card button.submit:active::after { width:100%; transition: width 0.1s; }
+
+.card p { margin-top:1.5rem; font-size:0.92rem; }
+.card a { color:inherit; text-decoration:none; font-weight:bold; transition: color 0.3s; }
+.card a:hover { color:#f0f; text-decoration:underline; }
+.card.fade-out { transform: scale(0.95); opacity:0; transition: all 0.3s; }
+
+/* White Theme */
+body.light { background:linear-gradient(135deg,#ffffff,#f2f2f2); color:#111; }
+body.light::before { background: repeating-linear-gradient(45deg, rgba(0,0,0,0.03), rgba(0,0,0,0.03) 2px, transparent 2px, transparent 6px);}
+body.light .card { background:rgba(255,255,255,0.95); color:#111; box-shadow:0 0 40px rgba(0,0,0,0.15);}
+body.light .card h2 { color:#111; text-shadow:0 0 12px rgba(0,0,0,0.2);}
+body.light .card button.submit { background:#111; color:#fff; box-shadow:0 0 20px rgba(0,0,0,0.25); }
+body.light .card button.submit svg.icon { stroke:#fff; }
+
+/* Black Theme */
+body.black { background:#000; color:#fff; }
+body.black::before { background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05), rgba(255,255,255,0.05) 2px, transparent 2px, transparent 6px);}
+body.black .card { background:rgba(20,20,20,0.95); color:#fff; box-shadow:0 0 40px rgba(255,255,255,0.15);}
+body.black .card button.submit { background:#fff; color:#000; box-shadow:0 0 20px rgba(255,255,255,0.25);}
+body.black .card button.submit svg.icon { stroke:#000; }
+
+/* Siber Theme (Emerald + Purple Cyberpunk) */
+body.siber { background:#000; color:#0ff; }
+body.siber::before {
+  background: repeating-linear-gradient(45deg, rgba(0,255,255,0.05), rgba(255,0,255,0.05) 2px, transparent 2px, transparent 6px);
+}
+body.siber .card {
+  background: rgba(0,0,0,0.9);
+  color:#0ff;
+  box-shadow: 0 0 60px #0ff, 0 0 90px #8000ff inset, 0 0 120px #0ff;
+}
+body.siber .card h2 { color:#0ff; text-shadow:0 0 20px #0ff,0 0 40px #8000ff;}
+body.siber .card button.submit { background:linear-gradient(90deg,#0ff,#8000ff); color:#000; }
+body.siber .card button.submit svg.icon { stroke:#000; }
+
+/* Toast */
+.toast {
+  position:fixed; bottom:-100px; left:50%; transform:translateX(-50%);
+  background:rgba(0,0,0,0.85); color:#fff;
+  padding:1rem 1.5rem; border-radius:12px;
+  display:flex; align-items:center; gap:10px;
+  box-shadow:0 0 20px rgba(0,0,0,0.4);
+  font-size:0.95rem; opacity:0; pointer-events:none;
+  transition: all 0.5s ease;
+  z-index:9999;
+}
+.toast.show { bottom:40px; opacity:1; }
+.toast svg { width:20px; height:20px; stroke:#ff4444; stroke-width:2; }
+
+</style>
+</head>
+<body>
+<div class="theme-switcher">
+  <button onclick="setTheme('light')">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/></svg>
+  </button>
+  <button onclick="setTheme('black')">
+    <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+  </button>
+  <button onclick="setTheme('siber')">
+    <svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+  </button>
+</div>
+
+<div class="container">
+  <div class="card" id="auth-card">
+    <h2 id="form-title">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/></svg>
+      로그인
+      <svg class="icon" viewBox="0 0 24 24"><polygon points="12,2 15,8 9,8"/></svg>
+    </h2>
+    <input type="text" id="username" placeholder=" 아이디">
+    <input type="password" id="password" placeholder="비밀번호">
+    <div id="captcha-container" style="margin:1rem 0;"></div>
+    <button class="submit" onclick="submitForm()">
+      <svg class="icon" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      로그인
+      <svg class="icon" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+    <p id="toggle-text">계정이 없나요? <a href="#" onclick="toggleForm()">회원가입</a></p>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="1"/></svg>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+let isLogin = true;
+const HCAPTCHA_SITE_KEY = "e3986d6c-f2f8-4e7e-932e-578476de8606";
+
+// 테마 LocalStorage
+function setTheme(theme){
+  document.body.className = theme;
+  localStorage.setItem("theme", theme);
+}
+window.onload = () => {
+  const saved = localStorage.getItem("theme");
+  if(saved) document.body.className = saved;
+};
+
+// 토스트 메시지
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-msg').innerText = msg;
+  toast.classList.add('show');
+  setTimeout(()=>{ toast.classList.remove('show'); },2000);
+}
+
+// 폼 처리 + LocalStorage 연동
+function submitForm(){
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  if(!username || !password){
+    showToast("아이디와 비밀번호를 입력하세요.");
+    return;
+  }
+
+  if(isLogin){
+    const storedPass = localStorage.getItem(`user_${username}`);
+    if(storedPass && storedPass === password){
+      showToast("로그인 성공!");
+      setTimeout(()=>{ window.location.href="dashboard.html"; }, 1000);
+    } else {
+      showToast("아이디 또는 비밀번호가 일치하지 않습니다.");
+    }
+  } else {
+    if(localStorage.getItem(`user_${username}`)){
+      showToast("이미 존재하는 아이디입니다.");
+    } else {
+      localStorage.setItem(`user_${username}`, password);
+      showToast("회원가입 성공! 로그인하세요.");
+      setTimeout(toggleForm, 1000);
+    }
+  }
+}
+
+// 로그인/회원가입 전환
+function toggleForm(){
+  const card = document.getElementById('auth-card');
+  card.classList.add('fade-out');
+  setTimeout(()=>{
+    isLogin = !isLogin;
+    if(isLogin){
+      document.getElementById('form-title').innerHTML =
+        '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/></svg> 로그인 <svg class="icon" viewBox="0 0 24 24"><polygon points="12,2 15,8 9,8"/></svg>';
+      document.querySelector('.submit').innerHTML =
+        '<svg class="icon" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg> 로그인 <svg class="icon" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+      document.getElementById('toggle-text').innerHTML='계정이 없나요? <a href="#" onclick="toggleForm()">회원가입</a>';
+      document.getElementById('captcha-container').innerHTML = '';
+    } else {
+      document.getElementById('form-title').innerHTML =
+        '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/></svg> 회원가입 <svg class="icon" viewBox="0 0 24 24"><polygon points="12,2 15,8 9,8"/></svg>';
+      document.querySelector('.submit').innerHTML =
+        '<svg class="icon" viewBox="0 0 24 24"><polyline points="5 12 19 12"/></svg> 회원가입 <svg class="icon" viewBox="0 0 24 24"><polyline points="5 12 19 12"/></svg>';
+      document.getElementById('toggle-text').innerHTML='이미 계정이 있나요? <a href="#" onclick="toggleForm()">로그인</a>';
+      document.getElementById('captcha-container').innerHTML = `<div class="h-captcha" data-sitekey="${HCAPTCHA_SITE_KEY}"></div>`;
+      if(window.hcaptcha) hcaptcha.render(document.querySelector('.h-captcha'));
+    }
+    card.classList.remove('fade-out');
+  },300);
+}
+</script>
+</body>
+</html>
