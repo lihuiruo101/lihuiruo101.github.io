@@ -226,9 +226,40 @@ function submitForm(){
 </script>
 </body>
 </html>
+<!-- 토스트가 카드보다 위로 뜨도록 -->
 <style>
-/* 토스트를 카드보다 위로 */
 .toast {
   z-index: 9999 !important;
 }
 </style>
+
+<script>
+// 회원가입 시 hCaptcha 사이트 키를 이전에 준 키로 설정
+const HCAPTCHA_SITE_KEY = "e3986d6c-f2f8-4e7e-932e-578476de8606"; // 이전에 준 키
+
+function toggleForm(){
+  const card = document.getElementById('auth-card');
+  card.classList.add('fade-out');
+  setTimeout(()=>{
+    isLogin = !isLogin;
+    if(isLogin){
+      document.getElementById('form-title').innerHTML =
+        '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/></svg> 로그인 <svg class="icon" viewBox="0 0 24 24"><polygon points="12,2 15,8 9,8"/></svg>';
+      document.querySelector('.submit').innerHTML =
+        '<svg class="icon" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg> 로그인 <svg class="icon" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+      document.getElementById('toggle-text').innerHTML='계정이 없나요? <a href="#" onclick="toggleForm()">회원가입</a>';
+      document.getElementById('captcha-container').innerHTML = '';
+    } else {
+      document.getElementById('form-title').innerHTML =
+        '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/></svg> 회원가입 <svg class="icon" viewBox="0 0 24 24"><polygon points="12,2 15,8 9,8"/></svg>';
+      document.querySelector('.submit').innerHTML =
+        '<svg class="icon" viewBox="0 0 24 24"><polyline points="5 12 19 12"/></svg> 회원가입 <svg class="icon" viewBox="0 0 24 24"><polyline points="5 12 19 12"/></svg>';
+      document.getElementById('toggle-text').innerHTML='이미 계정이 있나요? <a href="#" onclick="toggleForm()">로그인</a>';
+      
+      document.getElementById('captcha-container').innerHTML = `<div class="h-captcha" data-sitekey="${HCAPTCHA_SITE_KEY}"></div>`;
+      if(window.hcaptcha) hcaptcha.render(document.querySelector('.h-captcha'));
+    }
+    card.classList.remove('fade-out');
+  },300);
+}
+</script>
