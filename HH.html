@@ -17,9 +17,9 @@ body{
   justify-content:center;
   align-items:center;
   color:#fff;
+  position:relative;
 }
 
-/* 배경 고요한 그라디언트 */
 body::before{
   content:"";
   position:absolute;
@@ -29,7 +29,6 @@ body::before{
   z-index:0;
 }
 
-/* GUI 선 */
 .line{
   position:absolute;
   width:2px;
@@ -43,7 +42,6 @@ body::before{
   100%{transform:translateY(100%);}
 }
 
-/* 좌측 SVG 로고 */
 .logo{
   position:absolute;
   top:20px; left:20px;
@@ -59,7 +57,6 @@ body::before{
   stroke-linejoin:round;
 }
 
-/* 로그인 박스 */
 .auth-box{
   position:relative;
   z-index:1;
@@ -74,7 +71,6 @@ body::before{
   align-items:center;
 }
 
-/* 글리치 헤더 */
 .auth-box h1{
   color:#0ff;
   margin-bottom:1.5rem;
@@ -89,7 +85,6 @@ body::before{
   100% { text-shadow: 0 0 10px #0ff; }
 }
 
-/* 인풋 */
 .auth-box input{
   width:100%;
   padding:12px;
@@ -107,7 +102,6 @@ body::before{
   border-color:cyan;
 }
 
-/* 버튼 */
 .auth-box button{
   width:100%;
   padding:12px;
@@ -125,24 +119,6 @@ body::before{
   box-shadow:0 0 15px #0ff,0 0 25px cyan;
 }
 
-/* 토글 스위치 */
-.toggle{
-  display:flex;
-  align-items:center;
-  margin:1rem 0;
-  cursor:pointer;
-}
-.toggle svg{
-  width:50px;
-  height:25px;
-  margin-left:10px;
-}
-.toggle-circle{
-  fill:#0ff;
-  transition: transform 0.3s;
-}
-
-/* 토스트 */
 .toast{
   position:fixed;
   bottom:20px;
@@ -162,7 +138,6 @@ body::before{
   transform:translateX(-50%) translateY(-10px);
 }
 
-/* 좌측 명언 영역 */
 .quote{
   position:absolute;
   bottom:20px;
@@ -172,6 +147,28 @@ body::before{
   opacity:0.8;
   max-width:300px;
 }
+
+.star{
+  position:absolute;
+  width:3px;
+  height:3px;
+  background:#0ff;
+  border-radius:50%;
+  opacity:0.8;
+  animation:shoot 5s linear infinite;
+}
+@keyframes shoot{
+  0%{transform:translate(0,0) rotate(0deg);}
+  100%{transform:translate(800px,600px) rotate(360deg);}
+}
+
+/* 눈 SVG 음악 토글 */
+#eyeMusicToggle{
+  position:absolute; top:20px; right:20px; width:60px; height:60px; cursor:pointer; z-index:5;
+}
+#eyeMusicToggle ellipse{fill:#222; stroke:#0ff; stroke-width:2;}
+#eyeMusicToggle circle{fill:#0ff;}
+#eyelid{fill:#0b0b0b;}
 </style>
 </head>
 <body>
@@ -196,20 +193,11 @@ body::before{
 </svg>
 </div>
 
+<!-- 로그인 박스 -->
 <div class="auth-box">
 <h1>LOGIN</h1>
 <input type="text" placeholder="아이디" id="username">
 <input type="password" placeholder="비밀번호" id="password">
-
-<!-- 토글 -->
-<div class="toggle" id="eyeToggle">
-<span>Show Password</span>
-<svg viewBox="0 0 50 25">
-  <rect x="0" y="0" width="50" height="25" rx="12.5" ry="12.5" fill="#222" stroke="#0ff" stroke-width="2"/>
-  <circle class="toggle-circle" cx="12.5" cy="12.5" r="10"/>
-</svg>
-</div>
-
 <button id="loginBtn">로그인</button>
 <button id="registerBtn">회원가입</button>
 </div>
@@ -218,55 +206,68 @@ body::before{
 "The future is already here — it’s just not evenly distributed."<br>- William Gibson
 </div>
 
-<div class="toast" id="toast">Alert</div>
+<!-- 별똥별 -->
+<div class="star" style="top:10%; left:0;"></div>
+<div class="star" style="top:30%; left:0;"></div>
+<div class="star" style="top:50%; left:0;"></div>
+
+<!-- 눈 SVG 음악 토글 -->
+<div id="eyeMusicToggle">
+<svg viewBox="0 0 100 100">
+  <ellipse cx="50" cy="50" rx="40" ry="25"/>
+  <circle id="pupil" cx="50" cy="50" r="10"/>
+  <rect id="eyelid" x="10" y="50" width="80" height="25"/>
+</svg>
+</div>
+
+<audio id="nocturne" loop>
+  <source src="https://archive.org/download/ChopinNocturneNo.2InEFlatMajorOp.9No.2PianoArthurRubinstein_869/ChopinNocturneNo.2InEFlatMajorOp.9No.2PianoArthurRubinstein_869.mp3" type="audio/mp3">
+</audio>
 
 <script>
-// 토글 기능
-const eyeToggle = document.getElementById('eyeToggle');
-const passwordInput = document.getElementById('password');
-const toggleCircle = eyeToggle.querySelector('.toggle-circle');
-let showPass = false;
-eyeToggle.addEventListener('click', ()=>{
-  showPass = !showPass;
-  passwordInput.type = showPass?'text':'password';
-  toggleCircle.style.transform = showPass?'translateX(25px)':'translateX(0)';
-});
-
-// 토스트
+// localStorage 로그인/회원가입 + 토스트
 function showToast(msg){
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(()=>{toast.classList.remove('show');},2000);
+  const toast = document.createElement('div');
+  toast.className='toast show';
+  toast.textContent=msg;
+  document.body.appendChild(toast);
+  setTimeout(()=>{toast.remove();},2000);
 }
 
-// localStorage 로그인/회원가입
 document.getElementById('registerBtn').addEventListener('click',()=>{
-  const user = document.getElementById('username').value;
-  const pass = document.getElementById('password').value;
-  if(!user || !pass){ showToast('아이디와 비밀번호를 입력하세요'); return;}
-  if(localStorage.getItem(user)){ showToast('이미 존재하는 아이디'); return;}
-  localStorage.setItem(user, pass);
+  const u=document.getElementById('username').value;
+  const p=document.getElementById('password').value;
+  if(!u||!p){ showToast('아이디와 비밀번호를 입력하세요'); return;}
+  if(localStorage.getItem(u)){ showToast('이미 존재하는 아이디'); return;}
+  localStorage.setItem(u,p);
   showToast('회원가입 완료');
 });
 document.getElementById('loginBtn').addEventListener('click',()=>{
-  const user = document.getElementById('username').value;
-  const pass = document.getElementById('password').value;
-  if(!user || !pass){ showToast('아이디와 비밀번호를 입력하세요'); return;}
-  if(localStorage.getItem(user) !== pass){ showToast('로그인 실패'); return;}
+  const u=document.getElementById('username').value;
+  const p=document.getElementById('password').value;
+  if(!u||!p){ showToast('아이디와 비밀번호를 입력하세요'); return;}
+  if(localStorage.getItem(u)!==p){ showToast('로그인 실패'); return;}
   showToast('로그인 성공');
+});
+
+// 눈 클릭 시 음악 토글
+const eyeToggle=document.getElementById('eyeMusicToggle');
+const audio=document.getElementById('nocturne');
+const eyelid=document.getElementById('eyelid');
+let musicOn=false;
+
+eyeToggle.addEventListener('click', ()=>{
+  musicOn=!musicOn;
+  if(musicOn){
+    audio.volume=0.2;
+    audio.play().catch(()=>console.log('자동 재생 차단'));
+    eyelid.animate([{y:50},{y:0}],{duration:300,fill:'forwards'});
+  }else{
+    audio.pause();
+    eyelid.animate([{y:0},{y:50}],{duration:300,fill:'forwards'});
+  }
 });
 </script>
 
 </body>
 </html>
-<!-- 쇼팽 녹턴 자동 재생 -->
-<audio id="nocturne" autoplay loop>
-  <source src="https://archive.org/download/ChopinNocturneNo.2InEFlatMajorOp.9No.2PianoArthurRubinstein_869/ChopinNocturneNo.2InEFlatMajorOp.9No.2PianoArthurRubinstein_869.mp3" type="audio/mp3">
-  Your browser does not support the audio element.
-</audio>
-<script>
-  const audio = document.getElementById('nocturne');
-  audio.volume = 0.2; // 볼륨 낮게 설정
-  audio.play().catch(() => console.log('자동 재생이 차단되었습니다.'));
-</script>
