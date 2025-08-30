@@ -3,83 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cyberpunk Login Portal</title>
+<title>Silent Cyberpunk Auth</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Share Tech Mono', monospace;
-  height: 100vh;
-  overflow: hidden;
-  background: #0b0b0b;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Share Tech Mono', monospace;
+  height:100vh;
+  overflow:hidden;
+  background:#0b0b0b;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#fff;
 }
 
-/* 네온 움직이는 배경 */
-body::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: repeating-radial-gradient(circle at center,
-    rgba(0,255,255,0.05) 0,
-    rgba(0,255,255,0.05) 2px,
-    transparent 2px,
-    transparent 80px);
-  animation: rotate 40s linear infinite;
-  z-index: 0;
-}
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+/* 배경 고요한 그라디언트 */
+body::before{
+  content:"";
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: radial-gradient(circle at center,#0c0c0c,#050505 90%);
+  z-index:0;
 }
 
-/* 별똥별 애니메이션 */
-.star {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: cyan;
-  border-radius: 50%;
-  opacity: 0.8;
-  animation: shoot linear infinite;
+/* GUI 선 */
+.line{
+  position:absolute;
+  width:2px;
+  height:100%;
+  background: linear-gradient(to bottom, rgba(0,255,255,0.2), transparent);
+  animation: lineMove 3s linear infinite;
+  opacity:0.2;
 }
-@keyframes shoot {
-  0% { transform: translate(0,0) scale(0.5); opacity: 0; }
-  10% { opacity: 1; }
-  100% { transform: translate(1500px, -800px) scale(1.5); opacity: 0; }
+@keyframes lineMove{
+  0%{transform:translateY(-100%);}
+  100%{transform:translateY(100%);}
+}
+
+/* 좌측 SVG 로고 */
+.logo{
+  position:absolute;
+  top:20px; left:20px;
+  width:80px; height:80px;
+  z-index:2;
+}
+.logo svg{
+  width:100%; height:100%;
+  fill:none;
+  stroke:#0ff;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
 }
 
 /* 로그인 박스 */
-.login-container {
-  position: relative;
-  z-index: 1;
-  width: 400px;
-  background: rgba(20,20,30,0.6);
-  padding: 2.5rem;
-  border-radius: 15px;
-  box-shadow: 0 0 20px rgba(0,255,255,0.4), 0 0 40px rgba(255,0,255,0.2);
-  backdrop-filter: blur(10px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.auth-box{
+  position:relative;
+  z-index:1;
+  width:400px;
+  padding:2.5rem;
+  border-radius:15px;
+  background:rgba(20,20,30,0.7);
+  backdrop-filter:blur(10px);
+  box-shadow:0 0 25px rgba(0,255,255,0.3);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
 /* 글리치 헤더 */
-.login-container h1 {
-  color: #0ff;
-  text-shadow: 0 0 5px #0ff, 0 0 10px magenta, 0 0 20px cyan;
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-  position: relative;
-  animation: glitch 2s infinite;
+.auth-box h1{
+  color:#0ff;
+  margin-bottom:1.5rem;
+  text-shadow:0 0 5px #0ff,0 0 10px cyan;
+  animation: glitch 3s infinite;
 }
-@keyframes glitch {
+@keyframes glitch{
   0% { text-shadow: 2px 0 magenta, -2px 0 cyan; }
   20% { text-shadow: -2px 0 magenta, 2px 0 cyan; }
   40% { text-shadow: 2px 0 magenta, -2px 0 cyan; }
@@ -87,99 +89,93 @@ body::before {
   100% { text-shadow: 0 0 10px #0ff; }
 }
 
-.login-container input {
-  width: 100%;
-  padding: 12px;
-  margin: 0.7rem 0;
-  border: 1px solid #0ff;
-  border-radius: 8px;
-  background: rgba(10,10,20,0.85);
-  color: #fff;
-  outline: none;
-  transition: 0.3s;
+/* 인풋 */
+.auth-box input{
+  width:100%;
+  padding:12px;
+  margin:0.5rem 0;
+  border:none;
+  border-radius:8px;
+  background:rgba(10,10,20,0.85);
+  color:#fff;
+  outline:none;
+  border:1px solid #0ff;
+  transition:0.3s;
 }
-.login-container input:focus {
-  box-shadow: 0 0 15px #0ff;
-  border-color: magenta;
-}
-
-.login-container button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 1.5rem;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #0ff, magenta);
-  color: #000;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: 0.3s;
-}
-.login-container button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 25px magenta, 0 0 35px cyan;
+.auth-box input:focus{
+  box-shadow:0 0 10px #0ff;
+  border-color:cyan;
 }
 
-.login-container .link {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  text-align: center;
+/* 버튼 */
+.auth-box button{
+  width:100%;
+  padding:12px;
+  margin-top:1rem;
+  border:none;
+  border-radius:8px;
+  background:linear-gradient(90deg,#0ff,#00ffaa);
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
 }
-.login-container .link a {
-  color: #0ff;
-  text-decoration: none;
+.auth-box button:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 15px #0ff,0 0 25px cyan;
 }
-.login-container .link a:hover {
-  color: magenta;
+
+/* 토글 스위치 */
+.toggle{
+  display:flex;
+  align-items:center;
+  margin:1rem 0;
+  cursor:pointer;
+}
+.toggle svg{
+  width:50px;
+  height:25px;
+  margin-left:10px;
+}
+.toggle-circle{
+  fill:#0ff;
+  transition: transform 0.3s;
+}
+
+/* 토스트 */
+.toast{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(0,255,255,0.8);
+  color:#000;
+  padding:10px 20px;
+  border-radius:8px;
+  font-weight:bold;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s, transform 0.3s;
+}
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(-10px);
 }
 
 /* 좌측 명언 영역 */
-.quote {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  color: #aaa;
-  font-size: 0.9rem;
-  opacity: 0.8;
-  max-width: 300px;
-}
-
-/* GUI 애니메이션 라인 */
-.line {
-  position: absolute;
-  width: 2px;
-  height: 100%;
-  background: linear-gradient(to bottom, cyan, transparent);
-  animation: lineMove 2s linear infinite;
-  opacity: 0.3;
-}
-@keyframes lineMove {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
-}
-
-/* 상단 네온 글리치 텍스트 */
-.header-text {
-  position: absolute;
-  top: 20px;
-  width: 100%;
-  text-align: center;
-  font-size: 1.2rem;
-  color: #0ff;
-  text-shadow: 0 0 5px #0ff, 0 0 10px magenta, 0 0 20px cyan;
-  animation: headerGlitch 3s infinite;
-}
-@keyframes headerGlitch {
-  0% { text-shadow: 2px 0 magenta, -2px 0 cyan; }
-  25% { text-shadow: -2px 2px magenta, 2px -2px cyan; }
-  50% { text-shadow: 1px 1px magenta, -1px -1px cyan; }
-  75% { text-shadow: -1px 0 magenta, 1px 0 cyan; }
-  100% { text-shadow: 0 0 10px #0ff; }
+.quote{
+  position:absolute;
+  bottom:20px;
+  left:20px;
+  color:#aaa;
+  font-size:0.9rem;
+  opacity:0.8;
+  max-width:300px;
 }
 </style>
 </head>
 <body>
+
 <!-- GUI 선 -->
 <div class="line" style="left:10%; animation-delay:0s;"></div>
 <div class="line" style="left:20%; animation-delay:0.5s;"></div>
@@ -191,34 +187,86 @@ body::before {
 <div class="line" style="left:80%; animation-delay:3.5s;"></div>
 <div class="line" style="left:90%; animation-delay:4s;"></div>
 
-<div class="header-text">CYBERPUNK AUTH PORTAL</div>
+<!-- 좌측 로고 -->
+<div class="logo">
+<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="40"/>
+  <line x1="50" y1="10" x2="50" y2="90"/>
+  <line x1="10" y1="50" x2="90" y2="50"/>
+</svg>
+</div>
 
-<div class="login-container">
-  <h1>LOGIN</h1>
-  <input type="text" placeholder="아이디 입력">
-  <input type="password" placeholder="비밀번호 입력">
-  <button>CONNECT</button>
-  <div class="link">
-    계정이 없으신가요? <a href="#">REGISTER</a>
-  </div>
+<div class="auth-box">
+<h1>LOGIN</h1>
+<input type="text" placeholder="아이디" id="username">
+<input type="password" placeholder="비밀번호" id="password">
+
+<!-- 토글 -->
+<div class="toggle" id="eyeToggle">
+<span>Show Password</span>
+<svg viewBox="0 0 50 25">
+  <rect x="0" y="0" width="50" height="25" rx="12.5" ry="12.5" fill="#222" stroke="#0ff" stroke-width="2"/>
+  <circle class="toggle-circle" cx="12.5" cy="12.5" r="10"/>
+</svg>
+</div>
+
+<button id="loginBtn">로그인</button>
+<button id="registerBtn">회원가입</button>
 </div>
 
 <div class="quote">
-  "The future is already here — it’s just not evenly distributed."<br>- William Gibson
+"The future is already here — it’s just not evenly distributed."<br>- William Gibson
 </div>
 
-<!-- 별똥별 생성 스크립트 -->
+<div class="toast" id="toast">Alert</div>
+
 <script>
-for(let i=0;i<50;i++){
-  let star=document.createElement('div');
-  star.className='star';
-  star.style.top=Math.random()*window.innerHeight+'px';
-  star.style.left=Math.random()*window.innerWidth+'px';
-  star.style.animationDuration=1+Math.random()*3+'s';
-  star.style.width=1+Math.random()*2+'px';
-  star.style.height=1+Math.random()*2+'px';
-  document.body.appendChild(star);
+// 토글 기능
+const eyeToggle = document.getElementById('eyeToggle');
+const passwordInput = document.getElementById('password');
+const toggleCircle = eyeToggle.querySelector('.toggle-circle');
+let showPass = false;
+eyeToggle.addEventListener('click', ()=>{
+  showPass = !showPass;
+  passwordInput.type = showPass?'text':'password';
+  toggleCircle.style.transform = showPass?'translateX(25px)':'translateX(0)';
+});
+
+// 토스트
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(()=>{toast.classList.remove('show');},2000);
 }
+
+// localStorage 로그인/회원가입
+document.getElementById('registerBtn').addEventListener('click',()=>{
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
+  if(!user || !pass){ showToast('아이디와 비밀번호를 입력하세요'); return;}
+  if(localStorage.getItem(user)){ showToast('이미 존재하는 아이디'); return;}
+  localStorage.setItem(user, pass);
+  showToast('회원가입 완료');
+});
+document.getElementById('loginBtn').addEventListener('click',()=>{
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
+  if(!user || !pass){ showToast('아이디와 비밀번호를 입력하세요'); return;}
+  if(localStorage.getItem(user) !== pass){ showToast('로그인 실패'); return;}
+  showToast('로그인 성공');
+});
 </script>
+
 </body>
 </html>
+<!-- 쇼팽 녹턴 자동 재생 -->
+<audio id="nocturne" autoplay loop>
+  <source src="https://archive.org/download/ChopinNocturneNo.2InEFlatMajorOp.9No.2PianoArthurRubinstein_869/ChopinNocturneNo.2InEFlatMajorOp.9No.2PianoArthurRubinstein_869.mp3" type="audio/mp3">
+  Your browser does not support the audio element.
+</audio>
+<script>
+  const audio = document.getElementById('nocturne');
+  audio.volume = 0.2; // 볼륨 낮게 설정
+  audio.play().catch(() => console.log('자동 재생이 차단되었습니다.'));
+</script>
