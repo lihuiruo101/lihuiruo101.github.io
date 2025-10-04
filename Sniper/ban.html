@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>기기 밴</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  svg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+    fill: #ff0033;
+    animation: pulse 1s infinite alternate;
+  }
+
+  h1 {
+    font-size: 2em;
+    color: #ff0033;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 1.2em;
+    color: #fff;
+    max-width: 400px;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.2); }
+  }
+</style>
+</head>
+<body>
+  <svg viewBox="0 0 24 24">
+    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+  </svg>
+  <h1>위험 감지</h1>
+  <p>위험이 감지되어 기기밴 되었습니다.<br>이 기기에서는 더 이상 접속할 수 없습니다.</p>
+
+<script>
+  // 이 기기 밴 기록 저장
+  localStorage.setItem("banned","true");
+
+  // 다른 페이지에서도 자동 리다이렉트
+  window.addEventListener("load", ()=>{
+    if(localStorage.getItem("banned")==="true" && !window.location.pathname.endsWith("ban.html")){
+      window.location.href="ban.html";
+    }
+  });
+</script>
+</body>
+</html>
