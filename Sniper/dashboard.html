@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #000000, #ff0099);
+      color: white;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      font-size: 2em;
+      font-weight: bold;
+    }
+
+    #posts {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .post {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+    }
+
+    .post strong {
+      color: #ff66cc;
+      cursor: pointer;
+    }
+
+    /* 플로팅 버튼 */
+    #addPostBtn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #ff0099;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      transition: 0.3s;
+    }
+
+    #addPostBtn:hover {
+      transform: scale(1.1);
+    }
+
+    #addPostBtn svg {
+      width: 35px;
+      height: 35px;
+      fill: white;
+    }
+
+    /* 입력 모달 */
+    #postModal {
+      display: none;
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    #postModal input, #postModal textarea {
+      width: 250px;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+    }
+
+    #postModal button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #ff0099;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    #postModal button:hover {
+      background: #ff33aa;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+  <header>📌 Dashboard</header>
+  <div id="posts"></div>
+
+  <!-- 플로팅 버튼 -->
+  <div id="addPostBtn">
+    <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 
+      7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 
+      0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+  </div>
+
+  <!-- 입력 모달 -->
+  <div id="postModal">
+    <input type="text" id="postTitle" placeholder="제목"><br>
+    <textarea id="postDesc" placeholder="설명"></textarea><br>
+    <input type="text" id="postKakaoId" placeholder="카카오톡 ID"><br>
+    <button onclick="addPost()">완료</button>
+  </div>
+
+  <script>
+    // 로그인한 유저 ID 가져오기
+    const currentUser = localStorage.getItem("currentUser") || "익명";
+
+    const postsDiv = document.getElementById("posts");
+    const postModal = document.getElementById("postModal");
+    const addBtn = document.getElementById("addPostBtn");
+
+    // 저장된 게시글 불러오기
+    function loadPosts() {
+      postsDiv.innerHTML = "";
+      let posts = JSON.parse(localStorage.getItem("posts") || "[]");
+      posts.forEach(post => {
+        let div = document.createElement("div");
+        div.className = "post";
+        div.innerHTML = `<strong onclick="openChat('${post.user}')">${post.user}</strong> 
+          <h3>${post.title}</h3><p>${post.desc}</p>
+          <small>ID: ${post.kakaoId}</small>`;
+        postsDiv.appendChild(div);
+      });
+    }
+
+    // 게시글 추가
+    function addPost() {
+      let title = document.getElementById("postTitle").value;
+      let desc = document.getElementById("postDesc").value;
+      let kakaoId = document.getElementById("postKakaoId").value;
+
+      if (!title || !desc || !kakaoId) return;
+
+      let posts = JSON.parse(localStorage.getItem("posts") || "[]");
+      posts.push({user: currentUser, title, desc, kakaoId});
+      localStorage.setItem("posts", JSON.stringify(posts));
+
+      postModal.style.display = "none";
+      loadPosts();
+    }
+
+    // 모달 토글
+    addBtn.onclick = () => {
+      postModal.style.display = postModal.style.display === "block" ? "none" : "block";
+    };
+
+    loadPosts();
+
+    // =======================
+    //  🚨 밴 감지 코드
+    // =======================
+    let warningCount = 0;
+
+    function banUser() {
+      localStorage.setItem("banned", "true");
+      window.location.href = "ban.html";
+    }
+
+    if (localStorage.getItem("banned") === "true") {
+      window.location.href = "ban.html";
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if ((e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i")) || e.key === "F12") {
+        warningCount++;
+        if (warningCount >= 2) banUser();
+      }
+    });
+
+    document.addEventListener("contextmenu", function (e) {
+      e.preventDefault();
+      warningCount++;
+      if (warningCount >= 2) banUser();
+    });
+
+    document.addEventListener("copy", function () {
+      warningCount++;
+      if (warningCount >= 2) banUser();
+    });
+
+    document.addEventListener("paste", function () {
+      warningCount++;
+      if (warningCount >= 2) banUser();
+    });
+  </script>
+</body>
+</html>
