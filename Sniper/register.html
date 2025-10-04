@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회원가입</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap');
+
+:root {
+  --bg: #0d0d0d;
+  --primary: #ff49b3;
+  --secondary: #fff;
+  --toast-bg: rgba(255,73,179,0.9);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Nanum Gothic',sans-serif;}
+html, body{height:100%; overflow:hidden;}
+
+body{
+  background:var(--bg);
+  color:var(--secondary);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+
+/* 별똥별 */
+.star{
+  position:absolute;
+  border-radius:50%;
+  background:white;
+  opacity:0.8;
+  animation-name:shoot;
+  animation-timing-function:linear;
+  animation-iteration-count:infinite;
+}
+@keyframes shoot{
+  0%{transform:translateY(0) translateX(0);}
+  100%{transform:translateY(100vh) translateX(-50vw);}
+}
+
+/* 화면 전체 카드 */
+.card{
+  background:rgba(30,30,30,0.85);
+  width:100vw;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  padding-bottom:80px; /* 명언 공간 확보 */
+}
+
+h1{
+  color:var(--primary);
+  margin-bottom:30px;
+  text-shadow:0 0 10px var(--primary);
+  font-size:2.5rem;
+  text-align:center;
+}
+
+input{
+  width:80%;
+  max-width:400px;
+  padding:15px;
+  margin:10px 0;
+  border:none;
+  border-radius:10px;
+  background:#1e1e1e;
+  color:#fff;
+  font-size:1.2rem;
+}
+
+button{
+  width:80%;
+  max-width:400px;
+  padding:15px;
+  margin:10px 0;
+  background:var(--primary);
+  border:none;
+  border-radius:10px;
+  color:#fff;
+  font-size:1.2rem;
+  cursor:pointer;
+}
+button:hover{filter:brightness(1.2);}
+
+/* 토스트 */
+.toast{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--toast-bg);
+  padding:15px 25px;
+  border-radius:10px;
+  display:none;
+  color:#fff;
+  font-weight:bold;
+  animation:fade 3s forwards;
+}
+@keyframes fade{
+  0%{opacity:0;transform:translateX(-50%) translateY(20px);}
+  10%{opacity:1;transform:translateX(-50%) translateY(0);}
+  90%{opacity:1;transform:translateX(-50%) translateY(0);}
+  100%{opacity:0;transform:translateX(-50%) translateY(-20px);}
+}
+
+/* 명언 */
+#quote{
+  margin-top:30px;
+  font-style:italic;
+  color:#ddd;
+  text-align:center;
+  font-size:1rem;
+  opacity:1;
+  width:90%;
+  max-width:500px;
+}
+
+/* 모바일 대응 */
+@media(max-width:480px){
+  h1{font-size:1.8rem;}
+  input, button{padding:12px;font-size:1rem;}
+  #quote{font-size:0.9rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>회원가입</h1>
+  <input type="text" id="username" placeholder="유저명">
+  <input type="password" id="password" placeholder="비밀번호">
+  <button onclick="register()">회원가입</button>
+  <button onclick="location.href='login.html'">로그인으로</button>
+  <div id="quote"></div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+// 별똥별 생성
+function createStars(count){
+  for(let i=0;i<count;i++){
+    const star=document.createElement('div');
+    star.className='star';
+    const size = Math.random()*2 + 1;
+    const isBig = Math.random()<0.05;
+    star.style.width = star.style.height = isBig ? (size*5)+'px' : size+'px';
+    star.style.top=Math.random()*100+'%';
+    star.style.left=Math.random()*100+'%';
+    star.style.animationDuration=(Math.random()*5+5)+'s';
+    document.body.appendChild(star);
+  }
+}
+createStars(50);
+
+// 명언
+const quotes = [
+  "The best way to get started is to quit talking and begin doing. – Walt Disney",
+  "Don’t let yesterday take up too much of today. – Will Rogers",
+  "It’s not whether you get knocked down, it’s whether you get up. – Vince Lombardi",
+  "People who are crazy enough to think they can change the world, are the ones who do. – Rob Siltanen"
+];
+let quoteIndex=-1;
+function nextQuote(){
+  const q=document.getElementById('quote');
+  quoteIndex=(quoteIndex+1)%quotes.length;
+  q.style.opacity=0;
+  setTimeout(()=>{
+    q.innerText=quotes[quoteIndex];
+    q.style.opacity=1;
+  },500);
+}
+nextQuote();
+setInterval(nextQuote,8000);
+
+// 토스트
+function showToast(msg){
+  const toast=document.getElementById('toast');
+  toast.innerText=msg;
+  toast.style.display='block';
+  setTimeout(()=>{toast.style.display='none';},3000);
+}
+
+// 회원가입
+function register(){
+  const user=document.getElementById('username').value.trim();
+  const pass=document.getElementById('password').value.trim();
+  if(!user||!pass){showToast("모두 입력하세요.");return;}
+  let stored=JSON.parse(localStorage.getItem('users')||'{}');
+  if(stored[user]){showToast("이미 존재하는 유저명입니다."); return;}
+  stored[user]=pass;
+  localStorage.setItem('users',JSON.stringify(stored));
+  showToast("회원가입 완료! 로그인해주세요.");
+  setTimeout(()=>{window.location.href='login.html';},1500);
+}
+</script>
+</body>
+</html>
