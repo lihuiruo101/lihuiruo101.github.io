@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로그인</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap');
+  :root {
+    --bg: #0d0d0d;
+    --primary: #ff49b3;
+    --secondary: #fff;
+    --card-bg: rgba(30,30,30,0.85);
+    --toast-bg: rgba(255,73,179,0.9);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Nanum Gothic',sans-serif;}
+  body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);color:var(--secondary);}
+  h1{color:var(--primary);margin-bottom:20px;}
+  .card{background:var(--card-bg);padding:30px;border-radius:15px;width:90%;max-width:400px;box-shadow:0 0 20px var(--primary);}
+  input{width:100%;padding:10px;margin-bottom:15px;border:none;border-radius:10px;background:#1e1e1e;color:#fff;font-size:1rem;}
+  button{width:100%;padding:10px;background:var(--primary);border:none;border-radius:10px;color:#fff;font-size:1rem;cursor:pointer;margin-bottom:10px;}
+  button:hover{filter:brightness(1.2);}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--toast-bg);padding:15px 25px;border-radius:10px;display:none;color:#fff;font-weight:bold;animation:fade 3s forwards;}
+  @keyframes fade{0%{opacity:0;transform:translateX(-50%) translateY(20px);}10%{opacity:1;transform:translateX(-50%) translateY(0);}90%{opacity:1;transform:translateX(-50%) translateY(0);}100%{opacity:0;transform:translateX(-50%) translateY(-20px);}}
+  #quote{margin-top:40px;font-style:italic;color:#ddd;text-align:center;opacity:0;transition:opacity 2s;}
+</style>
+</head>
+<body>
+
+<h1>로그인</h1>
+<div class="card">
+  <input type="text" id="username" placeholder="유저명">
+  <input type="password" id="password" placeholder="비밀번호">
+  <button onclick="login()">로그인</button>
+  <button onclick="location.href='register.html'">회원가입</button>
+</div>
+
+<div id="toast" class="toast"></div>
+<div id="quote"></div>
+
+<script>
+const quotes = [
+  "The best way to get started is to quit talking and begin doing. – Walt Disney",
+  "Don’t let yesterday take up too much of today. – Will Rogers",
+  "It’s not whether you get knocked down, it’s whether you get up. – Vince Lombardi",
+  "People who are crazy enough to think they can change the world, are the ones who do. – Rob Siltanen"
+];
+
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.innerText = msg;
+  toast.style.display='block';
+  setTimeout(()=>{toast.style.display='none';},3000);
+}
+
+function login(){
+  const user = document.getElementById('username').value.trim();
+  const pass = document.getElementById('password').value.trim();
+  if(!user || !pass){ showToast("모두 입력하세요."); return; }
+
+  const stored = JSON.parse(localStorage.getItem('users') || '{}');
+  if(stored[user] && stored[user] === pass){
+    localStorage.setItem('currentUser', user);
+    window.location.href = 'dashboard.html';
+  } else {
+    showToast("유저명 또는 비밀번호가 틀립니다.");
+  }
+}
+
+// 외국 명언 랜덤 표시, 잔잔하게 사라졌다 나타나기
+let quoteIndex = -1;
+function nextQuote(){
+  const q = document.getElementById('quote');
+  quoteIndex = (quoteIndex+1)%quotes.length;
+  q.style.opacity=0;
+  setTimeout(()=>{q.innerText=quotes[quoteIndex];q.style.opacity=1;},1000);
+}
+nextQuote();
+setInterval(nextQuote, 8000);
+</script>
+</body>
+</html>
